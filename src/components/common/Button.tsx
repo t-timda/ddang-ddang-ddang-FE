@@ -1,40 +1,45 @@
 // Button.tsx
 
-import clsx from 'clsx';
+import clsx from "clsx";
 
 // Button 컴포넌트의 props 타입 정의
 type ButtonProps = {
   children: React.ReactNode;
-  variant?: 'primary' | 'secondary'; // 버튼 스타일 종류
-  size?: 'sm' | 'md' | 'lg'; // 버튼 크기
+  variant?: "primary" | "secondary" | "navbar"; // 버튼 스타일 종류
+  size?: "sm" | "md" | "lg"; // 버튼 크기
   isLoading?: boolean; // 로딩 상태
   className?: string; // 추가적인 클래스네임(승찬이형 pr 반영)
-} & React.ComponentPropsWithoutRef<'button'>; // 기본 button 속성들 포함
+} & React.ComponentPropsWithoutRef<"button">; // 기본 button 속성들 포함
 
 // Button 컴포넌트 정의
 const Button = ({
   // Button 컴포넌트의 props (디폴트 값 포함)
   children,
-  variant = 'primary',
-  size = 'md',
+  variant = "primary",
+  size = "md",
   isLoading = false,
-  className = '', // className prop의 기본값 설정
+  className = "", // className prop의 기본값 설정
   ...rest // 나머지 button 속성들 (onClick, disabled 등)
 }: ButtonProps) => {
-
-  const baseStyles = 'transition-colors flex items-center justify-center'; // 공통 스타일만 남김
+  const baseStyles = "transition-colors flex items-center justify-center"; // 공통 스타일만 남김
 
   const variantStyles = {
     // primary와 secondary 스타일 정의 -> 와이어프레임 나오면 그거에 맞게 색상 수정해야 할 것 같습니다.
     // primary와 secondary에 패딩, 폰트 굵기, 둥근 모서리 스타일 포함 (승찬이형 pr 반영)
-    primary: 'bg-yellow-400 hover:bg-blue-700 text-black font-bold py-2 px-4 rounded',
-    secondary: 'bg-yellow-200 hover:bg-gray-700 text-black font-medium py-1 px-3 rounded-lg',
+    primary:
+      "bg-yellow-400 hover:bg-blue-700 text-black font-bold py-2 px-4 rounded",
+    secondary:
+      "bg-yellow-200 hover:bg-gray-700 text-black font-medium py-1 px-3 rounded-lg",
+    // Navbar의 LOGIN 버튼
+    navbar:
+      "box-border h-[44px] px-[37px] py-[10px] rounded-[33px] bg-[#FFFFFF] " +
+      "text-[#000000] font-[Pretendard] text-[20px] font-normal leading-normal hover:bg-gray-100",
   };
 
   const sizeStyles = {
-    sm: 'text-sm',
-    md: 'text-base',
-    lg: 'text-lg',
+    sm: "text-sm",
+    md: "text-base",
+    lg: "text-lg",
   };
 
   const finalClassName = clsx(
@@ -42,12 +47,16 @@ const Button = ({
     baseStyles,
     variantStyles[variant],
     sizeStyles[size],
-    isLoading && 'opacity-50 cursor-not-allowed', 
+    isLoading && "opacity-50 cursor-not-allowed",
     className
   );
 
   return (
-    <button {...rest} className={finalClassName} disabled={isLoading || rest.disabled}>
+    <button
+      {...rest}
+      className={finalClassName}
+      disabled={isLoading || rest.disabled}
+    >
       {/* 로딩 중이면 스피너 또는 텍스트 표시, 아니면 원래 children 표시 */}
       {isLoading ? (
         <>
