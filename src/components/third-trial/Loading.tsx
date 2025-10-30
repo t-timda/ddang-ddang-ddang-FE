@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useThirdTrialStore } from "@/stores/thirdTrialStore";
-import VerdictLoadingGif from "@/assets/gifs/판결 영상.gif";
+import VerdictLoadingGif from "@/assets/gifs/판결 영상.gif";
 
 export default function Loading() {
   const setStep = useThirdTrialStore((s) => s.setStep);

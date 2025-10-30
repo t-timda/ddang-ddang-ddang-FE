@@ -10,6 +10,7 @@ export const PATHS = {
   SECOND_TRIAL: "/second-trial",
   SECOND_TRIAL_REGISTER: "/secondtrial/register",
   SECOND_TRIAL_ROUND_ONE: "/secondtrial/1",
+  SECOND_TRIAL_FINAL: "/secondtrial/final",
   THIRD_TRIAL: "/third-trial",
   DEBATE: "/debate",
 } as const;
