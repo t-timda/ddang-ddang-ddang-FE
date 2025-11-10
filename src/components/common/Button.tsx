@@ -9,7 +9,9 @@ type ButtonProps = {
     | "third"
     | "navbar"
     | "ghost"
-    | "trialStart";
+    | "trialStart"
+    | "white"
+    | "bright_main";
   size?: "sm" | "md" | "lg"; // 버튼 크기
   isLoading?: boolean; // 로딩 상태
   className?: string; // 추가적인 클래스네임(승찬이형 pr 반영)
