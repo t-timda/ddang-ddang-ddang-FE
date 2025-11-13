@@ -10,8 +10,7 @@ permissions:
 jobs:
   sync:
     runs-on: ubuntu-latest
-    if: github.repository == 'https://github.com/ddang-ddang-ddang/ddang-ddang-ddang-FE'
-
+    if: github.repository == 'ddang-ddang-ddang/ddang-ddang-ddang-FE'
     steps:
       - name: Checkout main (GITHUB_TOKEN)
         uses: actions/checkout@v4
