@@ -1,0 +1,33 @@
+name: Synchronize to forked repo
+
+on:
+  push:
+    branches: [ main ]
+
+permissions:
+  contents: read  # GITHUB_TOKEN으로 checkout
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    if: github.repository == 'https://github.com/ddang-ddang-ddang/ddang-ddang-ddang-FE'
+
+    steps:
+      - name: Checkout main (GITHUB_TOKEN)
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Add fork remote (Fine-grained PAT)
+        run: |
+          git remote add forked-repo https://x-access-token:${{ secrets.REPO_TOKEN }}@https://github.com/t-timda/ddang-ddang-ddang-FE.git
+
+      - name: Push main
+        run: |
+          git push -f forked-repo main
+
+      - name: Clean up
+        run: |
+          git remote remove forked-repo || true

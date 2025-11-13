@@ -1,1 +1,30 @@
+@import "./fonts.css";
 @import "tailwindcss";
+
+@theme {
+  --font-family-sans: "Pretendard", -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
+
+  --font-family-hanseokbong: "Gapyeong Hanseokbong", serif;
+
+  --font-size-xs: 12px;
+  --font-size-2xl: 24px;
+  --font-size-4xl: 36px;
+
+  --font-weight-normal: 400;
+  --font-weight-bold: 700;
+
+  --leading-tight: 100%;
+  --leading-relaxed: 150%;
+
+  --color-main: #203c77;
+  --color-main-bright: #e8f2ff;
+  --color-main-medium: #809ad2;
+  --color-main-red: #eb9292;
+}
+
+body {
+  font-family: var(--font-family-sans);
+  line-height: var(--leading-relaxed);
+  color: #000000;
+}
