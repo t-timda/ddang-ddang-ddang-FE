@@ -21,7 +21,7 @@ jobs:
 
       - name: Add fork remote (Fine-grained PAT)
         run: |
-          git remote add forked-repo https://x-access-token:${{ secrets.REPO_TOKEN }}@https://github.com/t-timda/ddang-ddang-ddang-FE.git
+          git remote add forked-repo https://x-access-token:${{ secrets.REPO_TOKEN }}@github.com/t-timda/ddang-ddang-ddang-FE.git
 
       - name: Push main
         run: |
