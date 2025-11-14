@@ -1,3 +1,4 @@
+
 import clsx from "clsx";
 
 // Button 컴포넌트의 props 타입 정의
@@ -34,25 +35,25 @@ const Button = ({
     // primary와 secondary 스타일 정의 -> 와이어프레임 나오면 그거에 맞게 색상 수정해야 할 것 같습니다.
     // primary와 secondary에 패딩, 폰트 굵기, 둥근 모서리 스타일 포함 (승찬이형 pr 반영)
     primary:
-      "bg-main hover:opacity-90 text-white font-bold py-2 px-4 rounded", // 🔹 기본 버튼 (예: 공통 테스트용) + main으로 색 변경 및 text 화이트
+      "bg-main hover:opacity-90 text-white font-bold py-2 px-4 rounded ", // 🔹 기본 버튼 (예: 공통 테스트용) + main으로 색 변경 및 text 화이트
 
     // 솔로모드 버튼
     secondary:
-      "bg-[#809AD2] text-white text-[36px] font-normal rounded-[15px] hover:opacity-90 leading-none whitespace-nowrap", // FirstTrialStart 솔로모드 버튼
+      "bg-[#94B0EB] text-white text-[36px] font-normal rounded-[15px] hover:opacity-90 leading-none whitespace-nowrap shadow-[8px_10px_0_0_var(--color-main-medium)]  active:shadow-none active:translate-x-[10px] active:translate-y-[12px]", // FirstTrialStart 솔로모드 버튼
 
     // VS모드 버튼
     third:
-      "bg-[#EB9292] text-white text-[36px] font-normal rounded-[15px] hover:opacity-90 leading-none whitespace-nowrap", // FirstTrialStart VS모드 버튼
+      "bg-[#FFA7A7] text-white text-[36px] font-normal rounded-[15px] hover:opacity-90 leading-none whitespace-nowrap shadow-[8px_10px_0_0_var(--color-main-red)]  active:shadow-none active:translate-x-[8px] active:translate-y-[10px]", // FirstTrialStart VS모드 버튼
 
     // 재판 시작하기 버튼
     trialStart:
-      "bg-[#203C77] text-white text-[36px] font-bold rounded-[15px] hover:opacity-90 leading-none whitespace-nowrap", // FirstTrialStart 재판 시작하기 버튼
+      "bg-[#3F5B94] text-white text-[36px] font-bold rounded-[15px] hover:opacity-90 leading-none whitespace-nowrap shadow-[8px_10px_0_0_var(--color-main)]  active:shadow-none active:translate-x-[10px] active:translate-y-[12px]", // FirstTrialStart 재판 시작하기 버튼
 
     white:
       "bg-white text-main font-bold font-[Pretendard] py-2 px-4 hover:bg-gray-100", // 흰색 배경 버튼
    
     bright_main:
-      "bg-[#C0DCFF] text-main font-bold font-[Pretendard] py-2 px-4 rounded-3xl hover:opacity-90", // Main 페이지의 중간색 버튼
+      "bg-[#C0DCFF] text-main font-bold font-[Pretendard] py-2 px-4 rounded-3xl hover:opacity-90 shadow-[5px_6px_0_0_var(--color-main-medium)]  active:shadow-none active:translate-x-[5px] active:translate-y-[6px]", // Main 페이지의 중간색 버튼
 
     // Navbar의 LOGIN 버튼
     navbar:

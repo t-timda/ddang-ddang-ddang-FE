@@ -145,7 +145,7 @@ const SecondTrial_1 = () => {
                 <div className="flex justify-center mb-12">
                     {MOCK_DEBATE_DATA.isVoteTime ? (
                         <Button 
-                            variant="primary" 
+                            variant="trialStart" 
                             size="lg" 
                             onClick={handleVote}
                             disabled={!selectedSide} 
@@ -156,7 +156,7 @@ const SecondTrial_1 = () => {
                     ) : (
                         // ⭐️ 투표 마감 시 버튼 역할 변경
                         <Button 
-                            variant="primary" 
+                            variant="trialStart" 
                             size="lg" 
                             className="w-[585px] h-[123px] rounded-[30px]"
                             onClick={() => navigate(PATHS.SECOND_TRIAL_FINAL)} // ⭐️ 최종 페이지 이동 함수 연결

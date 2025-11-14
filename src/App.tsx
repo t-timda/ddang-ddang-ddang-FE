@@ -36,7 +36,7 @@ function App() {
           element={<SecondTrial_1 />}
         />
         <Route
-          path={PATHS.SECOND_TRIAL_FINAL}
+          path={PATHS.SECOND_TRIAL_FINAL} 
           element={<SecondTrial_final />}
         />
 

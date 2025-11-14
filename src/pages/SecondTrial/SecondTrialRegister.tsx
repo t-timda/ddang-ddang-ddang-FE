@@ -20,7 +20,7 @@ const SecondTrialRegister: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="flex flex-col items-center pt-10 gap-y-10">
+    <div className="flex flex-col items-center pt-10 gap-y-10 pb-30">
       <h1 className="text-2xl font-bold text-center text-main">
         2차 재판 등록
       </h1>
@@ -75,7 +75,7 @@ const SecondTrialRegister: React.FC = () => {
       </select>
 
       <Button
-        variant="primary"
+        variant="trialStart"
         size="lg"
         className="w-[585px] h-[123px] rounded-[30px]"
         onClick={() => navigate(PATHS.SECOND_TRIAL_ROUND_ONE)}

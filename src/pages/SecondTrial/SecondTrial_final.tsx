@@ -115,7 +115,7 @@ const SecondTrial_final = () => {
         {/* ⭐️ 최종심 결과보기 버튼 추가 */}
         <div className="mt-8 flex justify-center w-full">
             <Button 
-                variant="primary"
+                variant="trialStart"
                 size="lg"
                 onClick={() => navigate(PATHS.THIRD_TRIAL)} // 3차 재판 페이지로 이동
                 className="w-[585px] h-[123px] rounded-[30px]" 
