@@ -28,7 +28,7 @@ const HotDebateCard = ({ debate }: HotDebateCardProps) => {
         bg-[#C0DCFF]
         rounded-[29px]
         pt-[4px] pb-[24px] px-[6px]
-        w-[285px]
+        w-full
         cursor-pointer
         flex items-center justify-center
       "
@@ -37,7 +37,7 @@ const HotDebateCard = ({ debate }: HotDebateCardProps) => {
         className="
           bg-white
           rounded-[24px]
-          w-[273px]
+          w-full
           h-[206px]
           p-[24px]
           relative

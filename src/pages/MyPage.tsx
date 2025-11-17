@@ -1,11 +1,10 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import Button from "@/components/common/Button"; 
 import TrialListItem, { TrialData, TrialStatus } from "@/components/mypage/TrialListItem"; 
 import judgeIllustrationUrl from "@/assets/svgs/FirstJudge.svg?url"; 
 import ProfileIcon from "@/assets/svgs/profileIcon.svg?react";
 import { useUserProfileQuery, useUserRecordQuery, useUserAchievementsQuery, useUserRankQuery, useUserCasesQuery, useUpdateUserProfileMutation, useUploadProfileImageMutation } from "@/hooks/api/useUserQuery";
 import { useAuthStore } from "@/stores/useAuthStore";
-import { useMemo } from "react";
 
 const MyPage = () => {
   const authStore = useAuthStore();
@@ -46,16 +45,18 @@ const MyPage = () => {
   const currentRank = rankData?.result?.rank ?? "로딩 중...";
   const currentExp = rankData?.result?.exp ?? 0;
 
-  const trialListData: TrialData[] = casesData?.result?.map(caseItem => ({
-    id: caseItem.caseId,
-    title: caseItem.title,
-    mySide: caseItem.mainArguments[0] || "",
-    status: caseItem.caseResult === "WIN" ? "승리" : caseItem.caseResult === "LOSE" ? "패배" : "진행중",
-    currentRound: caseItem.status === "DONE" ? "종료" : "진행중",
-  })) ?? [];
+  const trialListData: TrialData[] = useMemo(() => {
+    return casesData?.result?.map(caseItem => ({
+      id: caseItem.caseId,
+      title: caseItem.title,
+      mySide: caseItem.mainArguments[0] || "",
+      status: caseItem.caseResult === "WIN" ? "승리" : caseItem.caseResult === "LOSE" ? "패배" : "진행중",
+      currentRound: caseItem.status === "DONE" ? "종료" : "진행중",
+    })) ?? [];
+  }, [casesData]);
 
   const filteredTrials = useMemo(() => {
-    let list = [...trialListData];
+    const list = [...trialListData];
     if (sortType === '정렬') return list.sort((a, b) => b.id - a.id);
     return list.filter(trial => trial.status === sortType);
   }, [sortType, trialListData]);

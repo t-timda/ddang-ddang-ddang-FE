@@ -37,14 +37,9 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="mmt-[96px] mb-[-100px] flex w-full justify-center">
-      {/* 로그인 카드 배치 */}
-      <section className="mt-[96px] flex w-full justify-center">
-        {/* 남색 카드 컨테이너 */}
-        <div
-          className="rounded-[30px] px-[205px] py-[92px] flex flex-col items-center"
-          style={{ background: "var(--Main-Main, #203C77)" }}
-        >
+   <main className="min-h-full w-full bg-white flex flex-col justify-center my-10">
+      <section className="flex w-full justify-center">
+        <div className="flex flex-col gap-6 items-center rounded-[30px] max-w-[790px] w-full py-[40px] bg-main ">
           {/* 로고 영역 */}
           <div className="w-full flex justify-center">
             <Logo className="w-[380px] h-auto rotate-[1.317deg]" />
@@ -55,12 +50,12 @@ export default function LoginPage() {
 
           {/* 로그인 폼 */}
           <form onSubmit={onSubmit} className="w-[380px]">
-            {/* ID 입력 */}
+            {/* email 입력 */}
             <input
               type="text"
               value={userId}
               onChange={(e) => setUserId(e.target.value)}
-              placeholder="ID"
+              placeholder="email"
               className="
                 w-full h-[79px] rounded-[10px]
                 bg-[var(--main-main-bright,#E8F2FF)]
@@ -94,14 +89,11 @@ export default function LoginPage() {
               {/* 회원가입 링크 텍스트 */}
               <Link
                 to={PATHS.SIGNUP}
-                className="text-[16px] font-normal leading-[normal]"
-                style={{
-                  color:
-                    "var(--main-main-bright, var(--color-main-bright, #E8F2FF))",
-                  fontFamily: "Pretendard",
-                }}
               >
-                회원가입
+                <div
+                className="text-[20px] font-bold leading-[150%] bg-main rounded-[10px] text-white px-6 py-3">
+                  회원가입
+                </div>
               </Link>
 
               {/* 오류 메시지 */}
@@ -116,7 +108,7 @@ export default function LoginPage() {
                 type="submit"
                 disabled={isSubmitDisabled}
                 className="
-                      rounded-[10px] bg-white px-[47px] py-[10px]
+                      rounded-[10px] bg-white  px-6 py-3
                       cursor-pointer
                       transition-opacity duration-100
                       hover:opacity-90

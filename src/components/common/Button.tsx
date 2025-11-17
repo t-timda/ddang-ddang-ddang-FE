@@ -12,7 +12,8 @@ type ButtonProps = {
     | "ghost"
     | "trialStart"
     | "white"
-    | "bright_main";
+    | "bright_main"
+    | "none";
   size?: "sm" | "md" | "lg"; // 버튼 크기
   isLoading?: boolean; // 로딩 상태
   className?: string; // 추가적인 클래스네임(승찬이형 pr 반영)
@@ -61,6 +62,8 @@ const Button = ({
 
     ghost:
       "bg-transparent text-black hover:bg-gray-200 font-bold py-2 px-4 rounded",
+    
+    none: "", 
   };
 
   const sizeStyles = {
