@@ -2,12 +2,24 @@ import { useState } from "react";
 import Button from "@/components/common/Button";
 import Textarea from "@/components/common/textarea";
 import { useFirstTrialStore } from "@/stores/firstTrialStore";
+import { isAxiosError } from "axios";
+import { useCreateFirstCaseMutation } from "@/hooks/firstTrial/useFirstTrial";
 
 /* 입장문 제출 페이지 */
 export default function Submit() {
   const [selectedSide, setSelectedSide] = useState<"A" | "B" | null>(null);
   const [errorMessage, setErrorMessage] = useState("");
-  const { setStep } = useFirstTrialStore();
+  const { setStep, setCaseId } = useFirstTrialStore();
+
+  /* 폼 데이터 상태 */
+  const [title, setTitle] = useState("");
+  const [aMain, setAMain] = useState("");
+  const [aReason, setAReason] = useState("");
+  const [bMain, setBMain] = useState("");
+  const [bReason, setBReason] = useState("");
+
+  /* 생성 뮤테이션 */
+  const createMut = useCreateFirstCaseMutation();
 
   const handleSelect = (side: "A" | "B") => {
     if (selectedSide === side) {
@@ -18,17 +30,42 @@ export default function Submit() {
     setErrorMessage("");
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!selectedSide) {
       setErrorMessage("입장을 선택해주세요");
       return;
     }
-    setStep("loading");
+    if (!title || !aMain || !aReason || !bMain || !bReason) {
+      setErrorMessage("모든 내용을 입력해주세요");
+      return;
+    }
+
+    try {
+      const res = await createMut.mutateAsync({
+        mode: "SOLO",
+        title,
+        argumentAMain: aMain,
+        argumentAReasoning: aReason,
+        argumentBMain: bMain,
+        argumentBReasoning: bReason,
+      });
+      const id = res.result?.caseId ?? null;
+      if (!id) throw new Error("caseId가 없습니다");
+      setCaseId(id);
+      setStep("loading");
+    } catch (e) {
+      const msg = isAxiosError(e)
+        ? e.response?.data?.message || e.message
+        : e instanceof Error
+        ? e.message
+        : "제출에 실패했습니다.";
+      setErrorMessage(msg);
+    }
   };
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen font-[Pretendard] text-[#203C77]">
-      {/* 상단 제목 + 솔로모드 표시 */}
+      {/* 상단 타이틀/모드 */}
       <div className="flex items-center justify-between w-[995px] mt-[60px]">
         <h1 className="text-[38px] font-bold text-center flex-1">초심</h1>
         <div className="bg-[#809AD2] text-white px-4 py-2 rounded-[15px] text-[18px] font-normal">
@@ -41,6 +78,8 @@ export default function Submit() {
         <Textarea
           placeholder="밸런스 게임의 배경 상황을 설명해주세요."
           className="bg-[#E8F2FF] border-none text-[20px] text-[#203C77] w-full h-full resize-none outline-none placeholder-[#809AD2] font-normal"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
         />
       </div>
 
@@ -53,6 +92,8 @@ export default function Submit() {
           <Textarea
             placeholder="입장을 작성해주세요."
             className="bg-[#E8F2FF] border-none text-[20px] text-[#203C77] w-full h-full resize-none outline-none placeholder-[#809AD2] font-normal"
+            value={aMain}
+            onChange={(e) => setAMain(e.target.value)}
           />
         </div>
 
@@ -61,6 +102,8 @@ export default function Submit() {
           <Textarea
             placeholder="입장을 뒷받침하는 논리적인 근거를 작성해주세요."
             className="bg-[#E8F2FF] border-none text-[20px] text-[#203C77] w-full resize-none outline-none placeholder-[#809AD2] font-normal leading-[1.6]"
+            value={aReason}
+            onChange={(e) => setAReason(e.target.value)}
           />
         </div>
       </div>
@@ -74,6 +117,8 @@ export default function Submit() {
           <Textarea
             placeholder="입장을 작성해주세요."
             className="bg-[#E8F2FF] border-none text-[20px] text-[#203C77] w-full h-full resize-none outline-none placeholder-[#809AD2] font-normal"
+            value={bMain}
+            onChange={(e) => setBMain(e.target.value)}
           />
         </div>
 
@@ -82,11 +127,13 @@ export default function Submit() {
           <Textarea
             placeholder="입장을 뒷받침하는 논리적인 근거를 작성해주세요."
             className="bg-[#E8F2FF] border-none text-[20px] text-[#203C77] w-full resize-none outline-none placeholder-[#809AD2] font-normal leading-[1.6]"
+            value={bReason}
+            onChange={(e) => setBReason(e.target.value)}
           />
         </div>
       </div>
 
-      {/* A/B 버튼 + VS */}
+      {/* A/B 선택 버튼 + VS (⬇️ B측 아래로 이동) */}
       <div className="flex items-center justify-center mt-[72px] gap-[42px]">
         <Button
           variant="secondary"
@@ -98,9 +145,7 @@ export default function Submit() {
         >
           A측 입장
         </Button>
-
         <p className="text-[36px] font-bold text-[#203C77]">VS</p>
-
         <Button
           variant="third"
           size="lg"
@@ -113,7 +158,7 @@ export default function Submit() {
         </Button>
       </div>
 
-      {/* 에러 or 안내 문구 */}
+      {/* 안내/에러 */}
       <div className="mt-[64px] h-[32px] text-center">
         {errorMessage ? (
           <p className="text-[24px] text-[#809AD2] font-normal">
@@ -133,8 +178,9 @@ export default function Submit() {
           size="lg"
           className="w-[380px] h-[123px] text-[36px] font-bold rounded-[15px]"
           onClick={handleSubmit}
+          disabled={createMut.isPending}
         >
-          제출하고 재판하기
+          {createMut.isPending ? "제출중..." : "제출하고 재판하기"}
         </Button>
       </div>
     </div>

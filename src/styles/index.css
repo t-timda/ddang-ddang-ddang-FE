@@ -20,7 +20,9 @@
   --color-main: #203c77;
   --color-main-bright: #e8f2ff;
   --color-main-medium: #809ad2;
+  --color-main-medium-light: #bacdf7;
   --color-main-red: #eb9292;
+  --color-main-red-bright: #ffe5e5;
 }
 
 body {

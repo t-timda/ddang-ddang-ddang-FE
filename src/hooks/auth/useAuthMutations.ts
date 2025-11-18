@@ -8,9 +8,26 @@ import type {
   SignupResponse,
   TokenRefreshRequest,
   TokenRefreshResponse,
+  SendEmailCodeRequest,
+  VerifyEmailCodeRequest,
 } from "@/types/apis/auth";
 
-type MutationOptions<TData, TVariables> = UseMutationOptions<TData, Error, TVariables>;
+type MutationOptions<TData, TVariables> = UseMutationOptions<
+  TData,
+  Error,
+  TVariables
+>;
+
+export const useSendEmailCodeMutation = () =>
+  useMutation({
+    mutationFn: (body: SendEmailCodeRequest) => authApi.postSendEmailCode(body),
+  });
+
+export const useVerifyEmailCodeMutation = () =>
+  useMutation({
+    mutationFn: (body: VerifyEmailCodeRequest) =>
+      authApi.postVerifyEmailCode(body),
+  });
 
 export const usePostSignupMutation = (
   options?: MutationOptions<SignupResponse, SignupRequest>
@@ -20,7 +37,9 @@ export const usePostSignupMutation = (
     ...options,
   });
 
-export const usePostLoginMutation = (options?: MutationOptions<LoginResponse, LoginRequest>) =>
+export const usePostLoginMutation = (
+  options?: MutationOptions<LoginResponse, LoginRequest>
+) =>
   useMutation({
     mutationFn: authApi.postLogin,
     ...options,

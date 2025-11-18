@@ -1,132 +1,175 @@
-import React, { useState, useMemo } from 'react';
-import { useNavigate } from "react-router-dom";
+import React from 'react';
+import { useNavigate, useParams } from "react-router-dom";
 import { PATHS } from '@/constants';
 import clsx from 'clsx';
 import Button from '@/components/common/Button';
+import { useSecondTrialDetailsQuery, useVoteResultQuery } from "@/hooks/secondTrial/useSecondTrial";
+import { useFirstCaseDetailQuery } from "@/hooks/firstTrial/useFirstTrial";
 
-const MOCK_VOTE_RESULT = {
-  voteA: 62, // A측 투표율 (62%)
-  voteB: 38, // B측 투표율 (38%)
-};
-// 더미 데이터 및 상수
-const MOCK_DEBATE_DATA = {
-  id: 1,
-  timeLimit: '재판종료', // 마감 상태를 명확히 표시
-  situation: '깻잎 논쟁: 내 연인이 친구의 깻잎을 떼어주는 것을 허용해야 하는가?',
-  argumentA: '연인을 배려하는 행동이며, 사소한 일에 질투하는 것은 속이 좁은 것이다.',
-  argumentB: '연인과 친구 사이에 무의식적인 친밀감을 형성하는 행동이며, 오해의 소지가 있다.',
-  isArgumentTime: false, // 변론/대댓글 가능 시간 여부 (false = 마감)
-  isVoteTime: false,       // 투표 가능 시간 여부 (false = 마감)
-};
-
-
-const SecondTrial_final = () => {
+const SecondTrial_final: React.FC = () => {
+  const { caseId: caseIdParam } = useParams<{ caseId?: string }>();
+  const caseId = caseIdParam ? Number(caseIdParam) : undefined;
   const navigate = useNavigate();
-  // 2차 재판 결과가 확정된 후, 3차 투표를 위해 선택 상태만 임시로 유지
-  const [selectedSide, setSelectedSide] = useState<'A' | 'B' | null>(null);
-    
+
+  // API 훅
+  const { data: detailsRes, isLoading: isDetailsLoading } = useSecondTrialDetailsQuery(caseId);
+  const details = detailsRes?.result;
+
+  const { data: voteResultRes, isLoading: isVoteResultLoading } = useVoteResultQuery(caseId);
+  const voteResult = voteResultRes?.result;
+
+  // 1차 재판 정보 (A/B 주장 및 근거)
+  const { data: caseDetailRes, isLoading: isCaseDetailLoading } = useFirstCaseDetailQuery(caseId);
+  const caseDetail = caseDetailRes?.result;
+
+  // 로딩
+  if (isDetailsLoading || isVoteResultLoading || isCaseDetailLoading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <p className="text-main font-bold">로딩 중...</p>
+      </div>
+    );
+  }
+
+  // 데이터 없음 처리
+  if (!details || !voteResult || !caseDetail) {
+    return (
+      <div className="flex flex-col justify-center items-center min-h-screen gap-4">
+        <p className="text-main-red font-bold text-xl">데이터를 받아오지 못했습니다</p>
+        <div className="flex gap-3">
+          <Button variant="primary" onClick={() => window.location.reload()}>다시 시도</Button>
+          <Button variant="ghost" onClick={() => navigate(-1)}>이전으로</Button>
+        </div>
+      </div>
+    );
+  }
+
+  // 투표 결과 (API 값만 사용)
+  const ratioA = Math.max(0, Math.min(100, Math.round(voteResult.ratioA ?? 0)));
+  const ratioB = Math.max(0, Math.min(100, Math.round(voteResult.ratioB ?? (100 - ratioA))));
+  const totalVotes = voteResult.totalVotes ?? 0;
+
+  // 어느 쪽이 이겼는지 판단
+  const aWins = ratioA > ratioB;
+
+  // 1차 재판의 A/B 주장 및 근거
+  const aMainArgument = caseDetail.argumentA.mainArgument;
+  const aReasoning = caseDetail.argumentA.reasoning;
+  const bMainArgument = caseDetail.argumentB.mainArgument;
+  const bReasoning = caseDetail.argumentB.reasoning;
+
   return (
     <div className="bg-white min-h-screen pt-12 pb-20">
       <div className="max-w-6xl mx-auto px-4">
-        
-        {/* 1. 헤더 및 타이머 (마감 상태) */}
-        <div className="flex justify-between items-center pb-4 mb-6 ">
+        {/* 헤더 */}
+        <div className="flex justify-between items-center pb-4 mb-6">
           <h1 className="text-3xl font-bold text-main">2차 재판</h1>
-          <span className="bg-[#FFE5E5] p-4 rounded-lg text-md font-medium text-main-red">{MOCK_DEBATE_DATA.timeLimit}</span>
+          <span className="bg-[#FFE5E5] p-4 rounded-lg text-md font-medium text-main-red">
+            재판종료
+          </span>
         </div>
 
-        {/* 2. 상황 설명 */}
-        <p className="font-medium mb-8 text-main">{MOCK_DEBATE_DATA.situation}</p>
+        {/* 사건 제목 */}
+        <p className="font-medium mb-8 text-main">
+          {caseDetail.title}
+        </p>
 
-        {/* 3. 최종 심의 대상 카드 (2차 재판 결과 표시 예정) */}
+        {/* A/B 카드 */}
         <div className="flex space-x-8 justify-center mb-12">
-          
-          {/* A. 찬성 블록 (결과 확정) */}
-          <div 
+          <div
             className={clsx(
               "w-[513px] h-[447px] bg-main-medium rounded-[30px] flex justify-center items-center flex-col",
-              // 3차 심의에서는 투표가 불가능하므로 비활성화 스타일 유지
-              'cursor-default opacity-70 border-gray-300' 
+              "cursor-default opacity-70 border-gray-300"
             )}
           >
-            <span className="text-2xl font-bold text-center text-white">
-              A. 찬성 {/* api 통해 값 넣기 */}
-            </span>
-            <p className="px-20 py-10 text-white">{MOCK_DEBATE_DATA.argumentA}</p>
+            <span className="text-2xl font-bold text-center text-white mb-4">{aMainArgument}</span>
+            <div className="px-20 py-4 text-white text-center">
+              <p className="text-sm">{aReasoning}</p>
+            </div>
           </div>
-          
-          {/* B. 반대 블록 (결과 확정) */}
-          <div 
+
+          <div
             className={clsx(
               "w-[513px] h-[447px] bg-main-red rounded-[30px] flex justify-center items-center flex-col",
-              'cursor-default opacity-70 border-gray-300'
+              "cursor-default opacity-70 border-gray-300"
             )}
           >
-            <span className="text-2xl font-bold text-center text-white">
-              B. 찬성 {/* api 통해 값 넣기 */}
-            </span>
-            <p className="px-20 py-10 text-white">{MOCK_DEBATE_DATA.argumentB}</p>
+            <span className="text-2xl font-bold text-center text-white mb-4">{bMainArgument}</span>
+            <div className="px-20 py-4 text-white text-center">
+              <p className="text-sm">{bReasoning}</p>
+            </div>
           </div>
         </div>
-        
-        {/* 4. 최종 투표 결과 바 (추가된 부분) */}
+
+        {/* 투표 결과 바 */}
         <div className="flex flex-col items-center mb-12 pt-8">
-            <h2 className="text-2xl font-bold text-main mb-6">2차 재판 투표 결과</h2>
-            
-            {/* 비율 바 컨테이너 */}
-            <div className="w-full max-w-xl h-10 bg-gray-200 rounded-full flex overflow-hidden">
-                {/* A측 비율 (파란색) */}
-                <div 
-                    style={{ width: `${MOCK_VOTE_RESULT.voteA}%` }}
-                    className="bg-main-medium flex justify-center items-center text-white font-bold text-sm h-full"
-                >
-                    {/* A측 비율 텍스트 */}
-                    {MOCK_VOTE_RESULT.voteA > 5 && (
-                        <span>A측 입장 {MOCK_VOTE_RESULT.voteA}%</span>
-                    )}
-                </div>
-                
-                {/* B측 비율 (빨간색) */}
-                <div 
-                    style={{ width: `${MOCK_VOTE_RESULT.voteB}%` }}
-                    className="bg-main-red flex justify-center items-center text-white font-bold text-sm h-full"
-                >
-                    {/* B측 비율 텍스트 */}
-                    {MOCK_VOTE_RESULT.voteB > 5 && (
-                        <span>B측 입장 {MOCK_VOTE_RESULT.voteB}%</span>
-                    )}
-                </div>
-                
-                {/* 비율이 너무 작아서 텍스트가 안 보일 경우를 대비한 처리 */}
-                {MOCK_VOTE_RESULT.voteA <= 5 && MOCK_VOTE_RESULT.voteA > 0 && (
-                     <div className="absolute left-0 transform translate-x-[calc(50%-50%)]">
-                        <span className="text-black text-xs ml-1">A {MOCK_VOTE_RESULT.voteA}%</span>
-                     </div>
+          <h2 className="text-2xl font-bold text-main mb-6">2차 재판 투표 결과</h2>
+
+          <div className="mt-[43px] flex justify-center">
+            <div className="relative w-[995px] h-[44px] bg-[rgba(235,146,146,0.46)] rounded-[30px] overflow-hidden flex items-center justify-between px-[20px]">
+              {/* A측 비율 바 */}
+              <div
+                className="absolute left-0 top-0 h-full bg-[#809AD2] rounded-[30px] transition-all duration-500"
+                style={{ width: `${ratioA}%` }}
+              >
+                {/* A가 승리했을 때 입체감 효과 */}
+                {aWins && (
+                  <div 
+                    className="absolute top-0 left-0 h-[40%] w-full rounded-t-[30px] bg-gradient-to-b from-white/30 to-transparent"
+                  />
                 )}
-                {MOCK_VOTE_RESULT.voteB <= 5 && MOCK_VOTE_RESULT.voteB > 0 && (
-                     <div className="absolute right-0 transform translate-x-[calc(-50%+50%)]">
-                        <span className="text-black text-xs mr-1">B {MOCK_VOTE_RESULT.voteB}%</span>
-                     </div>
+              </div>
+              
+              {/* B측 비율 바 (우측에서 시작) */}
+              <div
+                className="absolute right-0 top-0 h-full bg-[rgba(235,146,146,0.8)] rounded-[30px] transition-all duration-500"
+                style={{ width: `${ratioB}%` }}
+              >
+                {/* B가 승리했을 때 입체감 효과 */}
+                {!aWins && (
+                  <div 
+                    className="absolute top-0 left-0 h-[40%] w-full rounded-t-[30px] bg-gradient-to-b from-white/30 to-transparent"
+                  />
                 )}
+              </div>
+              
+              {/* 비율 텍스트 */}
+              <div className="relative z-10 flex w-full justify-between items-center px-[20px]">
+                <p className={clsx(
+                  "text-[16px] font-bold leading-[150%]",
+                  aWins ? "text-white drop-shadow-md" : "text-white"
+                )}>
+                  A입장 {ratioA}%
+                </p>
+                <p className={clsx(
+                  "text-[16px] font-bold leading-[150%]",
+                  !aWins ? "text-white drop-shadow-md" : "text-white"
+                )}>
+                  B입장 {ratioB}%
+                </p>
+              </div>
             </div>
-            
-        </div>
-        
-        {/* ⭐️ 최종심 결과보기 버튼 추가 */}
-        <div className="mt-8 flex justify-center w-full">
-            <Button 
-                variant="primary"
-                size="lg"
-                onClick={() => navigate(PATHS.THIRD_TRIAL)} // 3차 재판 페이지로 이동
-                className="w-[585px] h-[123px] rounded-[30px]" 
-            >
-                최종심 결과보기
-            </Button>
+          </div>
+
+          {totalVotes > 0 && (
+            <p className="mt-4 text-main text-sm">총 {totalVotes}명이 투표했습니다.</p>
+          )}
         </div>
 
+        {/* 최종심 결과보기 */}
+        <div className="mt-8 flex justify-center w-full">
+          <Button
+            variant="trialStart"
+            size="lg"
+            onClick={() => navigate(PATHS.THIRD_TRIAL)}
+            className="w-[585px] h-[123px] rounded-[30px]"
+          >
+            최종심 결과보기
+          </Button>
+        </div>
       </div>
     </div>
   );
-}
+};
 
-export default SecondTrial_final; 
+export default SecondTrial_final;
