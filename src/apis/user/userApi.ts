@@ -47,7 +47,7 @@ const getUserRecord = async (): Promise<UserRecordResponse> => {
 };
 
 const getUserCases = async (): Promise<UserCasesResponse> => {
-  const { data } = await instance.get<UserCasesResponse>(`${USER_BASE_PATH}/record/list`);
+  const { data } = await instance.get<UserCasesResponse>(`${USER_BASE_PATH}/cases`);
   return data;
 };
 

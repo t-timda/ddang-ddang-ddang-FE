@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import Button from "@/components/common/Button"; 
-import TrialListItem, { TrialData, TrialStatus } from "@/components/mypage/TrialListItem"; 
+import TrialListItem, { TrialData, CaseResult } from "@/components/mypage/TrialListItem"; 
 import judgeIllustrationUrl from "@/assets/svgs/FirstJudge.svg?url"; 
 import ProfileIcon from "@/assets/svgs/profileIcon.svg?react";
 import { useUserProfileQuery, useUserRecordQuery, useUserAchievementsQuery, useUserRankQuery, useUserCasesQuery, useUpdateUserProfileMutation, useUploadProfileImageMutation } from "@/hooks/api/useUserQuery";
@@ -37,7 +37,7 @@ const MyPage = () => {
   }, [userData]);
 
   const [selectedMenu, setSelectedMenu] = useState("profile"); 
-  const [sortType, setSortType] = useState<TrialStatus | '정렬'>('정렬');
+  const [sortType, setSortType] = useState<CaseResult | '정렬'>('정렬');
 
   const wins = recordData?.result?.winCnt ?? 0;
   const losses = recordData?.result?.loseCnt ?? 0;
@@ -50,15 +50,15 @@ const MyPage = () => {
       id: caseItem.caseId,
       title: caseItem.title,
       mySide: caseItem.mainArguments[0] || "",
-      status: caseItem.caseResult === "WIN" ? "승리" : caseItem.caseResult === "LOSE" ? "패배" : "진행중",
-      currentRound: caseItem.status === "DONE" ? "종료" : "진행중",
+      status: caseItem.status, // "DONE" | "SECOND" | "PENDING"
+      caseResult: caseItem.caseResult, // "WIN" | "LOSE" | "PENDING"
     })) ?? [];
   }, [casesData]);
 
   const filteredTrials = useMemo(() => {
     const list = [...trialListData];
     if (sortType === '정렬') return list.sort((a, b) => b.id - a.id);
-    return list.filter(trial => trial.status === sortType);
+    return list.filter(trial => trial.caseResult === sortType);
   }, [sortType, trialListData]);
 
   const handleEditMode = () => setIsEditMode(true);
@@ -275,11 +275,11 @@ const MyPage = () => {
               <div className="pt-4">
                 <div className="flex justify-between items-center mb-6">
                   <h3 className="text-2xl font-bold text-gray-800">참여한 재판 목록 <span className="text-lg text-gray-500 font-normal">({trialListData.length}개의 재판)</span></h3>
-                  <select value={sortType} onChange={(e) => setSortType(e.target.value as TrialStatus | '정렬')} className="p-2 rounded-md bg-main-bright text-main-medium cursor-pointer appearance">
-                    <option value="정렬">정렬</option>
-                    <option value="승리">승리</option>
-                    <option value="패배">패배</option>
-                    <option value="진행중">진행 중</option>
+                  <select value={sortType} onChange={(e) => setSortType(e.target.value as CaseResult | '정렬')} className="p-2 rounded-md bg-main-bright text-main-medium cursor-pointer appearance">
+                    <option value="정렬">전체</option>
+                    <option value="WIN">승리</option>
+                    <option value="LOSE">패배</option>
+                    <option value="PENDING">진행중</option>
                   </select>
                 </div>
 

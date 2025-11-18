@@ -4,6 +4,7 @@ import { PATHS } from '@/constants';
 import clsx from 'clsx';
 import Button from '@/components/common/Button';
 import { useSecondTrialDetailsQuery, useVoteResultQuery } from "@/hooks/secondTrial/useSecondTrial";
+import { useFirstCaseDetailQuery } from "@/hooks/firstTrial/useFirstTrial";
 
 const SecondTrial_final: React.FC = () => {
   const { caseId: caseIdParam } = useParams<{ caseId?: string }>();
@@ -17,8 +18,12 @@ const SecondTrial_final: React.FC = () => {
   const { data: voteResultRes, isLoading: isVoteResultLoading } = useVoteResultQuery(caseId);
   const voteResult = voteResultRes?.result;
 
+  // 1차 재판 정보 (A/B 주장 및 근거)
+  const { data: caseDetailRes, isLoading: isCaseDetailLoading } = useFirstCaseDetailQuery(caseId);
+  const caseDetail = caseDetailRes?.result;
+
   // 로딩
-  if (isDetailsLoading || isVoteResultLoading) {
+  if (isDetailsLoading || isVoteResultLoading || isCaseDetailLoading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <p className="text-main font-bold">로딩 중...</p>
@@ -27,7 +32,7 @@ const SecondTrial_final: React.FC = () => {
   }
 
   // 데이터 없음 처리
-  if (!details || !voteResult) {
+  if (!details || !voteResult || !caseDetail) {
     return (
       <div className="flex flex-col justify-center items-center min-h-screen gap-4">
         <p className="text-main-red font-bold text-xl">데이터를 받아오지 못했습니다</p>
@@ -44,8 +49,14 @@ const SecondTrial_final: React.FC = () => {
   const ratioB = Math.max(0, Math.min(100, Math.round(voteResult.ratioB ?? (100 - ratioA))));
   const totalVotes = voteResult.totalVotes ?? 0;
 
-  const aContent = details.defenses?.find(d => d.side === 'A')?.content ?? '등록된 변론이 없습니다.';
-  const bContent = details.defenses?.find(d => d.side === 'B')?.content ?? '등록된 변론이 없습니다.';
+  // 어느 쪽이 이겼는지 판단
+  const aWins = ratioA > ratioB;
+
+  // 1차 재판의 A/B 주장 및 근거
+  const aMainArgument = caseDetail.argumentA.mainArgument;
+  const aReasoning = caseDetail.argumentA.reasoning;
+  const bMainArgument = caseDetail.argumentB.mainArgument;
+  const bReasoning = caseDetail.argumentB.reasoning;
 
   return (
     <div className="bg-white min-h-screen pt-12 pb-20">
@@ -60,7 +71,7 @@ const SecondTrial_final: React.FC = () => {
 
         {/* 사건 제목 */}
         <p className="font-medium mb-8 text-main">
-          {details.caseTitle}
+          {caseDetail.title}
         </p>
 
         {/* A/B 카드 */}
@@ -71,8 +82,10 @@ const SecondTrial_final: React.FC = () => {
               "cursor-default opacity-70 border-gray-300"
             )}
           >
-            <span className="text-2xl font-bold text-center text-white">A. 찬성</span>
-            <p className="px-20 py-10 text-white text-center">{aContent}</p>
+            <span className="text-2xl font-bold text-center text-white mb-4">{aMainArgument}</span>
+            <div className="px-20 py-4 text-white text-center">
+              <p className="text-sm">{aReasoning}</p>
+            </div>
           </div>
 
           <div
@@ -81,8 +94,10 @@ const SecondTrial_final: React.FC = () => {
               "cursor-default opacity-70 border-gray-300"
             )}
           >
-            <span className="text-2xl font-bold text-center text-white">B. 반대</span>
-            <p className="px-20 py-10 text-white text-center">{bContent}</p>
+            <span className="text-2xl font-bold text-center text-white mb-4">{bMainArgument}</span>
+            <div className="px-20 py-4 text-white text-center">
+              <p className="text-sm">{bReasoning}</p>
+            </div>
           </div>
         </div>
 
@@ -92,13 +107,46 @@ const SecondTrial_final: React.FC = () => {
 
           <div className="mt-[43px] flex justify-center">
             <div className="relative w-[995px] h-[44px] bg-[rgba(235,146,146,0.46)] rounded-[30px] overflow-hidden flex items-center justify-between px-[20px]">
+              {/* A측 비율 바 */}
               <div
                 className="absolute left-0 top-0 h-full bg-[#809AD2] rounded-[30px] transition-all duration-500"
                 style={{ width: `${ratioA}%` }}
-              />
+              >
+                {/* A가 승리했을 때 입체감 효과 */}
+                {aWins && (
+                  <div 
+                    className="absolute top-0 left-0 h-[40%] w-full rounded-t-[30px] bg-gradient-to-b from-white/30 to-transparent"
+                  />
+                )}
+              </div>
+              
+              {/* B측 비율 바 (우측에서 시작) */}
+              <div
+                className="absolute right-0 top-0 h-full bg-[rgba(235,146,146,0.8)] rounded-[30px] transition-all duration-500"
+                style={{ width: `${ratioB}%` }}
+              >
+                {/* B가 승리했을 때 입체감 효과 */}
+                {!aWins && (
+                  <div 
+                    className="absolute top-0 left-0 h-[40%] w-full rounded-t-[30px] bg-gradient-to-b from-white/30 to-transparent"
+                  />
+                )}
+              </div>
+              
+              {/* 비율 텍스트 */}
               <div className="relative z-10 flex w-full justify-between items-center px-[20px]">
-                <p className="text-white text-[16px] font-bold leading-[150%]">A입장 {ratioA}%</p>
-                <p className="text-white text-[16px] font-bold leading-[150%]">B입장 {ratioB}%</p>
+                <p className={clsx(
+                  "text-[16px] font-bold leading-[150%]",
+                  aWins ? "text-white drop-shadow-md" : "text-white"
+                )}>
+                  A입장 {ratioA}%
+                </p>
+                <p className={clsx(
+                  "text-[16px] font-bold leading-[150%]",
+                  !aWins ? "text-white drop-shadow-md" : "text-white"
+                )}>
+                  B입장 {ratioB}%
+                </p>
               </div>
             </div>
           </div>
