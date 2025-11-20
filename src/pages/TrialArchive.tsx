@@ -1,18 +1,16 @@
 import React, { useState } from "react";
-import { mockWaitingCases } from "@/mock/vsModeData";
-import WaitingTrialTable from "@/components/vs-mode/WaitingTrialTable";
+import { mockArchivedCases } from "@/mock/vsModeData";
+import ArchiveTrialTable from "@/components/trial/ArchiveTrialTable";
 import Pagination from "@/components/vs-mode/Pagination";
-import { useVsModeStore } from "@/stores/vsModeStore";
 
-const WaitingTrialList: React.FC = () => {
+const TrialArchive: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const { setStep, setCaseId } = useVsModeStore();
   const itemsPerPage = 10;
 
-  // TODO: API 연결 시 useWaitingCasesQuery() 사용
-  // 최신순 정렬 (createdAt 기준 내림차순)
-  const sortedCases = [...mockWaitingCases].sort(
-    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  // TODO: API 연결 시 useArchivedCasesQuery() 사용
+  // 완료순 정렬 (completedAt 기준 내림차순)
+  const sortedCases = [...mockArchivedCases].sort(
+    (a, b) => new Date(b.completedAt).getTime() - new Date(a.completedAt).getTime()
   );
   const isLoading = false;
 
@@ -25,8 +23,8 @@ const WaitingTrialList: React.FC = () => {
   const currentCases = sortedCases.slice(startIndex, startIndex + itemsPerPage);
 
   const handleCaseClick = (caseId: number) => {
-    setCaseId(caseId);
-    setStep("join");
+    // TODO: 재판 결과 상세 페이지로 이동
+    console.log("아카이브 재판 클릭:", caseId);
   };
 
   if (isLoading) {
@@ -43,15 +41,15 @@ const WaitingTrialList: React.FC = () => {
         {/* 헤더 */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-[#203C77] mb-3">
-            재판 매칭을 기다리고 있는 주제들이에요!
+            재판 아카이브
           </h1>
           <p className="text-gray-500">
-            마음에 드는 논쟁을 골라 반대 입장으로서, 당신의 논리가 대결을 완성합니다!
+            완료된 재판의 결과를 확인하고, 다양한 논쟁의 결론을 살펴보세요!
           </p>
         </div>
 
         {/* 테이블 */}
-        <WaitingTrialTable
+        <ArchiveTrialTable
           cases={currentCases}
           startIndex={startIndex}
           totalCount={totalCount}
@@ -69,4 +67,4 @@ const WaitingTrialList: React.FC = () => {
   );
 };
 
-export default WaitingTrialList;
+export default TrialArchive;

@@ -37,19 +37,20 @@ export default function LoginPage() {
   };
 
   return (
-   <main className="min-h-full w-full bg-white flex flex-col justify-center my-10">
-      <section className="flex w-full justify-center">
-        <div className="flex flex-col gap-6 items-center rounded-[30px] max-w-[790px] w-full py-[40px] bg-main ">
+   <main className="min-h-[calc(100vh-98px)] w-full bg-white flex flex-col items-center justify-center">
+      <section className="flex w-full justify-center h-full">
+        <div className="flex flex-col gap-2 md:gap-6 items-center bg-main w-full py-[40px]
+                        md:rounded-[30px] md:max-w-[790px]">
           {/* 로고 영역 */}
           <div className="w-full flex justify-center">
-            <Logo className="w-[380px] h-auto rotate-[1.317deg]" />
+            <Logo className="w-[280px] md:w-[380px] h-auto rotate-[1.317deg]" />
           </div>
 
           {/* 로고와 폼 간 간격 */}
           <div className="h-[56px]" />
 
           {/* 로그인 폼 */}
-          <form onSubmit={onSubmit} className="w-[380px]">
+          <form onSubmit={onSubmit} className="w-full max-w-[380px] px-6 md:px-0">
             {/* email 입력 */}
             <input
               type="text"
@@ -59,7 +60,7 @@ export default function LoginPage() {
               className="
                 w-full h-[79px] rounded-[10px]
                 bg-[var(--main-main-bright,#E8F2FF)]
-                px-[57px]
+                px-[30px] md:px-[57px]
                 text-[16px] font-normal text-[color:#203C77]
                 outline-none placeholder:text-[color:#203C77]
               "
@@ -78,7 +79,7 @@ export default function LoginPage() {
               className="
                 w-full h-[79px] rounded-[10px]
                 bg-[var(--main-main-bright,#E8F2FF)]
-                px-[57px]
+                px-[30px] md:px-[57px]
                 text-[16px] font-normal text-[color:#203C77]
                 outline-none placeholder:text-[color:#203C77]
               "
@@ -91,7 +92,7 @@ export default function LoginPage() {
                 to={PATHS.SIGNUP}
               >
                 <div
-                className="text-[20px] font-bold leading-[150%] bg-main rounded-[10px] text-white px-6 py-3">
+                className="text-[18px] md:text-[20px] font-bold leading-[150%] bg-main rounded-[10px] text-white px-5 md:px-6 py-3">
                   회원가입
                 </div>
               </Link>
@@ -108,7 +109,7 @@ export default function LoginPage() {
                 type="submit"
                 disabled={isSubmitDisabled}
                 className="
-                      rounded-[10px] bg-white  px-6 py-3
+                      rounded-[10px] bg-white px-5 md:px-6 py-3
                       cursor-pointer
                       transition-opacity duration-100
                       hover:opacity-90
@@ -117,8 +118,8 @@ export default function LoginPage() {
                 aria-busy={isPending}
               >
                 <span
-                  className="font-bold text-[20px] leading-[150%]"
-                  style={{ color: "#203C77", fontFamily: "Pretendard" }}
+                  className="font-bold text-[18px] md:text-[20px] leading-[150%] text-main"
+                  style={{ fontFamily: "Pretendard" }}
                 >
                   {isPending ? "로그인 중..." : "로그인"}
                 </span>

@@ -117,19 +117,20 @@ export default function SignupPage() {
   };
 
   return (
-    <main className="min-h-full w-full bg-white flex flex-col justify-center my-10">
+    <main className="min-h-full w-full bg-white flex flex-col justify-center md:my-10">
       <section className="flex w-full justify-center">
-        <div className="flex flex-col gap-6 items-stretch rounded-[30px] px-20 py-[40px] bg-main">
+        <div className="flex flex-col gap-6 items-stretch bg-main w-full md:w-fit px-6 py-[40px]
+                        md:rounded-[30px] md:px-20">
           {/* 로고 */}
           <div className="flex w-full justify-center">
-            <Logo className="h-auto w-[380px] rotate-[1.317deg]" />
+            <Logo className="h-auto w-[280px] md:w-[380px] rotate-[1.317deg]" />
           </div>
 
           {/* 이메일 */}
             <div className="flex flex-col gap-2">
               <Label>이메일</Label>
 
-              <div className="grid grid-cols-[1fr_1fr_0.8fr] gap-[24px]">
+              <div className="flex flex-col md:grid md:grid-cols-[1fr_1fr_0.8fr] gap-3 md:gap-[24px]">
                 <input
                   ref={emailLocalRef}
                   type="text"
@@ -263,7 +264,7 @@ export default function SignupPage() {
             <div className="flex items-start justify-between pt-2">
               <Link to={PATHS.LOGIN}>
                 <div
-                className="text-[20px] font-bold leading-[150%] bg-main rounded-[10px] text-white px-6 py-3">
+                className="text-[18px] md:text-[20px] font-bold leading-[150%] bg-main rounded-[10px] text-white px-5 md:px-6 py-3">
                   로그인
                 </div>
               </Link>
@@ -274,7 +275,7 @@ export default function SignupPage() {
                   !canSubmit || verifyCodeMut.isPending || signupMut.isPending
                 }
                 className={`
-                  rounded-[10px] bg-white px-6 py-3
+                  rounded-[10px] bg-white px-5 md:px-6 py-3
                   ${
                     canSubmit &&
                     !verifyCodeMut.isPending &&
@@ -284,7 +285,7 @@ export default function SignupPage() {
                   }
                 `}
               >
-                <span className="text-[20px] font-bold leading-[150%] text-main">
+                <span className="text-[18px] md:text-[20px] font-bold leading-[150%] text-main">
                   {verifyCodeMut.isPending || signupMut.isPending
                     ? "처리중..."
                     : "회원가입하기"}

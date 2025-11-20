@@ -14,7 +14,17 @@ import type {
   RebuttalRequest,
   LikeRequest,
 } from "@/types/apis/secondTrial";
-import ThumbUpIcon from "@/assets/svgs/thumbs-up.svg";
+import ThumbUpIcon from "@/assets/svgs/thumbs-up.svg?react";
+
+export interface ArgumentData {
+  id: number;
+  userNickname: string;
+  userDgree: string;
+  content: string;
+  likes: number;
+  isBest: boolean;
+  isReplyable: boolean;
+}
 
 export interface ArgumentCardProps {
   defenseId: number;

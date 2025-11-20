@@ -242,7 +242,7 @@ const MainPage = () => {
   return (
     <div className="bg-white min-h-screen w-full flex items-center flex-col">
       {/* 상단 영역 */}
-      <section className="flex flex-col md:flex-row items-start w-full max-w-7xl p-4 justify-center pt-24 gap-[30px]">
+      <section className="flex flex-col md:flex-row items-center w-full max-w-7xl p-4 justify-center gap-[30px] min-h-[calc(100vh-98px)]">
         {/* 왼쪽: 슬로건 + 로그인 박스 (UI 데코) */}
         <div className="flex flex-col gap-[32px] w-full md:w-[380px]">
           <h1 className="text-main font-bold text-[36px] leading-[150%] text-center md:text-left">
@@ -382,8 +382,8 @@ const MainPage = () => {
         </div>
 
         {/* 오른쪽: 첫 재판 시작 패널 */}
-        <div className="flex-1 flex flex-col gap-3 justify-between bg-[#6596DA] rounded-2xl p-[64px] w-full md:w-[790px] h-[509px] relative transition">
-          <div className="w-[45%] md:w-full">
+        <div className="flex-1 flex flex-col gap-3 justify-between bg-[#6596DA] rounded-2xl p-[64px] px-4 md:px-[64px] w-full md:w-[790px] h-[509px] relative transition">
+          <div className="w-full md:w-[45%]">
             <h2 className="text-3xl font-bold text-white">
               AI판사와 밸런스 재판
             </h2>
@@ -426,9 +426,9 @@ const MainPage = () => {
       </section>
 
       {/* HOT 재판 캐러셀 */}
-      <section className="bg-main-bright w-full pt-8 pb-20 mt-16 mb-20">
+      <section className="bg-main-bright w-full py-4 md:pt-8 md:pb-20">
         {/* 제목 + 전체 재판 보기 버튼 */}
-        <div className="flex pl-[120px] pr-[120px] justify-between items-center pt-10">
+        <div className="flex px-4 md:px-[120px] justify-between items-center p-2 md:pt-10 flex-col md:flex-row gap-4 md:gap-0 text-center md:text-left">
           <h2 className="text-2xl font-bold text-main">
             현재 진행중인 가장 핫한 재판에 참여해보세요
           </h2>
@@ -442,19 +442,31 @@ const MainPage = () => {
               active:shadow-[0_4px_0_0_rgba(62,116,214,0.8)]
               transition-all
             "
+            onClick={() => navigate(PATHS.ONGOING_TRIALS)}
           >
             전체 재판 보기
           </Button>
         </div>
 
-        <p className="pl-[120px] pr-[120px] text-main-medium mb-10">
+        <p className="px-10 md:px-[120px] text-main-medium pt-4 md:py-0 md:mb-10">
           재판에 참여해서 변론을 작성하고, 당신의 논리를 펼쳐보세요!
         </p>
 
         {/* 카드 4장 보이고, 5번째부터 오른쪽에서 잘리는 캐러셀 */}
-        <div className="relative mt-10">
+        <div className="relative mt-2 md:mt-10">
           {/* 카드 뷰포트: 제목/버튼과 같은 content 폭 */}
-          <div className="pl-[120px] pr-[120px]">
+          <div className="relative px-10 md:px-[120px]">
+
+            {/* 왼쪽 화살표 (데스크톱만) */}
+            <Button
+              onClick={handlePrevSingle}
+              variant="white"
+              disabled={!shouldLoop && startIndex === 0}
+              className="hidden md:flex absolute left-[46px] top-1/2 -translate-y-1/2 rounded-full w-13 h-13 z-10 items-center justify-center"
+            >
+              <Left className="w-6 h-6" title="이전 논쟁" />
+            </Button>
+
             <div className="overflow-hidden w-full" ref={viewportRef}>
               <div
                 className="flex"
@@ -477,26 +489,31 @@ const MainPage = () => {
                 ))}
               </div>
             </div>
-          </div>
-
-          {/* 왼쪽 화살표 (첫 카드 왼쪽 + 22px 정도 간격) */}
-          <Button
-            onClick={handlePrevSingle}
-            variant="white"
-            disabled={!shouldLoop && startIndex === 0}
-            className="absolute left-[46px] top-1/2 -translate-y-1/2 rounded-full w-13 h-13"
-          >
-            <Left className="w-6 h-6" title="이전 논쟁" />
-          </Button>
-
-          {/* 오른쪽 화살표 (5번째 카드 잘리는 위치) */}
+            {/* 오른쪽 화살표 (데스크톱만) */}
           <Button
             onClick={handleNextSingle}
             variant="white"
-            className="absolute right-[46px] top-1/2 -translate-y-1/2 rounded-full w-13 h-13 cursor-pointer"
+            className="hidden md:flex absolute right-[46px] top-1/2 -translate-y-1/2 rounded-full w-13 h-13 cursor-pointer z-10 items-center justify-center"
           >
             <Right className="w-6 h-6" title="다음 논쟁" />
           </Button>
+          </div>
+
+          {/* 페이지네이션 인디케이터 (모바일만) */}
+          <div className="flex md:hidden justify-center gap-2 mt-6">
+            {Array.from({ length: totalSlides }).map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setStartIndex(index)}
+                className={`transition-all duration-300 rounded-full
+                  ${startIndex % totalSlides === index
+                    ? 'w-8 h-2 bg-main'
+                    : 'w-2 h-2 bg-main-medium'
+                  }`}
+                aria-label={`${index + 1}번째 슬라이드로 이동`}
+              />
+            ))}
+          </div>
         </div>
       </section>
 

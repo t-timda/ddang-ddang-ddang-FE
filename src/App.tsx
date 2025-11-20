@@ -12,6 +12,8 @@ import SecondTrial_1 from "@/pages/SecondTrial/SecondTrial_1";
 import SecondTrial_final from "@/pages/SecondTrial/SecondTrial_final";
 import SignUpPage from "@/pages/SignUp/SignUp";
 import VsModePage from "@/pages/VsMode/VsModePage";
+import TrialArchive from "@/pages/TrialArchive";
+import OngoingTrialList from "@/pages/OngoingTrialList";
 
 function App() {
   return (
@@ -41,6 +43,10 @@ function App() {
 
         {/* VS 모드 - 하나의 페이지에서 step으로 관리 */}
         <Route path="/vs-mode" element={<VsModePage />} />
+
+        {/* 재판 아카이브 & 진행중인 재판 */}
+        <Route path={PATHS.TRIAL_ARCHIVE} element={<TrialArchive />} />
+        <Route path={PATHS.ONGOING_TRIALS} element={<OngoingTrialList />} />
 
         <Route path="*" element={<NotFound />} />
       </Routes>

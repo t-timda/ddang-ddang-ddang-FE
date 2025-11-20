@@ -12,6 +12,8 @@ export const PATHS = {
   DEBATE: "/debate",
   VS_MODE_WAITING: "/vs-mode/waiting",
   VS_MODE_JOIN: "/vs-mode/join",
+  TRIAL_ARCHIVE: "/trial-archive",
+  ONGOING_TRIALS: "/ongoing-trials",
 } as const;
 
 export const PATH_BUILDERS = {
