@@ -19,7 +19,7 @@ import RebuttalItem from "./RebuttalItem";
 import ReportNotification from "./ReportNotification";
 import ReportModal from "./ReportModal";
 import ThumbUpIcon from "@/assets/svgs/thumbs-up.svg?react";
-import Siren from "@/assets/svgs/siren.svg?react";
+import Siren from "@/assets/svgs/Siren.svg?react";
 
 export interface ArgumentData {
   id: number;
