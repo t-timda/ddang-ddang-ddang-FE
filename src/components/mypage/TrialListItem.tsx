@@ -1,19 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from '@/components/common/Button';
 import { PATHS } from '@/constants';
 
-// API에서 받는 실제 타입
-export type CaseStatus = "DONE" | "SECOND" | "PENDING" | "FIRST";
+export type CaseStatus = "DONE" | "SECOND" | "THIRD" | "PENDING" | "FIRST";
 export type CaseResult = "WIN" | "LOSE" | "PENDING";
 
-// 재판 데이터 타입 (API 응답 구조 그대로)
 export type TrialData = {
     id: number;
     title: string;
-    mySide: string; // mainArguments[0]
-    status: CaseStatus; // 재판 단계
-    caseResult: CaseResult; // 승패 결과
+    mySide: string;
+    status: CaseStatus;
+    caseResult: CaseResult;
 };
 
 type TrialListItemProps = {
@@ -22,6 +20,7 @@ type TrialListItemProps = {
 
 const TrialListItem = ({ trial }: TrialListItemProps) => {
     const navigate = useNavigate();
+    const [isExpanded, setIsExpanded] = useState(false);
     
     const RightArrowIcon: React.FC<{ size: number }> = ({ size }) => (
         <svg 
@@ -34,17 +33,39 @@ const TrialListItem = ({ trial }: TrialListItemProps) => {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
         </svg>
     );
+
+    const DownArrowIcon: React.FC = () => (
+        <svg 
+            className="w-5 h-5" 
+            fill="none" 
+            stroke="currentColor" 
+            viewBox="0 0 24 24" 
+            xmlns="http://www.w3.org/2000/svg"
+        >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
+        </svg>
+    );
+
+    const UpArrowIcon: React.FC = () => (
+        <svg 
+            className="w-5 h-5" 
+            fill="none" 
+            stroke="currentColor" 
+            viewBox="0 0 24 24" 
+            xmlns="http://www.w3.org/2000/svg"
+        >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 15l7-7 7 7"></path>
+        </svg>
+    );
     
-    // 표시할 텍스트와 스타일 결정
     const getDisplayInfo = () => {
-        // 종료된 재판
         if (trial.status === "DONE") {
             if (trial.caseResult === "WIN") {
                 return { 
                     text: "승리", 
                     bgClass: "bg-main-medium text-white",
                     isOngoing: false,
-                    roundText: null
+                    roundText: "최종 심리 완료"
                 };
             }
             if (trial.caseResult === "LOSE") {
@@ -52,31 +73,37 @@ const TrialListItem = ({ trial }: TrialListItemProps) => {
                     text: "패배", 
                     bgClass: "bg-main-red text-white",
                     isOngoing: false,
-                    roundText: null
+                    roundText: "최종 심리 완료"
                 };
             }
-            // DONE인데 PENDING인 경우 (드물지만)
             return { 
                 text: "종료", 
                 bgClass: "bg-gray-400 text-white",
                 isOngoing: false,
-                roundText: null
+                roundText: "최종 심리 완료"
             };
         }
         
-        // 진행중인 재판
         if (trial.status === "SECOND") {
-            return { 
-                text: "진행중", 
+            return {
+                text: "진행중",
                 bgClass: "bg-gray-400 text-white",
                 isOngoing: true,
                 roundText: "2차 재판 진행중"
             };
         }
-        
-        // 1차 또는 PENDING
-        return { 
-            text: "진행중", 
+
+        if (trial.status === "THIRD") {
+            return {
+                text: "진행중",
+                bgClass: "bg-gray-400 text-white",
+                isOngoing: true,
+                roundText: "최종심 진행중"
+            };
+        }
+
+        return {
+            text: "진행중",
             bgClass: "bg-gray-400 text-white",
             isOngoing: true,
             roundText: "1차 재판 진행중"
@@ -85,51 +112,95 @@ const TrialListItem = ({ trial }: TrialListItemProps) => {
 
     const displayInfo = getDisplayInfo();
 
-    // 진행중인 재판 클릭 핸들러
-    const handleClick = () => {
+    const handleNavigate = () => {
         if (!displayInfo.isOngoing) return;
 
-        // 재판 단계에 따라 적절한 페이지로 이동
         if (trial.status === "SECOND") {
-            // 2차 재판 진행중 -> 2차 재판 라운드1 페이지
             navigate(`${PATHS.SECOND_TRIAL_ROUND_ONE}/${trial.id}`);
+        } else if (trial.status === "THIRD") {
+            navigate(`${PATHS.THIRD_TRIAL}/${trial.id}`);
         } else {
-            // 1차 재판 진행중 -> 1차 재판 페이지
             navigate(`${PATHS.FIRST_TRIAL}?caseId=${trial.id}`);
         }
     };
 
+    const toggleExpanded = () => {
+        setIsExpanded(!isExpanded);
+    };
+
     return (
-        <div 
-            className={`flex justify-between items-start py-4 border-b border-main transition-colors duration-150 ${
-                displayInfo.isOngoing ? 'hover:bg-gray-50 cursor-pointer' : ''
-            }`}
-            onClick={handleClick}
-        >
-            <div className="flex-1 min-w-0">
-                <p className="text-lg font-bold text-main truncate">{trial.title}</p>
-                <p className="text-sm text-main mt-1">{trial.mySide}</p>
-            </div>
-            
-            <div className="flex flex-col items-end gap-1 ml-4">
-                {/* 진행중일 때만 재판 단계 표시 */}
-                {displayInfo.isOngoing && displayInfo.roundText && (
-                    <span className="text-sm text-main font-medium">
-                        {displayInfo.roundText}
-                    </span>
-                )}
+        <div className="border-b border-main">
+            <div 
+                className="flex justify-between items-start py-4 transition-colors duration-150 cursor-pointer hover:bg-gray-50"
+                onClick={toggleExpanded}
+            >
+                <div className="flex-1 min-w-0">
+                    <p className="text-lg font-bold text-main truncate">{trial.title}</p>
+                    <p className="text-sm text-main mt-1">{trial.mySide}</p>
+                </div>
                 
-                {/* 상태 배지 */}
-                <div
-                    className={
-                        'flex items-center gap-1 px-3 py-1 rounded-[10px] text-[16px] font-semibold whitespace-nowrap ' + 
-                        displayInfo.bgClass
-                    }
-                >
-                    <span>{displayInfo.text}</span>
-                    <RightArrowIcon size={12} />
+                <div className="flex items-center gap-3 ml-4">
+                    <div
+                        className={
+                            'flex items-center gap-1 px-3 py-1 rounded-[10px] text-[16px] font-semibold whitespace-nowrap ' + 
+                            displayInfo.bgClass
+                        }
+                    >
+                        <span>{displayInfo.text}</span>
+                        {displayInfo.isOngoing && <RightArrowIcon size={12} />}
+                    </div>
+
+                    <button 
+                        className="text-main hover:text-main-medium transition-colors"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            toggleExpanded();
+                        }}
+                    >
+                        {isExpanded ? <UpArrowIcon /> : <DownArrowIcon />}
+                    </button>
                 </div>
             </div>
+
+            {isExpanded && (
+                <div className="bg-main-bright px-6 py-4 mb-2 rounded-md">
+                    <div className="space-y-2">
+                        <div className="flex items-center">
+                            <span className="font-semibold text-main w-28">재판 제목:</span>
+                            <span className="text-main">{trial.title}</span>
+                        </div>
+                        <div className="flex items-center">
+                            <span className="font-semibold text-main w-28">승패여부:</span>
+                            <span className={`font-bold ${
+                                trial.caseResult === "WIN" ? "text-main-medium" :
+                                trial.caseResult === "LOSE" ? "text-main-red" :
+                                "text-gray-600"
+                            }`}>
+                                {trial.caseResult === "WIN" ? "승리" :
+                                 trial.caseResult === "LOSE" ? "패배" :
+                                 "진행중"}
+                            </span>
+                        </div>
+                        <div className="flex items-center">
+                            <span className="font-semibold text-main w-28">재판진행도:</span>
+                            <span className="text-main">{displayInfo.roundText}</span>
+                        </div>
+                    </div>
+                    
+                    {/* 진행중인 재판일 때만 버튼 표시 */}
+                    {displayInfo.isOngoing && (
+                        <div className="flex justify-end mt-4">
+                            <Button
+                                variant="primary"
+                                size="md"
+                                onClick={handleNavigate}
+                            >
+                                재판 보러가기
+                            </Button>
+                        </div>
+                    )}
+                </div>
+            )}
         </div>
     );
 };

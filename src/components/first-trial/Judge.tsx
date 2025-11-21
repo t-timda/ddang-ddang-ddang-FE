@@ -22,7 +22,7 @@ export default function Judge() {
 
   const title = detail?.result?.title ?? "사건";
   const aMain = detail?.result?.argumentA.mainArgument ?? "A입장";
-  const bMain = detail?.result?.argumentB.mainArgument ?? "B입장";
+  const bMain = detail?.result?.argumentB?.mainArgument ?? "B입장";
   const verdict = judgment?.result?.verdict ?? "판결";
   const conclusion = judgment?.result?.conclusion ?? "";
   const ratioA = Math.round(judgment?.result?.ratioA ?? 50);
@@ -58,7 +58,7 @@ export default function Judge() {
             <div className="relative w-[316px] h-[78px] bg-white rounded-[30px] shadow-sm flex justify-center items-center px-[55px] py-[21px]">
               <p className="text-black text-[16px] font-normal leading-[150%] text-center">
                 <span className="font-semibold">{winnerMain}</span> 의견이{" "}
-                <span className="font-semibold">{winnerRatio}%</span> 더
+                <span className="font-semibold">{winnerRatio}%</span>로 더
                 논리적입니다.
               </p>
               <div className="absolute left-[50px] bottom-[-20px] w-0 h-0 border-l-[24px] border-l-transparent border-r-[24px] border-r-transparent border-t-[24px] border-t-white"></div>
@@ -92,11 +92,11 @@ export default function Judge() {
             사건명: {title}
           </p>
 
-          <p className="absolute top-[249px] left-1/2 -translate-x-1/2 w-[420px] text-[15px] leading-[150%] text-center text-[#EBAD27] font-normal font-['Gapyeong_Hanseokbong']">
+          <p className="absolute top-[200px] left-1/2 -translate-x-1/2 w-[420px] text-[15px] leading-[150%] text-center text-[#EBAD27] font-normal font-['Gapyeong_Hanseokbong']">
             {conclusion}
           </p>
 
-          <p className="absolute top-[403px] left-1/2 -translate-x-1/2 w-[420px] text-[15px] font-bold leading-[150%] text-center text-[#EBAD27] font-['Gapyeong_Hanseokbong']">
+          <p className="absolute top-[320px] left-1/2 -translate-x-1/2 w-[420px] text-[15px] font-bold leading-[150%] text-center text-[#EBAD27] font-['Gapyeong_Hanseokbong']">
             {verdict}
           </p>
         </div>
@@ -158,7 +158,9 @@ export default function Judge() {
             // caseId를 localStorage에 저장
             localStorage.setItem("lastCaseId", String(caseId));
             // PATH_BUILDERS 사용하여 경로 생성
-            navigate(PATH_BUILDERS.secondTrialRegister(caseId), { state: { caseId } });
+            navigate(PATH_BUILDERS.secondTrialRegister(caseId), {
+              state: { caseId },
+            });
           }}
         >
           <span className="text-white text-[36px] font-bold leading-normal">

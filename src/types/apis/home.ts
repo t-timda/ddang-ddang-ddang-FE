@@ -2,7 +2,7 @@
 export type MyDefenseItem = {
   caseId: number;
   debateSide: "A" | "B";
-  title: string;
+  title?: string;
   content: string;
   likeCount: number;
 };

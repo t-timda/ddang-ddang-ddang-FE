@@ -1,17 +1,21 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Button from "@/components/common/Button";
-import Logo from "@/assets/svgs/logo.svg?react"; // svgr 컴포넌트 사용
+import Logo from "@/assets/svgs/logo.svg?react";
 import { HIDE_NAV_STEPS_BY_PATH, PATHS } from "@/constants";
 import { useThirdTrialStore } from "@/stores/thirdTrialStore";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { useVsModeStore } from "@/stores/vsModeStore";
+import { useNotificationStore } from "@/stores/useNotificationStore";
+import NotificationDropdown from "@/components/layout/NotificationDropdown";
 
 export default function Navbar() {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const { isLogin } = useAuthStore();
+  const { unreadCount } = useNotificationStore();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
 
   // 경로와 스텝에 따라 네브바 노출 제어
   let hide = false;
@@ -22,22 +26,39 @@ export default function Navbar() {
     hide = hiddenSet?.has(step) ?? false;
   }
 
+  // 스크롤 감지하여 알림 드롭다운 닫기
+  useEffect(() => {
+    const handleScroll = () => {
+      if (isNotificationOpen) {
+        setIsNotificationOpen(false);
+      }
+    };
+
+    if (isNotificationOpen) {
+      window.addEventListener('scroll', handleScroll);
+    }
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [isNotificationOpen]);
+
   if (hide) return null;
 
   const handleVsModeClick = () => {
-    useVsModeStore.getState().reset(); // VS 모드 초기화
+    useVsModeStore.getState().reset();
     navigate("/vs-mode");
   };
 
   const handleMenuItemClick = (action: () => void) => {
     action();
-    setIsMobileMenuOpen(false); // 메뉴 아이템 클릭 시 패널 닫기
+    setIsMobileMenuOpen(false);
   };
 
   return (
     <>
       <nav
-        className="flex items-center justify-between w-full h-[98px] bg-[#203C77]
+        className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between w-full h-[98px] bg-[#203C77]
                       px-6 sm:px-10 md:px-[40px] lg:px-[60px]"
       >
         {/* 로고 */}
@@ -54,7 +75,28 @@ export default function Navbar() {
 
         {/* 데스크톱 메뉴 (md 이상에서만 표시) */}
         {isLogin ? (
-          <div className="hidden md:flex gap-8">
+          <div className="hidden md:flex items-center gap-8">
+            {/* 알림 아이콘 */}
+            <div className="relative">
+              <button
+                onClick={() => setIsNotificationOpen(!isNotificationOpen)}
+                className="relative text-white text-xl px-3 py-2"
+                aria-label="알림"
+              >
+                알림
+                {/* 하얀색 점 표시 */}
+                {unreadCount > 0 && (
+                  <span className="absolute top-0 right-0 bg-white rounded-full h-2 w-2 animate-pulse" />
+                )}
+              </button>
+
+              {/* 알림 드롭다운 - 절대 위치로 우측 정렬 */}
+              {isNotificationOpen && (
+                <div className="fixed top-[98px] right-6 sm:right-10 md:right-[40px] lg:right-[60px] z-[60]">
+                  <NotificationDropdown onClose={() => setIsNotificationOpen(false)} />
+                </div>
+              )}
+            </div>
             <Button
               variant="none"
               onClick={() => navigate(PATHS.TRIAL_ARCHIVE)}
@@ -76,6 +118,7 @@ export default function Navbar() {
             >
               마이페이지
             </Button>
+
             <Button
               variant="navbar"
               onClick={() => {useAuthStore.getState().setLogout(); navigate(PATHS.ROOT);}}
@@ -133,6 +176,24 @@ export default function Navbar() {
         <div className="flex flex-col p-6 gap-2">
           {isLogin ? (
             <>
+              {/* 모바일 알림 버튼 */}
+              <Button
+                variant="none"
+                onClick={() => {
+                  handleMenuItemClick(() => setIsNotificationOpen(true));
+                }}
+                className="text-white text-lg text-left py-4 px-4 rounded-lg hover:bg-main-medium/30 transition-colors relative"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="relative">
+                    <span>알림</span>
+                    {/* 하얀색 점 표시 */}
+                    {unreadCount > 0 && (
+                      <span className="absolute top-0 -right-1 bg-white rounded-full h-2 w-2 animate-pulse" />
+                    )}
+                  </div>
+                </div>
+              </Button>
               <Button
                 variant="none"
                 onClick={() => handleMenuItemClick(() => navigate(PATHS.TRIAL_ARCHIVE))}
@@ -201,6 +262,24 @@ export default function Navbar() {
           className="fixed inset-0 bg-main/60 backdrop-blur-sm md:hidden z-40 top-[98px]"
           onClick={() => setIsMobileMenuOpen(false)}
         />
+      )}
+
+      {/* 모바일 알림 드롭다운 (전체 화면) */}
+      {isNotificationOpen && (
+        <div className="fixed inset-0 bg-white z-[70] md:hidden">
+          <div className="h-full flex flex-col">
+            <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-gray-50">
+              <h3 className="font-bold text-lg text-main">알림</h3>
+              <button
+                onClick={() => setIsNotificationOpen(false)}
+                className="text-2xl text-gray-600"
+              >
+                ✕
+              </button>
+            </div>
+            <NotificationDropdown onClose={() => setIsNotificationOpen(false)} />
+          </div>
+        </div>
       )}
     </>
   );

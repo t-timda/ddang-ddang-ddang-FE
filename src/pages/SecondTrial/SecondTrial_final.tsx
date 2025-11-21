@@ -55,8 +55,8 @@ const SecondTrial_final: React.FC = () => {
   // 1차 재판의 A/B 주장 및 근거
   const aMainArgument = caseDetail.argumentA.mainArgument;
   const aReasoning = caseDetail.argumentA.reasoning;
-  const bMainArgument = caseDetail.argumentB.mainArgument;
-  const bReasoning = caseDetail.argumentB.reasoning;
+  const bMainArgument = caseDetail.argumentB?.mainArgument;
+  const bReasoning = caseDetail.argumentB?.reasoning;
 
   return (
     <div className="bg-white min-h-screen pt-12 pb-20">

@@ -1,4 +1,3 @@
-// /dev/src/components/vs-mode/Pagination.tsx
 import React from "react";
 
 interface PaginationProps {
@@ -16,7 +15,6 @@ const Pagination: React.FC<PaginationProps> = ({
 
   return (
     <div className="flex justify-center items-center gap-2 py-8">
-      {/* 이전 버튼 */}
       <button
         onClick={() => onPageChange(Math.max(currentPage - 1, 1))}
         disabled={currentPage === 1}
@@ -25,7 +23,6 @@ const Pagination: React.FC<PaginationProps> = ({
         &lt;
       </button>
 
-      {/* 페이지 번호 */}
       {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
         <button
           key={page}
@@ -40,7 +37,6 @@ const Pagination: React.FC<PaginationProps> = ({
         </button>
       ))}
 
-      {/* 다음 버튼 */}
       <button
         onClick={() => onPageChange(Math.min(currentPage + 1, totalPages))}
         disabled={currentPage === totalPages}

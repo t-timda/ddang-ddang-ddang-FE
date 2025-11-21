@@ -128,9 +128,9 @@ const SecondTrialRegister: React.FC = () => {
           </p>
         </div>
         <div className="w-[513px] h-[447px] bg-main-red rounded-[30px] flex justify-center items-center flex-col">
-          <span className="text-2xl font-bold text-center text-white">{caseDetail.argumentB.mainArgument}</span>
+          <span className="text-2xl font-bold text-center text-white">{caseDetail.argumentB?.mainArgument}</span>
           <p className="px-20 py-10 text-white">
-            {caseDetail.argumentB.reasoning}
+            {caseDetail.argumentB?.reasoning}
           </p>
         </div>
       </div>

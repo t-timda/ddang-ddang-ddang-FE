@@ -5,20 +5,17 @@ import { useFirstTrialStore } from "@/stores/firstTrialStore";
 import { isAxiosError } from "axios";
 import { useCreateFirstCaseMutation } from "@/hooks/firstTrial/useFirstTrial";
 
-/* 입장문 제출 페이지 */
 export default function Submit() {
   const [selectedSide, setSelectedSide] = useState<"A" | "B" | null>(null);
   const [errorMessage, setErrorMessage] = useState("");
   const { setStep, setCaseId } = useFirstTrialStore();
 
-  /* 폼 데이터 상태 */
   const [title, setTitle] = useState("");
   const [aMain, setAMain] = useState("");
   const [aReason, setAReason] = useState("");
   const [bMain, setBMain] = useState("");
   const [bReason, setBReason] = useState("");
 
-  /* 생성 뮤테이션 */
   const createMut = useCreateFirstCaseMutation();
 
   const handleSelect = (side: "A" | "B") => {
@@ -49,6 +46,7 @@ export default function Submit() {
         argumentBMain: bMain,
         argumentBReasoning: bReason,
       });
+
       const id = res.result?.caseId ?? null;
       if (!id) throw new Error("caseId가 없습니다");
       setCaseId(id);
@@ -65,80 +63,29 @@ export default function Submit() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen font-[Pretendard] text-[#203C77]">
-      {/* 상단 타이틀/모드 */}
       <div className="flex items-center justify-between w-[995px] mt-[60px]">
         <h1 className="text-[38px] font-bold text-center flex-1">초심</h1>
-        <div className="bg-[#809AD2] text-white px-4 py-2 rounded-[15px] text-[18px] font-normal">
+        <div className="bg-[#809AD2] text-white px-4 py-2 rounded-[15px] text-[18px]">
           솔로모드
         </div>
       </div>
 
-      {/* 밸런스 게임 상황 설명 */}
+      {/* 배경 상황 */}
       <div className="mt-[40px] w-[995px] h-[96px] bg-[#E8F2FF] rounded-[15px] flex items-center px-[56px]">
         <Textarea
           placeholder="밸런스 게임의 배경 상황을 설명해주세요."
-          className="bg-[#E8F2FF] border-none text-[20px] text-[#203C77] w-full h-full resize-none outline-none placeholder-[#809AD2] font-normal"
+          className="bg-[#E8F2FF] border-none text-[20px] text-[#203C77] w-full h-full resize-none outline-none placeholder-[#809AD2]"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
         />
       </div>
 
-      {/* A측 */}
-      <div className="mt-[60px] w-[995px]">
-        <h2 className="text-[24px] font-bold mb-[15px]">A측 입장</h2>
-
-        {/* 입장 박스 */}
-        <div className="bg-[#E8F2FF] h-[96px] rounded-[15px] mb-[20px] flex items-center px-[56px]">
-          <Textarea
-            placeholder="입장을 작성해주세요."
-            className="bg-[#E8F2FF] border-none text-[20px] text-[#203C77] w-full h-full resize-none outline-none placeholder-[#809AD2] font-normal"
-            value={aMain}
-            onChange={(e) => setAMain(e.target.value)}
-          />
-        </div>
-
-        {/* 근거 박스 */}
-        <div className="bg-[#E8F2FF] h-[259px] rounded-[15px] flex items-start px-[56px] pt-[34px] pb-[201px]">
-          <Textarea
-            placeholder="입장을 뒷받침하는 논리적인 근거를 작성해주세요."
-            className="bg-[#E8F2FF] border-none text-[20px] text-[#203C77] w-full resize-none outline-none placeholder-[#809AD2] font-normal leading-[1.6]"
-            value={aReason}
-            onChange={(e) => setAReason(e.target.value)}
-          />
-        </div>
-      </div>
-
-      {/* B측 */}
-      <div className="mt-[60px] w-[995px]">
-        <h2 className="text-[24px] font-bold mb-[15px]">B측 입장</h2>
-
-        {/* 입장 박스 */}
-        <div className="bg-[#E8F2FF] h-[96px] rounded-[15px] mb-[20px] flex items-center px-[56px]">
-          <Textarea
-            placeholder="입장을 작성해주세요."
-            className="bg-[#E8F2FF] border-none text-[20px] text-[#203C77] w-full h-full resize-none outline-none placeholder-[#809AD2] font-normal"
-            value={bMain}
-            onChange={(e) => setBMain(e.target.value)}
-          />
-        </div>
-
-        {/* 근거 박스 */}
-        <div className="bg-[#E8F2FF] h-[259px] rounded-[15px] flex items-start px-[56px] pt-[34px] pb-[201px]">
-          <Textarea
-            placeholder="입장을 뒷받침하는 논리적인 근거를 작성해주세요."
-            className="bg-[#E8F2FF] border-none text-[20px] text-[#203C77] w-full resize-none outline-none placeholder-[#809AD2] font-normal leading-[1.6]"
-            value={bReason}
-            onChange={(e) => setBReason(e.target.value)}
-          />
-        </div>
-      </div>
-
-      {/* A/B 선택 버튼 + VS (⬇️ B측 아래로 이동) */}
-      <div className="flex items-center justify-center mt-[72px] gap-[42px]">
+      {/* A/B 선택 버튼 바로 아래로 이동됨 */}
+      <div className="flex items-center justify-center mt-[60px] gap-[42px]">
         <Button
           variant="secondary"
           size="lg"
-          className={`w-[373px] h-[96px] text-[24px] font-semibold leading-none rounded-[15px] transition-all duration-200 ${
+          className={`w-[373px] h-[96px] text-[24px] font-semibold rounded-[15px] ${
             selectedSide === "B" ? "opacity-60" : "opacity-100"
           }`}
           onClick={() => handleSelect("A")}
@@ -149,7 +96,7 @@ export default function Submit() {
         <Button
           variant="third"
           size="lg"
-          className={`w-[373px] h-[96px] text-[24px] font-semibold leading-none rounded-[15px] transition-all duration-200 ${
+          className={`w-[373px] h-[96px] text-[24px] font-semibold rounded-[15px] ${
             selectedSide === "A" ? "opacity-60" : "opacity-100"
           }`}
           onClick={() => handleSelect("B")}
@@ -158,20 +105,67 @@ export default function Submit() {
         </Button>
       </div>
 
+      {/* 선택된 입장에 따라 A/B 입력 UI가 조건부 렌더링 */}
+      {selectedSide === "A" && (
+        <div className="mt-[60px] w-[995px]">
+          <h2 className="text-[24px] font-bold mb-[15px]">A측 입장</h2>
+
+          <div className="bg-[#E8F2FF] h-[96px] rounded-[15px] mb-[20px] flex items-center px-[56px]">
+            <Textarea
+              placeholder="입장을 작성해주세요."
+              className="bg-[#E8F2FF] border-none text-[20px] text-[#203C77] w-full h-full resize-none outline-none"
+              value={aMain}
+              onChange={(e) => setAMain(e.target.value)}
+            />
+          </div>
+
+          <div className="bg-[#E8F2FF] h-[259px] rounded-[15px] flex items-start px-[56px] pt-[34px]">
+            <Textarea
+              placeholder="입장을 뒷받침하는 논리적인 근거를 작성해주세요."
+              className="bg-[#E8F2FF] border-none text-[20px] text-[#203C77] w-full resize-none outline-none leading-[1.6]"
+              value={aReason}
+              onChange={(e) => setAReason(e.target.value)}
+            />
+          </div>
+        </div>
+      )}
+
+      {selectedSide === "B" && (
+        <div className="mt-[60px] w-[995px]">
+          <h2 className="text-[24px] font-bold mb-[15px]">B측 입장</h2>
+
+          <div className="bg-[#E8F2FF] h-[96px] rounded-[15px] mb-[20px] flex items-center px-[56px]">
+            <Textarea
+              placeholder="입장을 작성해주세요."
+              className="bg-[#E8F2FF] border-none text-[20px] text-[#203C77] w-full h-full resize-none outline-none"
+              value={bMain}
+              onChange={(e) => setBMain(e.target.value)}
+            />
+          </div>
+
+          <div className="bg-[#E8F2FF] h-[259px] rounded-[15px] flex items-start px-[56px] pt-[34px]">
+            <Textarea
+              placeholder="입장을 뒷받침하는 논리적인 근거를 작성해주세요."
+              className="bg-[#E8F2FF] border-none text-[20px] text-[#203C77] w-full resize-none outline-none leading-[1.6]"
+              value={bReason}
+              onChange={(e) => setBReason(e.target.value)}
+            />
+          </div>
+        </div>
+      )}
+
       {/* 안내/에러 */}
       <div className="mt-[64px] h-[32px] text-center">
         {errorMessage ? (
-          <p className="text-[24px] text-[#809AD2] font-normal">
-            {errorMessage}
-          </p>
+          <p className="text-[24px] text-[#809AD2]">{errorMessage}</p>
         ) : (
-          <p className="text-[24px] text-[#809AD2] font-normal">
+          <p className="text-[24px] text-[#809AD2]">
             제출후에는 의견 수정이 불가능합니다
           </p>
         )}
       </div>
 
-      {/* 제출 버튼 */}
+      {/* 제출 */}
       <div className="mt-[29px] mb-[120px]">
         <Button
           variant="trialStart"

@@ -3,37 +3,61 @@ import { useNavigate } from "react-router-dom";
 import Button from "@/components/common/Button";
 import Textarea from "@/components/common/textarea";
 import { PATHS } from "@/constants";
-import { mockWaitingCases } from "@/mock/vsModeData";
 import { useVsModeStore } from "@/stores/vsModeStore";
+import { useJoinCaseQuery } from "@/hooks/vsMode/useJoinCaseQuery";
+import { useSubmitVsArgument } from "@/hooks/vsMode/useSubmitVsArgument";
 
-export default function RSubmit() {
+export default function RivalVsSubmit() {
   const navigate = useNavigate();
   const { caseId, setStep } = useVsModeStore();
 
+  const [mainArgument, setMainArgument] = useState("");
+  const [reasoning, setReasoning] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // TODO: API 연결 시 useFirstCaseDetailQuery(caseId) 사용
-  const caseDetail = mockWaitingCases.find((c) => c.caseId === caseId);
+  // 사건 상세 조회
+  const { data, isLoading } = useJoinCaseQuery(caseId);
+  const caseDetail = data?.result;
+
+  // B측 입장 제출 API
+  const submitMut = useSubmitVsArgument();
 
   const handleSubmit = () => {
+    if (!mainArgument.trim() || !reasoning.trim()) {
+      alert("입장 및 근거를 입력해주세요.");
+      return;
+    }
     setIsModalOpen(true);
   };
 
-  const handleProceed = () => {
+  const handleProceed = async () => {
+    if (!caseId) return;
+
     setIsModalOpen(false);
-    setStep("loading"); // loading으로 step 변경
+
+    try {
+      await submitMut.mutateAsync({
+        caseId,
+        mainArgument,
+        reasoning,
+      });
+
+      // 성공 → loading step
+      setStep("loading");
+    } catch (err) {
+      console.error(err);
+      alert("제출 중 오류가 발생했습니다.");
+    }
   };
 
   const handleCancel = () => {
     navigate(PATHS.ROOT);
   };
 
-  if (!caseDetail) {
+  if (isLoading || !caseDetail) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <p className="text-main-red font-bold text-xl">
-          재판 정보를 불러올 수 없습니다
-        </p>
+        <p className="text-main font-bold">로딩 중...</p>
       </div>
     );
   }
@@ -50,9 +74,7 @@ export default function RSubmit() {
 
       {/* 상황 설명 */}
       <div className="mt-[40px] w-[995px] h-[96px] bg-[#E8F2FF] rounded-[15px] flex items-center px-[56px]">
-        <p className="text-[20px] text-[#203C77]">
-          {caseDetail.title}
-        </p>
+        <p className="text-[20px] text-[#203C77]">{caseDetail.title}</p>
       </div>
 
       {/* 상대 입장 */}
@@ -61,13 +83,13 @@ export default function RSubmit() {
 
         <div className="bg-[#D4E4FF] h-[96px] rounded-[15px] mb-[20px] flex items-center px-[56px]">
           <p className="text-[20px] text-[#203C77]">
-            {caseDetail.argumentAMain}
+            {caseDetail.argumentA?.mainArgument}
           </p>
         </div>
 
         <div className="bg-[#D4E4FF] h-[259px] rounded-[15px] flex items-start px-[56px] pt-[34px]">
           <p className="text-[20px] text-[#203C77] leading-[1.6]">
-            {caseDetail.argumentAReasoning}
+            {caseDetail.argumentA?.reasoning}
           </p>
         </div>
       </div>
@@ -80,6 +102,8 @@ export default function RSubmit() {
           <Textarea
             placeholder="입장을 작성해주세요."
             className="bg-[#E8F2FF] border-none text-[20px] w-full h-full resize-none outline-none placeholder-[#809AD2]"
+            value={mainArgument}
+            onChange={(e) => setMainArgument(e.target.value)}
           />
         </div>
 
@@ -87,6 +111,8 @@ export default function RSubmit() {
           <Textarea
             placeholder="입장을 뒷받침하는 논리적인 근거를 작성해주세요."
             className="bg-[#E8F2FF] border-none text-[20px] w-full resize-none outline-none placeholder-[#809AD2] leading-[1.6]"
+            value={reasoning}
+            onChange={(e) => setReasoning(e.target.value)}
           />
         </div>
       </div>
@@ -110,7 +136,7 @@ export default function RSubmit() {
         </Button>
       </div>
 
-      {/* =================== 모달 =================== */}
+      {/* 모달 */}
       {isModalOpen && (
         <div
           className="fixed inset-0 flex items-center justify-center z-50"
@@ -128,7 +154,7 @@ export default function RSubmit() {
             }}
           />
 
-          {/* 안쪽 메인 박스 */}
+          {/* 메인 박스 */}
           <div
             className="relative flex flex-col items-center justify-center"
             style={{
@@ -154,9 +180,8 @@ export default function RSubmit() {
               {"\n"}계속하시겠습니까?
             </p>
 
-            {/* 버튼 2개 */}
             <div className="flex items-center justify-center gap-[49px]">
-              {/* 취소 버튼 */}
+              {/* 취소 */}
               <button
                 onClick={handleCancel}
                 className="transition-all duration-150"
@@ -171,25 +196,11 @@ export default function RSubmit() {
                   background: "#AFC5F8",
                   boxShadow: "0px 6px 0px #8FADE8",
                 }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.opacity = "0.85";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.opacity = "1";
-                }}
-                onMouseDown={(e) => {
-                  e.currentTarget.style.transform = "translateY(4px)";
-                  e.currentTarget.style.boxShadow = "0px 2px 0px #8FADE8";
-                }}
-                onMouseUp={(e) => {
-                  e.currentTarget.style.transform = "translateY(0px)";
-                  e.currentTarget.style.boxShadow = "0px 6px 0px #8FADE8";
-                }}
               >
                 취소
               </button>
 
-              {/* 계속 진행하기 버튼 */}
+              {/* 계속 진행하기 */}
               <button
                 onClick={handleProceed}
                 className="transition-all duration-150"
@@ -203,20 +214,6 @@ export default function RSubmit() {
                   color: "#FFFFFF",
                   background: "#2E4C8F",
                   boxShadow: "0px 6px 0px #1C356B",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.opacity = "0.85";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.opacity = "1";
-                }}
-                onMouseDown={(e) => {
-                  e.currentTarget.style.transform = "translateY(4px)";
-                  e.currentTarget.style.boxShadow = "0px 2px 0px #1C356B";
-                }}
-                onMouseUp={(e) => {
-                  e.currentTarget.style.transform = "translateY(0px)";
-                  e.currentTarget.style.boxShadow = "0px 6px 0px #1C356B";
                 }}
               >
                 계속 진행하기

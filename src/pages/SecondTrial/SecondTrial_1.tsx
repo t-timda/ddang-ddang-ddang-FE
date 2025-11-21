@@ -179,9 +179,9 @@ const SecondTrial_1 = () => {
                             !isVoteTime && 'opacity-70'
                         )}
                     >
-                        <h2 className="text-2xl font-bold text-center text-white mb-4">{caseDetail.argumentB.mainArgument}</h2>
+                        <h2 className="text-2xl font-bold text-center text-white mb-4">{caseDetail.argumentB?.mainArgument}</h2>
                         <p className="px-20 py-10 text-white text-center">
-                            {caseDetail.argumentB.reasoning}
+                            {caseDetail.argumentB?.reasoning}
                         </p>
                     </div>
                 </div>

@@ -7,30 +7,24 @@ export default function VsLoading() {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      next(); // result로 자동 이동
+      next(); // result로 이동
     }, 3000);
+
     return () => clearTimeout(timer);
   }, [next]);
 
   return (
-    <div className="flex flex-col items-center bg-white mx-auto w-full max-w-[1440px] min-h-screen text-[#203C77] font-[Pretendard]">
+    <div className="flex flex-col items-center bg-white mx-auto w-full max-w-[1440px] pb-[80px] min-h-screen text-[#203C77] font-[Pretendard]">
       <h1 className="text-[38px] font-bold text-center mt-[78px] leading-[150%]">
         초심
       </h1>
 
-      <div className="flex flex-col items-center justify-center mt-[100px] w-[395px] h-[448px] rounded-[100px] bg-main-medium/20">
+      <div className="flex flex-col items-center justify-center mt-[100px] w-[833px] h-[548px] rounded-[100px] bg-main-medium/20">
         <FileIcon
-          className="w-[229px] h-[229px] mb-[20px]"
-          style={{
-            animation: "spin 3s linear infinite",
-          }}
+          className="w-[448px] h-[448px] mb-[4px]"
           title="로딩 아이콘"
         />
-        <p className="text-[36px] font-bold leading-tight">
-          상대 의견
-          <br />
-          기다리는 중
-        </p>
+        <p className="text-[36px] font-bold leading-tight">입장문 제출중...</p>
       </div>
     </div>
   );

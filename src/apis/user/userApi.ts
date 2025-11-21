@@ -63,7 +63,7 @@ const updateProfile = async (payload: UserUpdateRequest): Promise<UserUpdateResp
 
 const uploadProfileImage = async (file: File): Promise<UserProfileImageResponse> => {
   const formData = new FormData();
-  formData.append("image", file);
+  formData.append("profileImage", file);
   
   const { data } = await instance.post<UserProfileImageResponse>(
     `${USER_BASE_PATH}/image`,
