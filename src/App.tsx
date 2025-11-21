@@ -1,4 +1,5 @@
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
+import { useEffect } from "react";
 import Main from "@/pages/Main";
 import MyPage from "@/pages/MyPage";
 import Navbar from "@/components/layout/Navbar";
@@ -18,6 +19,13 @@ import { useSSE } from "@/hooks/notification/useSSE";
 import NotificationToast from "@/components/common/NotificationToast";
 
 function App() {
+  const { pathname } = useLocation();
+
+  // 페이지 전환 시 항상 스크롤을 상단으로
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  
   useSSE(); // SSE 연결
 
   return (
@@ -26,7 +34,8 @@ function App() {
       <Navbar />
 
       {/* 라우팅 영역 */}
-      <Routes>
+      <div className="pt-[98px]">
+        <Routes>
         <Route path={PATHS.ROOT} element={<Main />} />
         <Route path={PATHS.MY_PAGE} element={<MyPage />} />
         <Route path={PATHS.LOGIN} element={<Login />} />
@@ -53,7 +62,8 @@ function App() {
         <Route path={PATHS.ONGOING_TRIALS} element={<OngoingTrialList />} />
 
         <Route path="*" element={<NotFound />} />
-      </Routes>
+        </Routes>
+      </div>
 
       {/* 알림 토스트 */}
       <NotificationToast />

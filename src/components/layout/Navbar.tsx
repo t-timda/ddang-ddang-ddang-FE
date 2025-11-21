@@ -58,7 +58,7 @@ export default function Navbar() {
   return (
     <>
       <nav
-        className="flex items-center justify-between w-full h-[98px] bg-[#203C77]
+        className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between w-full h-[98px] bg-[#203C77]
                       px-6 sm:px-10 md:px-[40px] lg:px-[60px]"
       >
         {/* 로고 */}
