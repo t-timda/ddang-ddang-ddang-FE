@@ -35,22 +35,22 @@ export interface ArgumentCardProps {
   defenseId: number;
   caseId: number;
   authorNickname?: string;
+  authorRank?: string;
   side?: string;
   content?: string;
   likesCount?: number;
   isLikedByMe?: boolean;
-  badgeLabel?: string;
 }
 
 const ArgumentCard: React.FC<ArgumentCardProps> = ({
   defenseId,
   caseId,
   authorNickname = "닉네임",
+  authorRank = "칭호", // authorDegree → authorRank로 변경
   side,
   content,
   likesCount = 0,
   isLikedByMe,
-  badgeLabel = "칭호",
 }) => {
   const [searchParams] = useSearchParams();
   const { setHighlightRebuttal } = useNotificationStore();
@@ -208,7 +208,9 @@ const ArgumentCard: React.FC<ArgumentCardProps> = ({
         {/* 헤더 */}
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-4">
-            <span className="text-main font-semibold">{badgeLabel}</span>
+            <span className="inline-block px-2 py-0.5 rounded-full border border-main text-main text-xs font-bold">
+              {authorRank}
+            </span>
             <span className="inline-block px-3 py-1 rounded-full text-main">{authorNickname}</span>
             <span className={`inline-block px-3 py-1 rounded-xl text-sm font-semibold ${sideColorClass} ${sideBgClass}`}>
               {side} 의견

@@ -130,8 +130,9 @@ const RebuttalItem: React.FC<RebuttalItemProps> = ({
         <div className="flex justify-between items-start">
           <div className="flex-1">
             <div className="flex items-center gap-2 text-main font-semibold">
-              <span className="inline-block px-2 py-0.5 rounded-full border border-main text-main text-xs">
-                칭호
+              {/* API에서 가져온 칭호 */}
+              <span className="inline-block px-2 py-0.5 rounded-full border border-main text-main text-xs font-bold">
+                {rebuttal.authorRank || "칭호"}
               </span>
               <span>{rebuttal.authorNickname}</span>
               <span className={`px-2 py-0.5 rounded-xl text-xs font-semibold ${typeColorClass} ${typeBgClass}`}>

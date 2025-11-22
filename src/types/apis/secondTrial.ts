@@ -1,6 +1,7 @@
 export interface Defense {
   defenseId: number;
   authorNickname: string;
+  authorRank?: string; // 추가
   side: string;
   content: string;
   likesCount: number;
@@ -27,7 +28,8 @@ export interface DefenseResponse {
 export interface DefenseItem {
   defenseId: number;
   authorNickname: string;
-  side: string; // "A" | "B"
+  authorRank?: string; // 추가
+  side: string;
   content: string;
   likesCount: number;
   isLikedByMe: boolean;
@@ -88,11 +90,13 @@ export interface RebuttalRequest {
 
 export interface RebuttalItem {
   rebuttalId: number;
+  defenseId: number;
   parentId: number | null;
   authorNickname: string;
-  type: string; // "A" | "B"
+  authorRank?: string; // authorDegree → authorRank로 변경
+  type: "A" | "B";
   content: string;
-  likesCount: number;
-  isLikedByMe: boolean;
-  children?: RebuttalItem[]; // 중첩 반론(대댓글)
+  likesCount?: number;
+  isLikedByMe?: boolean;
+  children?: RebuttalItem[];
 }

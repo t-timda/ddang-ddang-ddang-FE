@@ -282,6 +282,7 @@ const SecondTrial_1 = () => {
                                 caseId={caseId!}
                                 defenseId={arg.defenseId}
                                 authorNickname={arg.authorNickname}
+                                authorRank={arg.authorRank} // 추가
                                 side={arg.side}
                                 content={arg.content}
                                 likesCount={arg.likesCount}
