@@ -39,6 +39,7 @@ export type HotCaseItem = {
   caseId: number;
   title: string;
   mainArguments: string[];
+  participateCnt?: number;
 };
 
 export type GetHotCasesResponse = {

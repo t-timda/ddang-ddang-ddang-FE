@@ -17,15 +17,16 @@ import { useUserProfileQuery } from "@/hooks/api/useUserQuery";
 import { usePostLoginMutation } from "@/hooks/auth/useAuthMutations";
 import CircleArrowIcon from "@/assets/icons/CircleArrow";
 
+
 // HOT 재판 더미 데이터 (API 실패 시 사용)
 const hotDebatesFallback = [
-  { id: 1, title: "짜장면 VS 짬뽕", participants: 120 },
-  { id: 2, title: "민트초코 VS 반민트초코", participants: 85 },
-  { id: 3, title: "부먹 VS 찍먹", participants: 95 },
-  { id: 4, title: "바다 VS 산", participants: 110 },
-  { id: 5, title: "수도권 VS 지방 이사 논쟁", participants: 77 },
-  { id: 6, title: "커피 VS 탄산음료", participants: 99 },
-  { id: 7, title: "라면 VS 떡볶이", participants: 54 },
+  { id: 1, title: "짜장면 VS 짬뽕", participateCnt: 120 },
+  { id: 2, title: "민트초코 VS 반민트초코", participateCnt: 85 },
+  { id: 3, title: "부먹 VS 찍먹", participateCnt: 95 },
+  { id: 4, title: "바다 VS 산", participateCnt: 110 },
+  { id: 5, title: "수도권 VS 지방 이사 논쟁", participateCnt: 77 },
+  { id: 6, title: "커피 VS 탄산음료", participateCnt: 99 },
+  { id: 7, title: "라면 VS 떡볶이", participateCnt: 54 },
 ];
 
 // 캐러셀 배치용 상수
@@ -128,17 +129,36 @@ const MainPage = () => {
   const isInlineLoginDisabled =
     !loginEmail.trim() || !loginPassword.trim() || isMainLoginPending;
 
+  // 날짜 포맷 함수
+  const formatUpdateTime = (dateString: string) => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = date.getHours();
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const period = hours >= 12 ? 'PM' : 'AM';
+    const displayHours = String(hours % 12 || 12).padStart(2, '0');
+    
+    return `${year}.${month}.${day} ${period} ${displayHours}:${minutes}`;
+  };
+
   // HOT 재판 리스트 (API → 카드용 데이터)
   const hotList =
-    hotQ.data?.result?.map((c, idx) => ({
-      id: c.caseId,
-      title:
-        c.mainArguments && c.mainArguments.length >= 2
-          ? `${c.mainArguments[0]} VS ${c.mainArguments[1]}`
-          : c.title,
-      participants:
-        hotDebatesFallback[idx % hotDebatesFallback.length].participants,
-    })) ?? hotDebatesFallback;
+  hotQ.data?.data?.result?.map((c) => ({
+    id: c.caseId,
+    title:
+      c.mainArguments && c.mainArguments.length >= 2
+        ? `${c.mainArguments[0]} VS ${c.mainArguments[1]}`
+        : c.title,
+    originalTitle: c.title,
+    mainArguments: c.mainArguments,
+    participateCnt: c.participateCnt ?? 0,
+  })) ?? [];
+
+  const lastUpdated = hotQ.data?.lastUpdated 
+    ? formatUpdateTime(hotQ.data.lastUpdated)
+    : '';
 
   const totalSlides = hotList.length;
   const shouldLoop = totalSlides > visibleCount;
@@ -451,6 +471,12 @@ const MainPage = () => {
 
         <p className="px-10 md:px-[120px] text-main-medium pt-4 md:py-0 md:mb-10">
           재판에 참여해서 변론을 작성하고, 당신의 논리를 펼쳐보세요!
+          {lastUpdated && (
+            <>
+              <br />
+              <span className="text-sm text-main-medium">{lastUpdated} 기준</span>
+            </>
+          )}
         </p>
 
         {/* 카드 4장 보이고, 5번째부터 오른쪽에서 잘리는 캐러셀 */}

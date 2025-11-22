@@ -24,8 +24,11 @@ export const getMyOngoingCases = async () => {
 
 // 공개 API
 export const getHotCases = async () => {
-  const { data } = await instance.get<GetHotCasesResponse>(HOME_HOT_PATH);
-  return data;
+  const response = await instance.get<GetHotCasesResponse>(HOME_HOT_PATH);
+  return {
+    data: response.data,
+    lastUpdated: response.headers.date || new Date().toUTCString(),
+  };
 };
 
 export const homeApi = {

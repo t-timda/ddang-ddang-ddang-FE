@@ -6,7 +6,9 @@ import LawIcon from "@/assets/svgs/law.svg?react";
 type Debate = {
   id: number;
   title: string;
-  participants: number;
+  originalTitle?: string;
+  participateCnt: number; 
+  mainArguments?: string[]; 
 };
 
 type HotDebateCardProps = {
@@ -20,6 +22,11 @@ const HotDebateCard = ({ debate }: HotDebateCardProps) => {
   const handleCardClick = () => {
     navigate(PATH_BUILDERS.secondTrialRoundOne(debate.id));
   };
+
+  // mainArguments가 있으면 사용, 없으면 기본 텍스트
+  const description = debate.mainArguments && debate.mainArguments.length > 0
+    ? debate.mainArguments[0] // A측 주장을 설명으로 표시
+    : "재판에 참여해서 변론을 작성하고, 당신의 논리를 펼쳐보세요!";
 
   return (
     <div
@@ -63,15 +70,15 @@ const HotDebateCard = ({ debate }: HotDebateCardProps) => {
         </div>
 
         {/* 설명 */}
-        <p className="text-left text-sm text-main mt-4">
-          재판에 참여해서 변론을 작성하고, 당신의 논리를 펼쳐보세요!
+        <p className="text-left text-sm text-main mt-4 line-clamp-2">
+          {debate.originalTitle}
         </p>
 
         {/* 참여자 수 */}
         <div className="flex gap-2 absolute bottom-[24px] right-[24px]">
           <LawIcon />
           <p className="text-right text-xs text-main-medium font-semibold">
-            참여 중인 변호사 {debate.participants}명
+            참여 중인 변호사 {debate.participateCnt}명
           </p>
         </div>
       </div>
