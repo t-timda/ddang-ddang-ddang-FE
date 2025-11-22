@@ -1,21 +1,39 @@
 import React from "react";
 
-interface OngoingTrialItemProps {
+interface UserOngoingTrialItemProps {
   index: number;
   caseId: number;
   title: string;
   argumentAMain: string;
   argumentBMain: string;
   status: string;
+  stage: string; // "FIRST", "SECOND", "THIRD" 등
   onClick: () => void;
 }
 
-const OngoingTrialItem: React.FC<OngoingTrialItemProps> = ({
+const stageToText = (stage: string): string => {
+  switch (stage) {
+    case "FIRST":
+      return "1차 재판";
+    case "SECOND":
+      return "2차 재판";
+    case "THIRD":
+      return "3차 재판";
+    case "PENDING":
+      return "대기 중";
+    case "DONE":
+      return "완료";
+    default:
+      return stage;
+  }
+};
+
+const UserOngoingTrialItem: React.FC<UserOngoingTrialItemProps> = ({
   index,
   title,
   argumentAMain,
   argumentBMain,
-  status,
+  stage,
   onClick,
 }) => {
   return (
@@ -34,23 +52,23 @@ const OngoingTrialItem: React.FC<OngoingTrialItemProps> = ({
       </div>
 
       {/* A 주장 */}
-      <div className="col-span-3 text-gray-700 text-sm truncate border-r border-gray-300 flex items-center">
+      <div className="col-span-2 text-gray-700 text-sm truncate border-r border-gray-300 flex items-center">
         {argumentAMain}
       </div>
 
       {/* B 주장 */}
-      <div className="col-span-3 text-gray-700 text-sm truncate border-r border-gray-300 flex items-center">
+      <div className="col-span-2 text-gray-700 text-sm truncate border-r border-gray-300 flex items-center">
         {argumentBMain}
       </div>
 
-      {/* 상태 */}
-      <div className="col-span-1 text-center flex items-center justify-center">
+      {/* 재판 단계 */}
+      <div className="col-span-3 text-center flex items-center justify-center">
         <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-700">
-          {status}
+          {stageToText(stage)}
         </span>
       </div>
     </div>
   );
 };
 
-export default OngoingTrialItem;
+export default UserOngoingTrialItem;

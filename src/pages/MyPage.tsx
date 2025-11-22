@@ -12,10 +12,6 @@ import MypageHammerIcon from '@/assets/svgs/mypageHammerIcon.svg?react';
 import { useUserProfileQuery, useUserRecordQuery, useUserAchievementsQuery, useUserRankQuery, useUserCasesQuery, useUpdateUserProfileMutation, useUploadProfileImageMutation } from "@/hooks/api/useUserQuery";
 import { useMyDefensesQuery, useMyOngoingCasesQuery, useCasesResultsQuery } from "@/hooks/home/useHome";
 import { useAuthStore } from "@/stores/useAuthStore";
-import expIcon from '@/assets/svgs/expIcon.svg';
-import medalIcon from '@/assets/svgs/medalIcon.svg';
-import userIcon from '@/assets/svgs/userIcon.svg';
-import mypageHammerIcon from '@/assets/svgs/mypageHammerIcon.svg';
 
 const MyPage = () => {
   const authStore = useAuthStore();

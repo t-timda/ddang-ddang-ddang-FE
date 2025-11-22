@@ -12,8 +12,10 @@ export type ThirdTrialStep =
 
 type ThirdTrialState = {
   step: ThirdTrialStep;
+  caseId: number | null;
   selectedArguments: SelectedArgumentsMap;
   setStep: (step: ThirdTrialStep) => void;
+  setCaseId: (id: number | null) => void;
   setSelectedArguments: (map: SelectedArgumentsMap) => void;
   updateSelectedArguments: (side: ThirdTrialSide, ids: number[]) => void;
   reset: () => void;
@@ -21,11 +23,13 @@ type ThirdTrialState = {
 
 export const useThirdTrialStore = create<ThirdTrialState>((set) => ({
   step: "adopt",
+  caseId: null,
   selectedArguments: {
     first: [],
     second: [],
   },
   setStep: (step) => set({ step }),
+  setCaseId: (id) => set({ caseId: id }),
   setSelectedArguments: (map) => set({ selectedArguments: map }),
   updateSelectedArguments: (side, ids) =>
     set((state) => ({
@@ -37,6 +41,7 @@ export const useThirdTrialStore = create<ThirdTrialState>((set) => ({
   reset: () =>
     set({
       step: "adopt",
+      caseId: null,
       selectedArguments: {
         first: [],
         second: [],

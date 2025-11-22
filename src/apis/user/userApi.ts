@@ -1,7 +1,8 @@
 import instance from "@/apis/instance";
-import type { 
-  UserProfileResponse, 
-  UserUpdateRequest, 
+import type {
+  UserInfoResponse,
+  UserProfileResponse,
+  UserUpdateRequest,
   UserUpdateResponse,
   UserRecordResponse,
   UserAchievementsResponse,
@@ -11,18 +12,6 @@ import type {
 } from "@/types/apis/user";
 
 const USER_BASE_PATH = "/api/users";
-
-// helper: 로컬에 저장된 토큰/세션ID에서 헤더 구성
-const getAccessToken = () => localStorage.getItem("accessToken") ?? undefined;
-const getSessionId = () => localStorage.getItem("JSESSIONID") ?? undefined;
-
-const buildHeaders = (opts?: { contentType?: boolean }) => {
-  const headers: Record<string, string> = {};
-  const token = getAccessToken();
-  if (token) headers.Authorization = `Bearer ${token}`;
-  if (opts?.contentType) headers["Content-Type"] = "application/json";
-  return headers;
-};
 
 // NOTE: 브라우저에서는 "Cookie" 헤더를 JS에서 직접 설정할 수 없습니다.
 // 서버와 쿠키를 주고받으려면 withCredentials: true를 사용하고 서버가
@@ -51,6 +40,13 @@ const getUserCases = async (): Promise<UserCasesResponse> => {
   return data;
 };
 
+// 유저 기본 정보 조회 (nickname, email, userId, profileImageUrl)
+const getUserInfo = async (): Promise<UserInfoResponse> => {
+  const { data } = await instance.get<UserInfoResponse>(`${USER_BASE_PATH}/getInfo`);
+  return data;
+};
+
+// 유저 프로필 조회 (마이페이지용 - 상세 정보)
 const getProfile = async (): Promise<UserProfileResponse> => {
   const { data } = await instance.get<UserProfileResponse>(`${USER_BASE_PATH}/getInfo`);
   return data;
@@ -78,6 +74,7 @@ const uploadProfileImage = async (file: File): Promise<UserProfileImageResponse>
 };
 
 export const userApi = {
+  getUserInfo,
   getProfile,
   updateProfile,
   getUserRank,

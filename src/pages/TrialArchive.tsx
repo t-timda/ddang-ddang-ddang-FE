@@ -1,18 +1,40 @@
-import React, { useState } from "react";
-import { mockArchivedCases } from "@/mock/vsModeData";
+import React, { useState, useMemo } from "react";
+import { useFinishedCasesQuery } from "@/hooks/cases/useCases";
 import ArchiveTrialTable from "@/components/trial/ArchiveTrialTable";
 import Pagination from "@/components/vs-mode/Pagination";
+import JudgmentHistoryModal from "@/components/common/JudgmentHistoryModal";
 
 const TrialArchive: React.FC = () => {
+  const [selectedCaseId, setSelectedCaseId] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
-  // TODO: API 연결 시 useArchivedCasesQuery() 사용
-  // 완료순 정렬 (completedAt 기준 내림차순)
-  const sortedCases = [...mockArchivedCases].sort(
-    (a, b) => new Date(b.completedAt).getTime() - new Date(a.completedAt).getTime()
-  );
-  const isLoading = false;
+  // 완료된 재판 목록 조회
+  const { data: finishedCasesRes, isLoading } = useFinishedCasesQuery();
+  const finishedCases = finishedCasesRes?.result ?? [];
+
+  // 아카이브 테이블 형식에 맞게 데이터 변환
+  const cases = useMemo(() => {
+    return finishedCases.map(finishedCase => {
+      const [argumentAMain = "A 주장", argumentBMain = "B 주장"] = finishedCase.mainArguments ?? [];
+      return {
+        caseId: finishedCase.caseId,
+        title: finishedCase.title || "제목 없음",
+        argumentAMain,
+        argumentBMain,
+        authorNickname: "",
+        rivalNickname: "",
+        status: finishedCase.status,
+        createdAt: "",
+        completedAt: "",
+      };
+    });
+  }, [finishedCases]);
+
+  // 최신 사건 순 정렬 (caseId 내림차순)
+  const sortedCases = useMemo(() => {
+    return [...cases].sort((a, b) => b.caseId - a.caseId);
+  }, [cases]);
 
   // 전체 데이터 개수
   const totalCount = sortedCases.length;
@@ -23,8 +45,11 @@ const TrialArchive: React.FC = () => {
   const currentCases = sortedCases.slice(startIndex, startIndex + itemsPerPage);
 
   const handleCaseClick = (caseId: number) => {
-    // TODO: 재판 결과 상세 페이지로 이동
-    console.log("아카이브 재판 클릭:", caseId);
+    setSelectedCaseId(caseId);
+  };
+
+  const handleCloseHistory = () => {
+    setSelectedCaseId(null);
   };
 
   if (isLoading) {
@@ -62,6 +87,14 @@ const TrialArchive: React.FC = () => {
           totalPages={totalPages}
           onPageChange={setCurrentPage}
         />
+
+        {/* 판결 히스토리 모달 */}
+        {selectedCaseId && (
+          <JudgmentHistoryModal
+            caseId={selectedCaseId}
+            onClose={handleCloseHistory}
+          />
+        )}
       </div>
     </div>
   );

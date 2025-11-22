@@ -2,6 +2,7 @@ import axios from "axios";
 
 import instance from "@/apis/instance";
 import { useAuthStore } from "@/stores/useAuthStore";
+import { userApi } from "@/apis/user/userApi";
 import type {
   LoginRequest,
   LoginResponse,
@@ -37,11 +38,29 @@ const postLogin = async (payload: LoginRequest): Promise<LoginResponse> => {
       throw new Error(data.message || "로그인에 실패했습니다.");
     }
 
+    // 토큰 임시 저장
     useAuthStore.getState().setLogin({
       accessToken: data.result.accessToken,
       refreshToken: data.result.refreshToken,
       email: payload.email,
     });
+
+    // 유저 정보 조회 후 userId, rank 저장
+    try {
+      const userInfoRes = await userApi.getUserInfo();
+      if (userInfoRes.isSuccess && userInfoRes.result) {
+        useAuthStore.getState().setLogin({
+          accessToken: data.result.accessToken,
+          refreshToken: data.result.refreshToken,
+          email: payload.email,
+          userId: userInfoRes.result.userId,
+          rank: userInfoRes.result.rank,
+        });
+      }
+    } catch (userInfoError) {
+      console.error("Failed to fetch user info:", userInfoError);
+      // userId, rank 조회 실패해도 로그인은 성공으로 처리
+    }
 
     return data;
   } catch (error) {

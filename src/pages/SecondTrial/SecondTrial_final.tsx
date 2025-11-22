@@ -1,15 +1,18 @@
 import React from 'react';
 import { useNavigate, useParams } from "react-router-dom";
-import { PATHS } from '@/constants';
+import { PATH_BUILDERS } from '@/constants';
 import clsx from 'clsx';
 import Button from '@/components/common/Button';
 import { useSecondTrialDetailsQuery, useVoteResultQuery } from "@/hooks/secondTrial/useSecondTrial";
-import { useFirstCaseDetailQuery } from "@/hooks/firstTrial/useFirstTrial";
+import { useThirdTrialStore } from "@/stores/thirdTrialStore";
+import { useJudgeStatusQuery } from "@/hooks/thirdTrial/useThirdTrial";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 const SecondTrial_final: React.FC = () => {
   const { caseId: caseIdParam } = useParams<{ caseId?: string }>();
   const caseId = caseIdParam ? Number(caseIdParam) : undefined;
   const navigate = useNavigate();
+  const { setCaseId, reset: resetThirdTrial } = useThirdTrialStore();
 
   // API 훅
   const { data: detailsRes, isLoading: isDetailsLoading } = useSecondTrialDetailsQuery(caseId);
@@ -18,12 +21,15 @@ const SecondTrial_final: React.FC = () => {
   const { data: voteResultRes, isLoading: isVoteResultLoading } = useVoteResultQuery(caseId);
   const voteResult = voteResultRes?.result;
 
-  // 1차 재판 정보 (A/B 주장 및 근거)
-  const { data: caseDetailRes, isLoading: isCaseDetailLoading } = useFirstCaseDetailQuery(caseId);
-  const caseDetail = caseDetailRes?.result;
+  // authStore에서 userId 가져오기
+  const userId = useAuthStore((state) => state.userId);
+
+  // 최종 판결 상태 조회
+  const { data: judgeStatusRes, isLoading: isJudgeStatusLoading } = useJudgeStatusQuery(caseId);
+  const judgeStatus = judgeStatusRes?.result;
 
   // 로딩
-  if (isDetailsLoading || isVoteResultLoading || isCaseDetailLoading) {
+  if (isDetailsLoading || isVoteResultLoading || isJudgeStatusLoading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <p className="text-main font-bold">로딩 중...</p>
@@ -32,7 +38,7 @@ const SecondTrial_final: React.FC = () => {
   }
 
   // 데이터 없음 처리
-  if (!details || !voteResult || !caseDetail) {
+  if (!details || !voteResult) {
     return (
       <div className="flex flex-col justify-center items-center min-h-screen gap-4">
         <p className="text-main-red font-bold text-xl">데이터를 받아오지 못했습니다</p>
@@ -52,11 +58,42 @@ const SecondTrial_final: React.FC = () => {
   // 어느 쪽이 이겼는지 판단
   const aWins = ratioA > ratioB;
 
-  // 1차 재판의 A/B 주장 및 근거
-  const aMainArgument = caseDetail.argumentA.mainArgument;
-  const aReasoning = caseDetail.argumentA.reasoning;
-  const bMainArgument = caseDetail.argumentB?.mainArgument;
-  const bReasoning = caseDetail.argumentB?.reasoning;
+  // 2차 재판 API의 A/B 주장 및 근거
+  const aMainArgument = details.argumentA.mainArgument;
+  const aReasoning = details.argumentA.reasoning;
+  const bMainArgument = details.argumentB.mainArgument;
+  const bReasoning = details.argumentB.reasoning;
+
+  // 현재 로그인한 유저가 의견 작성자인지 확인
+  const isAuthorA = userId !== null && userId === details.argumentA.authorId;
+  const isAuthorB = userId !== null && userId === details.argumentB.authorId;
+  const isEitherAuthor = isAuthorA || isAuthorB;
+
+  // 최종심으로 가기 버튼 클릭 핸들러
+  const handleGoToThirdTrial = () => {
+    if (!caseId) return;
+
+    // 3차 재판 store 초기화 및 caseId 설정
+    resetThirdTrial();
+    setCaseId(caseId);
+
+    // 3차 재판 페이지로 이동
+    // AFTER: 판결 결과 화면으로 자동 이동
+    // BEFORE: 채택 페이지로 이동 (작성자만 버튼 활성화되므로 여기까지 옴)
+    navigate(PATH_BUILDERS.thirdTrial(caseId));
+  };
+
+  // 버튼 활성화 조건
+  // AFTER: 판결이 난 상태 - 누구나 활성화
+  // BEFORE: 판결이 안 난 상태 - 작성자만 활성화
+  // userId가 null이면서 BEFORE 상태면 비활성화
+  const isButtonEnabled =
+    judgeStatus === "AFTER"
+      ? true  // AFTER 상태면 누구나 활성화
+      : userId !== null && isEitherAuthor;  // BEFORE 상태면 로그인되고 작성자인 경우만
+
+  // 버튼 텍스트
+  const buttonText = judgeStatus === "AFTER" ? "최종심 결과보기" : "최종심으로 가기";
 
   return (
     <div className="bg-white min-h-screen pt-12 pb-20">
@@ -71,7 +108,7 @@ const SecondTrial_final: React.FC = () => {
 
         {/* 사건 제목 */}
         <p className="font-medium mb-8 text-main">
-          {caseDetail.title}
+          {details.caseTitle}
         </p>
 
         {/* A/B 카드 */}
@@ -161,10 +198,11 @@ const SecondTrial_final: React.FC = () => {
           <Button
             variant="trialStart"
             size="lg"
-            onClick={() => navigate(PATHS.THIRD_TRIAL)}
+            onClick={handleGoToThirdTrial}
+            disabled={!isButtonEnabled}
             className="w-[585px] h-[123px] rounded-[30px]"
           >
-            최종심 결과보기
+            {buttonText}
           </Button>
         </div>
       </div>

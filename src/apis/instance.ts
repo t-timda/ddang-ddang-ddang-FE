@@ -93,14 +93,14 @@ const requestTokenRefresh = (): Promise<string> => {
   return refreshPromise;
 };
 
-// 응답 인터셉터: 401 (Unauthorized), 403 (Forbidden: 만료) 에러 시 처리
+// 응답 인터셉터: 401 (Unauthorized) 에러 시 토큰 갱신 처리
 instance.interceptors.response.use(
   (response: AxiosResponse) => response,
   async (error: AxiosError) => {
     const status = error.response?.status;
     const originalRequest = error.config as AuthRequestConfig | undefined;
 
-    if (!status || (status !== 401 && status !== 403) || !originalRequest) {
+    if (!status || status !== 401 || !originalRequest) {
       return Promise.reject(error);
     }
 

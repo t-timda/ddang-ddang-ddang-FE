@@ -22,11 +22,11 @@ const WaitingTrialTable: React.FC<WaitingTrialTableProps> = ({
   onCaseClick,
 }) => {
   return (
-    <div className="bg-white rounded-lg overflow-hidden">
+    <div className="bg-white rounded-lg overflow-hidden border-2 border-gray-300">
       <div className="grid grid-cols-12 gap-4 bg-main-bright px-6 py-4 font-bold text-main-medium">
-        <div className="col-span-1 text-center">순서</div>
-        <div className="col-span-3 text-center">주장</div>
-        <div className="col-span-6 text-center">주제</div>
+        <div className="col-span-1 text-center border-r border-gray-300">순서</div>
+        <div className="col-span-3 text-center border-r border-gray-300">주장</div>
+        <div className="col-span-6 text-center border-r border-gray-300">주제</div>
         <div className="col-span-2 text-center">등록한 시간</div>
       </div>
 

@@ -5,12 +5,16 @@ type AuthTokens = {
   accessToken: string;
   refreshToken?: string | null;
   email?: string | null;
+  userId?: number | null;
+  rank?: string | null;
 };
 
 type AuthState = {
   accessToken: string | null;
   refreshToken: string | null;
   email: string | null;
+  userId: number | null;
+  rank: string | null;
   isLogin: boolean;
 };
 
@@ -21,22 +25,26 @@ type AuthActions = {
 
 export type AuthStore = AuthState & AuthActions;
 
-type AuthPersistedState = Pick<AuthState, "accessToken" | "refreshToken" | "email" | "isLogin">;
+type AuthPersistedState = Pick<AuthState, "accessToken" | "refreshToken" | "email" | "userId" | "rank" | "isLogin">;
 
 const initialState: AuthState = {
   accessToken: null,
   refreshToken: null,
   email: null,
+  userId: null,
+  rank: null,
   isLogin: false,
 };
 
 const persistOptions: PersistOptions<AuthStore, AuthPersistedState> = {
   name: "auth-storage",
   storage: createJSONStorage<AuthPersistedState>(() => localStorage),
-  partialize: ({ accessToken, refreshToken, email, isLogin }) => ({
+  partialize: ({ accessToken, refreshToken, email, userId, rank, isLogin }) => ({
     accessToken,
     refreshToken,
     email,
+    userId,
+    rank,
     isLogin,
   }),
   onRehydrateStorage: state => {
@@ -54,7 +62,7 @@ export const useAuthStore = create<AuthStore>()(
   persist(
     (set) => ({
       ...initialState,
-      setLogin: ({ accessToken, refreshToken, email }) =>
+      setLogin: ({ accessToken, refreshToken, email, userId, rank }) =>
         set((prev) => ({
           accessToken: accessToken ?? prev.accessToken,
           refreshToken:
@@ -62,6 +70,8 @@ export const useAuthStore = create<AuthStore>()(
               ? prev.refreshToken
               : refreshToken,
           email: typeof email === "undefined" ? prev.email : email,
+          userId: typeof userId === "undefined" ? prev.userId : userId,
+          rank: typeof rank === "undefined" ? prev.rank : rank,
           isLogin: Boolean(accessToken ?? prev.accessToken),
         })),
       setLogout: () => set({ ...initialState }),

@@ -18,7 +18,7 @@ const HotDebateCard = ({ debate }: HotDebateCardProps) => {
   const titleParts = debate.title.split("VS");
 
   const handleCardClick = () => {
-    navigate(PATH_BUILDERS.debateDetail(debate.id));
+    navigate(PATH_BUILDERS.secondTrialRoundOne(debate.id));
   };
 
   return (

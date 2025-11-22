@@ -1,5 +1,14 @@
 import type { ApiResponse } from "@/types/common/api";
 
+// getInfo API 응답 타입 (간단한 유저 정보)
+export type UserInfo = {
+  userId: number;
+  nickname: string;
+  profileImageUrl: string;
+  email: string;
+  rank: string;
+};
+
 // ⭐️ User 테이블의 DB 스키마와 API 응답을 통합한 최종 사용자 프로필 데이터 타입
 export type UserProfileData = {
   // DB 기본 필드
@@ -9,11 +18,11 @@ export type UserProfileData = {
   created_at: string; // 가입일 (DB 필드)
   exp: number; // 누적 경험치 (DB 필드)
   total_points: number; // 포인트 (DB 필드)
-  
+
   // API 응답/MyPage UI에 필요한 필드
-  profileImageUrl: string | null; 
+  profileImageUrl: string | null;
   phone_number: string; // 전화번호 (조회/수정 시 필요)
-  
+
   // 전적 및 칭호 관련 필드 (백엔드 계산 필드 가정)
   win_count: number;
   loss_count: number;
@@ -24,6 +33,9 @@ export type UserProfileData = {
   grade_progress: number; // 등급 진행률 (%)
   grade_history: string[]; // 칭호 단계 히스토리
 };
+
+// 사용자 기본 정보 조회 응답 타입
+export type UserInfoResponse = ApiResponse<UserInfo | null>;
 
 // 사용자 프로필 조회 응답 타입
 export type UserProfileResponse = ApiResponse<UserProfileData | null>;
@@ -72,7 +84,7 @@ export type UserRankResponse = ApiResponse<{
 export type CaseRecord = {
   caseId: number;
   title: string;
-  status: "DONE" | "SECOND" | "PENDING"; // 상태
+  status: "PENDING" | "FIRST" | "SECOND" | "THIRD" | "DONE"; // 상태
   caseResult: "WIN" | "LOSE" | "PENDING"; // 결과
   mainArguments: string[]; // 주요 주장
 };

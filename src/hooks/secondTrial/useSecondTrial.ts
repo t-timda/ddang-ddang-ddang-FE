@@ -1,14 +1,15 @@
 import { startSecondTrial, getSecondTrialDetails, getDefenses, postDefense, postVote, getVoteResult, postRebuttal, getRebuttals } from "@/apis/secondTrial/secondTrialApi";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { ApiResponse } from "@/types/common/api";
-import type { SecondTrialDetailsResponse, DefenseRequest, LikeRequest, VoteRequest, VoteResultResponse, RebuttalRequest, DefenseItem, RebuttalItem } from "@/types/apis/secondTrial";
+import type { SecondTrialDetailsResponse, StartSecondTrialRequest, DefenseRequest, LikeRequest, VoteRequest, VoteResultResponse, RebuttalRequest, DefenseItem, RebuttalItem } from "@/types/apis/secondTrial";
 
 
 // 2차 재판 시작 훅
 export const useStartSecondTrialMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (caseId: number) => startSecondTrial(caseId),
+    mutationFn: ({ caseId, body }: { caseId: number; body: StartSecondTrialRequest }) =>
+      startSecondTrial(caseId, body),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['secondTrialDetails'] });
     },

@@ -33,17 +33,17 @@ const WaitingTrialItem: React.FC<WaitingTrialItemProps> = ({
       className="grid grid-cols-12 gap-4 px-6 py-5 hover:bg-[#F8FBFF] cursor-pointer transition-colors"
       onClick={onClick}
     >
-      <div className="col-span-1 text-center flex items-center justify-center">
+      <div className="col-span-1 text-center flex items-center justify-center border-r border-gray-300">
         <span className="text-main-medium font-bold text-lg">{index}</span>
       </div>
 
       {/* 주장: 가운데 정렬 */}
-      <div className="col-span-3 flex items-center justify-center text-center">
+      <div className="col-span-3 flex items-center justify-center text-center border-r border-gray-300">
         <span className="font-bold text-main">{argumentAMain}</span>
       </div>
 
       {/* 주제: 가운데 정렬 */}
-      <div className="col-span-6 flex items-center justify-center text-center">
+      <div className="col-span-6 flex items-center justify-center text-center border-r border-gray-300">
         <span className="text-main-medium line-clamp-2">{title}</span>
       </div>
 
