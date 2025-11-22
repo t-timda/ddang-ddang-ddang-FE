@@ -93,8 +93,8 @@ const JoinTrialPage: React.FC = () => {
           <Button
             variant="trialStart"
             size="lg"
+            className="w-[340px] h-[100px] text-[36px] font-bold rounded-[15px]"
             onClick={handleJoinTrial}
-            className="p-4 text-base"
           >
             해당재판 참가하기
           </Button>

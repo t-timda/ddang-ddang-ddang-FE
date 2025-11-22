@@ -132,7 +132,7 @@ export default function RivalVsSubmit() {
           className="w-[380px] h-[123px] text-[36px] font-bold rounded-[15px]"
           onClick={handleSubmit}
         >
-          상대의견 기다리기
+          재판 시작하기
         </Button>
       </div>
 
