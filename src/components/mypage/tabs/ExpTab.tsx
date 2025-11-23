@@ -79,6 +79,10 @@ export const ExpTab: React.FC<ExpTabProps> = ({ currentRank, currentExp, nicknam
   const { data: expHistoryData, isLoading: isExpHistoryLoading } = useUserExpHistoryQuery({ enabled: showExpHistory });
   const expHistory = expHistoryData?.result ?? [];
 
+  // 파트너 변호사는 흰색 텍스트
+  const isPartnerLawyer = currentRank === "파트너 변호사";
+  const currentRankTextColor = isPartnerLawyer ? "text-white" : "text-main";
+
   // 현재 칭호의 경험치 범위 계산
   const currentRankIndex = rankData.findIndex(r => r.name === currentRank);
   const currentRankData = rankData[currentRankIndex];
@@ -112,7 +116,7 @@ export const ExpTab: React.FC<ExpTabProps> = ({ currentRank, currentExp, nicknam
         />
         {/* 텍스트 오버레이 - 칭호 닉네임 순서로 한 줄에 */}
         <div className="absolute inset-0 flex items-center justify-center">
-          <p className="text-main font-bold text-[10px] md:text-xs">
+          <p className={`${currentRankTextColor} font-bold text-[10px] md:text-xs`}>
             {currentRank} {nickname || "닉네임"}
           </p>
         </div>
@@ -220,6 +224,8 @@ export const ExpTab: React.FC<ExpTabProps> = ({ currentRank, currentExp, nicknam
                 {categoryData.ranks.map((rankName) => {
                   const isActive = rankName === currentRank;
                   const frameImage = getRankNicknameFrame(rankName);
+                  const isPartner = rankName === "파트너 변호사";
+                  const textColor = isPartner ? "text-white" : "text-main";
                   
                   return (
                     <div 
@@ -237,7 +243,7 @@ export const ExpTab: React.FC<ExpTabProps> = ({ currentRank, currentExp, nicknam
                           className="w-full h-auto"
                         />
                         <div className="absolute inset-0 flex items-center justify-center">
-                          <p className="text-main font-bold text-[8px] md:text-[10px] text-center px-1">
+                          <p className={`${textColor} font-bold text-[8px] md:text-[10px] text-center px-1`}>
                             {rankName}
                           </p>
                         </div>

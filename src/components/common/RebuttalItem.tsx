@@ -136,16 +136,15 @@ const RebuttalItem: React.FC<RebuttalItemProps> = ({
             : 'bg-main-bright'
         }`}
       >
-        <div className="flex-1 min-w-0">
-          {/* 닉네임, 칭호, 의견 타입, 신고, 좋아요를 한 줄에 배치 */}
-          <div className="flex items-center justify-between gap-2 text-main font-semibold">
-            <div className="flex flex-wrap items-center gap-1 md:gap-2 flex-1 min-w-0">
-              {/* 칭호 - 모든 화면에서 표시 */}
-              <span className="inline-block px-1.5 md:px-2 py-0.5 rounded-full border border-main text-main text-[10px] md:text-xs font-bold whitespace-nowrap">
-                {rebuttal.authorRank || "칭호"}
-              </span>
-              <span className="text-sm md:text-base truncate font-bold">{rebuttal.authorNickname}</span>
-              <span className={`px-1.5 md:px-2 py-0.5 rounded-xl text-[10px] md:text-xs font-semibold ${typeColorClass} ${typeBgClass} whitespace-nowrap`}>
+        <div className="flex justify-between items-start">
+          <div className="flex-1">
+            <div className="flex items-center gap-2 text-main font-semibold">
+              <RankBadge 
+                rank={rebuttal.authorRank || "말싸움 풋내기"} 
+                nickname={rebuttal.authorNickname}
+                size="sm"
+              />
+              <span className={`px-2 py-0.5 rounded-xl text-xs font-semibold ${typeColorClass} ${typeBgClass}`}>
                 {rebuttal.type} 의견
               </span>
             </div>

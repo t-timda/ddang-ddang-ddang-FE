@@ -25,10 +25,12 @@ const JudgmentHistoryModal: React.FC<JudgmentHistoryModalProps> = ({
   };
 
   return (
+    <>
+    <div className="fixed inset-0 bg-gray-700 opacity-50"></div>
     <div
-      className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
       onClick={onClose}
-    >
+    > 
       <div
         className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
@@ -47,7 +49,7 @@ const JudgmentHistoryModal: React.FC<JudgmentHistoryModalProps> = ({
         </div>
 
         {/* 모달 내용 */}
-        <div className="p-6">
+        <div className="p-6 bg-white">
           {isHistoryLoading ? (
             <div className="flex justify-center items-center py-20">
               <p className="text-main font-bold">로딩 중...</p>
@@ -119,6 +121,7 @@ const JudgmentHistoryModal: React.FC<JudgmentHistoryModalProps> = ({
         </div>
       </div>
     </div>
+    </>
   );
 };
 

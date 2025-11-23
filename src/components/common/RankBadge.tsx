@@ -17,6 +17,10 @@ const RankBadge: React.FC<RankBadgeProps> = ({
 }) => {
   const frameImage = getRankNicknameFrame(rank);
   
+  // 파트너 변호사는 흰색 텍스트
+  const isPartnerLawyer = rank === "파트너 변호사";
+  const textColorClass = isPartnerLawyer ? "text-white" : "text-main";
+  
   // 크기별 스타일 정의
   const sizeStyles = {
     sm: {
@@ -46,7 +50,7 @@ const RankBadge: React.FC<RankBadgeProps> = ({
         className="absolute inset-0 w-full h-full object-fill"
       />
       <div className={`relative z-10 w-full flex items-center justify-center ${styles.padding}`}>
-        <p className={`text-main font-bold text-center whitespace-nowrap ${styles.text}`}>
+        <p className={`${textColorClass} font-bold text-center whitespace-nowrap ${styles.text}`}>
           {rank} {nickname}
         </p>
       </div>
