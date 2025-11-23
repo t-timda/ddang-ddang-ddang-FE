@@ -8,7 +8,8 @@ import type {
   UserAchievementsResponse,
   UserRankResponse,
   UserCasesResponse,
-  UserProfileImageResponse
+  UserProfileImageResponse,
+  UserExpHistoryResponse
 } from "@/types/apis/user";
 
 const USER_BASE_PATH = "/api/users";
@@ -73,6 +74,12 @@ const uploadProfileImage = async (file: File): Promise<UserProfileImageResponse>
   return data;
 };
 
+// 경험치 내역 조회
+const getExpHistory = async (): Promise<UserExpHistoryResponse> => {
+  const { data } = await instance.get<UserExpHistoryResponse>(`${USER_BASE_PATH}/exp-history`);
+  return data;
+};
+
 export const userApi = {
   getUserInfo,
   getProfile,
@@ -82,6 +89,7 @@ export const userApi = {
   getUserRecord,
   getUserCases,
   uploadProfileImage,
+  getExpHistory,
 } as const;
 
 export type UserApi = typeof userApi;

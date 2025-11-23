@@ -4,8 +4,10 @@ import { useSearchParams } from "react-router-dom";
 import { useNotificationStore } from "@/stores/useNotificationStore";
 import type { RebuttalItem as RebuttalItemType, RebuttalRequest } from "@/types/apis/secondTrial";
 import { renderContentWithMentions } from "@/utils/mentionRenderer";
+import { getRankNicknameFrame } from "@/utils/rankImageMapper";
 import ThumbUpIcon from "@/assets/svgs/thumbs-up.svg?react";
 import Siren from "@/assets/svgs/Siren.svg?react";
+import RankBadge from "./RankBadge";
 
 interface RebuttalItemProps {
   rebuttal: RebuttalItemType;
@@ -47,6 +49,13 @@ const RebuttalItem: React.FC<RebuttalItemProps> = ({
   const typeBgClass = rebuttal.type === "A" ? "bg-main-medium" : "bg-main-red";
   
   const isThisInputActive = activeReplyInput === rebuttal.rebuttalId;
+  
+  // 칭호 명패 이미지
+  const rankFrameImage = getRankNicknameFrame(rebuttal.authorRank || "말싸움 풋내기");
+
+  // 디버깅
+  console.log('Rebuttal authorRank:', rebuttal.authorRank);
+  console.log('Rebuttal rankFrameImage:', rankFrameImage);
 
   // 하이라이트 효과
   useEffect(() => {

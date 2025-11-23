@@ -10,6 +10,7 @@ import {
 } from "@/hooks/like/useLike";
 import { useUserProfileQuery } from "@/hooks/api/useUserQuery";
 import { useNotificationStore } from "@/stores/useNotificationStore";
+import { getRankNicknameFrame } from "@/utils/rankImageMapper";
 import type {
   RebuttalItem as RebuttalItemType,
   RebuttalRequest,
@@ -20,6 +21,7 @@ import ReportNotification from "./ReportNotification";
 import ReportModal from "./ReportModal";
 import ThumbUpIcon from "@/assets/svgs/thumbs-up.svg?react";
 import Siren from "@/assets/svgs/Siren.svg?react";
+import RankBadge from "./RankBadge";
 
 export interface ArgumentData {
   id: number;
@@ -54,6 +56,9 @@ const ArgumentCard: React.FC<ArgumentCardProps> = ({
 }) => {
   const [searchParams] = useSearchParams();
   const { setHighlightRebuttal } = useNotificationStore();
+  
+  // 칭호 명패 이미지
+  const rankFrameImage = getRankNicknameFrame(authorRank);
   
   // Queries & Mutations
   const { data: rebuttalsRes, isLoading: isRebuttalsLoading } = useRebuttalsQuery(defenseId);

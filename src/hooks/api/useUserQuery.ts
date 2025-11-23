@@ -7,7 +7,8 @@ import type {
   UserAchievementsResponse,
   UserRankResponse,
   UserCasesResponse,
-  UserProfileImageResponse
+  UserProfileImageResponse,
+  UserExpHistoryResponse
 } from '@/types/apis/user';
 
 // My Page: 사용자 프로필 정보를 가져오는 훅
@@ -78,6 +79,21 @@ export const useUserCasesQuery = (options?: { enabled?: boolean }) => {
             const response = await userApi.getUserCases();
             if (!response.isSuccess || !response.result) {
                 throw new Error(response.message || '사건 정보를 불러오지 못했습니다.');
+            }
+            return response;
+        },
+        enabled: options?.enabled,
+    });
+};
+
+// My Page: 사용자 경험치 내역을 가져오는 훅
+export const useUserExpHistoryQuery = (options?: { enabled?: boolean }) => {
+    return useQuery<UserExpHistoryResponse, Error>({
+        queryKey: ['userExpHistory'],
+        queryFn: async () => {
+            const response = await userApi.getExpHistory();
+            if (!response.isSuccess || !response.result) {
+                throw new Error(response.message || '경험치 내역을 불러오지 못했습니다.');
             }
             return response;
         },

@@ -89,6 +89,15 @@ export type CaseRecord = {
   mainArguments: string[]; // 주요 주장
 };
 
+export type ExpHistoryItem = {
+  id: number;
+  amount: number;
+  description: string;
+  createdAt: string;
+};
+
+export type UserExpHistoryResponse = ApiResponse<ExpHistoryItem[]>;
+
 export type UserCasesResponse = ApiResponse<CaseRecord[]>;
 
 // 프로필 사진 업로드 응답 타입
