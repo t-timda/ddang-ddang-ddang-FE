@@ -3,7 +3,7 @@ import ScaleIcon from "@/assets/svgs/Scale.svg?react";
 import Button from "@/components/common/Button";
 import { useVsModeStore } from "@/stores/vsModeStore";
 import { useNavigate } from "react-router-dom";
-import { PATH_BUILDERS } from "@/constants";
+import { PATHS } from "@/constants";
 import { useQuery } from "@tanstack/react-query";
 import instance from "@/apis/instance";
 
@@ -176,9 +176,7 @@ export default function VsJudge() {
             return;
           }
           localStorage.setItem("lastCaseId", String(caseId));
-          navigate(PATH_BUILDERS.secondTrialRegister(caseId), {
-            state: { caseId },
-          });
+          navigate(`${PATHS.SECOND_TRIAL_ROUND_ONE}/${caseId}`);
         }}
       >
         <span className="text-white text-[28px] font-bold leading-normal">
