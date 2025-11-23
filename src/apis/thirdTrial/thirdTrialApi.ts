@@ -56,12 +56,21 @@ const getJudgeStatus = async (caseId: number) => {
   return data;
 };
 
+// 최종 판결 생성
+const postCreateJudgment = async (caseId: number) => {
+  const { data } = await instance.post<ThirdTrialJudgmentResponse>(
+    `/api/final/judge/${caseId}`
+  );
+  return data;
+};
+
 export const thirdTrialApi = {
   postThirdTrialStart,
   getThirdTrialDetail,
   getThirdTrialJudgment,
   patchThirdTrialStatus,
   getJudgeStatus,
+  postCreateJudgment,
 } as const;
 
 export type ThirdTrialApi = typeof thirdTrialApi;

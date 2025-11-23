@@ -1,7 +1,7 @@
 import { useMemo, useState, useCallback } from "react";
 import Button from "@/components/common/Button";
 import { useThirdTrialStore } from "@/stores/thirdTrialStore";
-import { useBestAdoptItemsQuery, useAdoptItemsMutation, useChangeToThirdTrialMutation } from "@/hooks/thirdTrial/useThirdTrial";
+import { useBestAdoptItemsQuery, useAdoptItemsMutation, useChangeToThirdTrialMutation, useCreateJudgmentMutation } from "@/hooks/thirdTrial/useThirdTrial";
 import type { AdoptableItemDto } from "@/types/apis/adopt";
 import {
   THIRD_TRIAL_STEP_META,
@@ -26,7 +26,10 @@ export default function SelectionReview() {
   // 3차 재판으로 상태 변경 mutation
   const changeToThirdTrialMutation = useChangeToThirdTrialMutation();
 
-  const isPending = adoptItemsMutation.isPending || changeToThirdTrialMutation.isPending;
+  // 최종 판결 생성 mutation
+  const createJudgmentMutation = useCreateJudgmentMutation();
+
+  const isPending = adoptItemsMutation.isPending || changeToThirdTrialMutation.isPending || createJudgmentMutation.isPending;
 
   const [openMap, setOpenMap] = useState<Record<string, boolean>>({});
   const toggleOpen = useCallback((id: number) => {
@@ -45,9 +48,7 @@ export default function SelectionReview() {
 
         // 선택된 ID에 해당하는 아이템 찾기
         const items = ids
-          .map((id) => itemsForSide.find((item) =>
-            (item.itemType === "DEFENSE" ? item.defenseId : item.id) === id
-          ))
+          .map((id) => itemsForSide.find((item) => item.id === id))
           .filter((item): item is AdoptableItemDto => Boolean(item));
 
         return {
@@ -76,14 +77,11 @@ export default function SelectionReview() {
 
     // 선택된 ID를 defenseId와 rebuttalId로 분류
     const allSelectedIds = [...selectedArguments.first, ...selectedArguments.second];
-    const selectedItems = bestItems.filter((item) => {
-      const itemId = item.itemType === "DEFENSE" ? item.defenseId : item.id;
-      return allSelectedIds.includes(itemId);
-    });
+    const selectedItems = bestItems.filter((item) => allSelectedIds.includes(item.id));
 
     const defenseIds = selectedItems
       .filter((item) => item.itemType === "DEFENSE")
-      .map((item) => item.defenseId);
+      .map((item) => item.id);
 
     const rebuttalIds = selectedItems
       .filter((item) => item.itemType === "REBUTTAL")
@@ -102,7 +100,10 @@ export default function SelectionReview() {
       // 2. 3차 재판으로 상태 변경
       await changeToThirdTrialMutation.mutateAsync(caseId);
 
-      // 3. 로딩 화면으로 이동
+      // 3. 최종 판결 생성 (argumentA와 B 모두 채택된 경우)
+      await createJudgmentMutation.mutateAsync(caseId);
+
+      // 4. 로딩 화면으로 이동
       setStep("loading");
     } catch (error) {
       console.error("채택 또는 3차 재판 시작 실패:", error);
@@ -138,17 +139,16 @@ export default function SelectionReview() {
                 </div>
               ) : (
                 items.map((item) => {
-                  const itemId = item.itemType === "DEFENSE" ? item.defenseId : item.id;
-                  const isOpen = (openMap[itemId] ?? true);
+                  const isOpen = (openMap[item.id] ?? true);
                   return (
                   <article
-                    key={itemId}
+                    key={item.id}
                     className={`relative flex w-full flex-col gap-6 rounded-[30px] px-8 py-8 md:px-12 ${meta.cardBgClass}`}
                   >
                     <button
                       type="button"
                       aria-expanded={isOpen}
-                      onClick={() => toggleOpen(itemId)}
+                      onClick={() => toggleOpen(item.id)}
                       className="absolute right-6 top-3 md:right-12 p-1"
                     >
                       <ChevronUpIcon className={`h-[53px] w-[53px] text-main transition-transform duration-200 ${isOpen ? "rotate-0" : "rotate-180"}`} />

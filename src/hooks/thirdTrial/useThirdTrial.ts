@@ -120,3 +120,20 @@ export const useJudgeStatusQuery = (caseId?: number) =>
     queryFn: () => thirdTrialApi.getJudgeStatus(caseId as number),
     enabled: !!caseId,
   });
+
+// 최종 판결 생성 훅
+export const useCreateJudgmentMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (caseId: number) => thirdTrialApi.postCreateJudgment(caseId),
+    onSuccess: (_data, caseId) => {
+      queryClient.invalidateQueries({
+        queryKey: ["third-trial", "judgment", caseId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["third-trial", "judge-status", caseId],
+      });
+    },
+  });
+};

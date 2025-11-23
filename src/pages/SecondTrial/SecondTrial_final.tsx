@@ -81,14 +81,26 @@ const SecondTrial_final: React.FC = () => {
     navigate(PATH_BUILDERS.thirdTrial(caseId));
   };
 
-  // 버튼 활성화 조건
-  const isButtonEnabled =
-    judgeStatus === "AFTER"
-      ? true  // AFTER 상태면 누구나 활성화
-      : userId !== null && isEitherAuthor;  // BEFORE 상태면 로그인되고 작성자인 경우만
+  // 버튼 활성화 조건 및 텍스트
+  let isButtonEnabled = false;
+  let buttonText = "";
 
-  // 버튼 텍스트
-  const buttonText = judgeStatus === "AFTER" ? "최종심 결과보기" : "최종심으로 가기";
+  if (judgeStatus === "AFTER") {
+    // AFTER: 판결이 난 상태 - 누구나 활성화
+    isButtonEnabled = true;
+    buttonText = "최종심 결과보기";
+  } else if (judgeStatus === "BEFORE") {
+    // BEFORE: 판결이 안 난 상태
+    if (userId !== null && isEitherAuthor) {
+      // 작성자: 활성화, 채택하러 가기
+      isButtonEnabled = true;
+      buttonText = "채택하러 가기";
+    } else {
+      // 일반 사용자: 비활성화, 아직 채택 중
+      isButtonEnabled = false;
+      buttonText = "아직 채택 중이에요";
+    }
+  }
 
   return (
     <div className="bg-white min-h-screen pt-6 md:pt-12 pb-12 md:pb-20">
@@ -207,7 +219,11 @@ const SecondTrial_final: React.FC = () => {
             size="lg"
             onClick={handleGoToThirdTrial}
             disabled={!isButtonEnabled}
-            className="w-full max-w-[585px] h-[80px] md:h-[100px] lg:h-[123px] rounded-[20px] md:rounded-[30px] text-base md:text-lg"
+            className={`w-full max-w-[585px] h-[80px] md:h-[100px] lg:h-[123px] rounded-[20px] md:rounded-[30px] text-base md:text-lg ${
+              !isButtonEnabled
+                ? "bg-gray-300 text-gray-500 cursor-not-allowed hover:bg-gray-300"
+                : ""
+            }`}
           >
             {buttonText}
           </Button>
