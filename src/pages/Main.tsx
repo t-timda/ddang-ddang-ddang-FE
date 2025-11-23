@@ -314,7 +314,7 @@ const MainPage = () => {
                           <Button
                             variant="white"
                             className="w-full rounded-xl bg-white/90 py-3 text-main hover:bg-white"
-                            onClick={() => navigate(PATHS.MY_PAGE)}
+                            onClick={() => navigate(`${PATHS.MY_PAGE}?tab=participate&subtab=변호전적`)}
                           >
                             <div className="px-1 py-1 w-full flex justify-between items-center">
                               <span className="text-base font-bold text-main">

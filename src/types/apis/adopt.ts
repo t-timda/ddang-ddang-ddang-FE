@@ -13,9 +13,9 @@ export interface AdoptableItemDto {
   debateSide: DebateSide;
   content: string;
   likeCount: number;
-  defenseId: number;
-  parentId: number | null;
-  parentContent: string | null;
+  defenseId?: number; // DEFENSE일 때만 존재 (optional)
+  parentId?: number | null; // REBUTTAL일 때만 존재
+  parentContent?: string | null; // REBUTTAL일 때만 존재
 }
 
 // 채택 후보/결과 응답

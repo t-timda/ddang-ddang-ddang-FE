@@ -10,6 +10,7 @@ import {
 } from "@/hooks/like/useLike";
 import { useUserProfileQuery } from "@/hooks/api/useUserQuery";
 import { useNotificationStore } from "@/stores/useNotificationStore";
+import { getRankNicknameFrame } from "@/utils/rankImageMapper";
 import type {
   RebuttalItem as RebuttalItemType,
   RebuttalRequest,
@@ -20,6 +21,7 @@ import ReportNotification from "./ReportNotification";
 import ReportModal from "./ReportModal";
 import ThumbUpIcon from "@/assets/svgs/thumbs-up.svg?react";
 import Siren from "@/assets/svgs/Siren.svg?react";
+import RankBadge from "./RankBadge";
 
 export interface ArgumentData {
   id: number;
@@ -46,7 +48,7 @@ const ArgumentCard: React.FC<ArgumentCardProps> = ({
   defenseId,
   caseId,
   authorNickname = "닉네임",
-  authorRank = "칭호", // authorDegree → authorRank로 변경
+  authorRank = "칭호",
   side,
   content,
   likesCount = 0,
@@ -54,6 +56,9 @@ const ArgumentCard: React.FC<ArgumentCardProps> = ({
 }) => {
   const [searchParams] = useSearchParams();
   const { setHighlightRebuttal } = useNotificationStore();
+  
+  // 칭호 명패 이미지
+  const rankFrameImage = getRankNicknameFrame(authorRank);
   
   // Queries & Mutations
   const { data: rebuttalsRes, isLoading: isRebuttalsLoading } = useRebuttalsQuery(defenseId);
@@ -204,126 +209,139 @@ const ArgumentCard: React.FC<ArgumentCardProps> = ({
 
   return (
     <>
-      <div className="bg-white p-6 rounded-lg">
+      <div className="bg-white p-3 md:p-6 rounded-lg">
         {/* 헤더 */}
-        <div className="flex items-start justify-between">
-          <div className="flex items-center gap-4">
-            <span className="inline-block px-2 py-0.5 rounded-full border border-main text-main text-xs font-bold">
-              {authorRank}
-            </span>
-            <span className="inline-block px-3 py-1 rounded-full text-main">{authorNickname}</span>
-            <span className={`inline-block px-3 py-1 rounded-xl text-sm font-semibold ${sideColorClass} ${sideBgClass}`}>
-              {side} 의견
-            </span>
+        <div className="flex-1 min-w-0">
+          {/* 닉네임, 칭호, 의견 타입, 신고, 좋아요를 한 줄에 배치 */}
+          <div className="flex items-center justify-between gap-2 text-main font-semibold">
+            <div className="flex flex-wrap items-center gap-1 md:gap-2 flex-1 min-w-0">
+              {/* 칭호 - 모든 화면에서 표시 */}
+              <span className="inline-block px-1.5 md:px-2 py-0.5 rounded-full border border-main text-main text-[10px] md:text-xs font-bold whitespace-nowrap">
+                {authorRank}
+              </span>
+              <span className="text-sm md:text-base truncate font-bold">{authorNickname}</span>
+              <span className={`px-1.5 md:px-2 py-0.5 rounded-xl text-[10px] md:text-xs font-semibold ${sideColorClass} ${sideBgClass} whitespace-nowrap`}>
+                {side} 의견
+              </span>
+            </div>
+            {/* 신고하기 + 좋아요 버튼 */}
+            <div className="flex flex-row items-center gap-2 flex-shrink-0">
+              {/* 신고하기 버튼 - 모바일은 아이콘만, 데스크톱은 텍스트 포함 */}
+              <button
+                onClick={() => handleReport(defenseId, "DEFENSE", content)}
+                className="flex items-center gap-1 text-[10px] md:text-xs px-1 md:px-2 py-1 text-red-500 hover:text-red-700"
+                title="신고하기"
+              >
+                <Siren className="w-3 h-3 md:w-4 md:h-4" />
+                <span className="hidden md:inline">신고하기</span>
+              </button>
+              
+              {/* 좋아요 버튼 - 모바일은 아이콘+숫자만, 데스크톱은 텍스트 포함 */}
+              <button
+                onClick={handleToggleDefenseLike}
+                disabled={toggleDefenseLikeMutation.isPending || isMyDefense}
+                className="flex items-center gap-1 md:gap-2 text-main disabled:opacity-50"
+                aria-label="방어변론 좋아요"
+                title={isMyDefense ? "내 방어변론에는 좋아요를 누를 수 없습니다" : ""}
+              >
+                <ThumbUpIcon className={`w-4 h-4 md:w-5 md:h-5 ${likedDefense ? "opacity-60" : ""}`} />
+                <span className="text-[10px] md:text-sm">
+                  {defenseLikes}
+                  <span className="hidden md:inline">명이 이 의견에 찬성합니다</span>
+                </span>
+              </button>
+            </div>
           </div>
-          
-          <div className="flex items-center gap-2">
+
+          {/* 본문 */}
+          {side && <div className="mt-2 md:mt-3"/>}
+          <p className="mt-2 leading-relaxed text-sm md:text-base text-main break-words">{content}</p>
+
+          {/* 토글/의견달기 */}
+          <div className="mt-3 md:mt-4 flex flex-col gap-2 md:gap-3">
             <button
-              onClick={() => handleReport(defenseId, "DEFENSE", content)}
-              className="flex items-center gap-1 text-xs px-2 py-1 text-red-500 hover:text-red-700"
+              className="flex items-center gap-2 text-main font-semibold text-sm md:text-base"
+              onClick={handleToggleExpanded}
             >
-              <Siren className="w-4 h-4" />
-              <span>신고하기</span>
+              <span className="text-base md:text-lg">{expanded ? "▲" : "▶"}</span>
+              <span>{expanded ? "의견 접기" : `의견 ${repliesCount}개 펼쳐보기`}</span>
             </button>
+
             <button
-              onClick={handleToggleDefenseLike}
-              disabled={toggleDefenseLikeMutation.isPending || isMyDefense}
-              className="flex items-center gap-2 text-main disabled:opacity-50"
-              aria-label="방어변론 좋아요"
-              title={isMyDefense ? "내 방어변론에는 좋아요를 누를 수 없습니다" : ""}
+              className="flex items-center gap-2 text-main text-sm md:text-base"
+              onClick={handleFocusWrite}
             >
-              <ThumbUpIcon className={likedDefense ? "opacity-60" : ""} />
-              <span className="text-md">{defenseLikes}명이 이 의견에 찬성합니다</span>
+              <span className="text-base md:text-lg">↳</span>
+              <span className="font-semibold">의견달기</span>
             </button>
           </div>
-        </div>
 
-        {/* 본문 */}
-        {side && <div className="mt-3"/>}
-        <p className="mt-2 leading-7 text-main">{content}</p>
-
-        {/* 토글/의견달기 */}
-        <div className="mt-4 flex flex-col gap-3">
-          <button
-            className="flex items-center gap-2 text-main font-semibold"
-            onClick={handleToggleExpanded}
-          >
-            <span className="text-lg">{expanded ? "▲" : "▶"}</span>
-            <span>{expanded ? "의견 접기" : `의견 ${repliesCount}개 펼쳐보기`}</span>
-          </button>
-
-          <button
-            className="flex items-center gap-2 text-main"
-            onClick={handleFocusWrite}
-          >
-            <span className="text-lg">↳</span>
-            <span className="font-semibold">의견달기</span>
-          </button>
-        </div>
-
-        {/* 펼친 영역 */}
-        {expanded && (
-          <div className="mt-4 bg-main-bright">
-            {isRebuttalsLoading ? (
-              <div className="text-sm text-gray-500">의견을 불러오는 중...</div>
-            ) : rebuttals.length === 0 ? (
-              <div className="text-sm text-gray-500">등록된 의견이 없습니다.</div>
-            ) : (
-              rebuttals.map((r) => (
-                <RebuttalItem
-                  key={r.rebuttalId}
-                  rebuttal={r}
-                  depth={0}
-                  defenseId={defenseId}
-                  onLike={handleLikeRebuttal}
-                  isLikePending={toggleRebuttalLikeMutation.isPending}
-                  postRebuttalMutation={postRebuttalMutation}
-                  defaultRebuttalType={rebuttalType}
-                  onReport={(rebuttalId) => handleReport(rebuttalId, "REBUTTAL")} 
-                  currentUserNickname={currentUserNickname}
-                  activeReplyInput={activeReplyInput}
-                  setActiveReplyInput={setActiveReplyInput}
-                />
-              ))
-            )}
-
-            {/* 최상위 의견 입력 */}
-            {activeReplyInput === null && (
-              <div className="mt-2 p-3 rounded-md bg-main-bright">
-                <div className="flex items-center gap-2 mb-2">
-                  <label className="text-sm text-main">타입</label>
-                  <select
-                    value={rebuttalType}
-                    onChange={(e) => setRebuttalType(e.target.value as "A" | "B")}
-                    className="p-1 rounded-md"
-                  >
-                    <option value="A">A</option>
-                    <option value="B">B</option>
-                  </select>
+          {/* 펼친 영역 */}
+          {expanded && (
+            <div className="mt-3 md:mt-4 bg-main-bright p-2 md:p-0 rounded-lg md:rounded-none">
+              {isRebuttalsLoading ? (
+                <div className="text-xs md:text-sm text-gray-500 p-2">의견을 불러오는 중...</div>
+              ) : rebuttals.length === 0 ? (
+                <div className="text-xs md:text-sm text-gray-500 p-2">등록된 의견이 없습니다.</div>
+              ) : (
+                <div className="space-y-2">
+                  {rebuttals.map((r) => (
+                    <RebuttalItem
+                      key={r.rebuttalId}
+                      rebuttal={r}
+                      depth={0}
+                      defenseId={defenseId}
+                      onLike={handleLikeRebuttal}
+                      isLikePending={toggleRebuttalLikeMutation.isPending}
+                      postRebuttalMutation={postRebuttalMutation}
+                      defaultRebuttalType={rebuttalType}
+                      onReport={(rebuttalId) => handleReport(rebuttalId, "REBUTTAL")} 
+                      currentUserNickname={currentUserNickname}
+                      activeReplyInput={activeReplyInput}
+                      setActiveReplyInput={setActiveReplyInput}
+                    />
+                  ))}
                 </div>
+              )}
 
-                <textarea
-                  ref={inputRef}
-                  rows={3}
-                  value={rebuttalContent}
-                  onChange={(e) => setRebuttalContent(e.target.value)}
-                  className="w-full p-2 rounded-md bg-white border"
-                  placeholder="의견 내용을 입력하세요."
-                />
+              {/* 최상위 의견 입력 */}
+              {activeReplyInput === null && (
+                <div className="mt-2 p-2 md:p-3 rounded-md bg-main-bright">
+                  <div className="flex items-center gap-2 mb-2">
+                    <label className="text-xs md:text-sm text-main">타입</label>
+                    <select
+                      value={rebuttalType}
+                      onChange={(e) => setRebuttalType(e.target.value as "A" | "B")}
+                      className="p-1 rounded-md text-xs md:text-sm"
+                    >
+                      <option value="A">A</option>
+                      <option value="B">B</option>
+                    </select>
+                  </div>
 
-                <div className="flex justify-end mt-2">
-                  <button
-                    onClick={handleSubmitRebuttal}
-                    disabled={postRebuttalMutation.isPending}
-                    className="px-4 py-2 bg-main text-white rounded-md"
-                  >
-                    {postRebuttalMutation.isPending ? "등록중..." : "의견 등록"}
-                  </button>
+                  <textarea
+                    ref={inputRef}
+                    rows={3}
+                    value={rebuttalContent}
+                    onChange={(e) => setRebuttalContent(e.target.value)}
+                    className="w-full p-2 rounded-md bg-white border text-sm md:text-base"
+                    placeholder="의견 내용을 입력하세요."
+                  />
+
+                  <div className="flex justify-end mt-2">
+                    <button
+                      onClick={handleSubmitRebuttal}
+                      disabled={postRebuttalMutation.isPending}
+                      className="px-3 md:px-4 py-1.5 md:py-2 bg-main text-white rounded-md text-sm md:text-base"
+                    >
+                      {postRebuttalMutation.isPending ? "등록중..." : "의견 등록"}
+                    </button>
+                  </div>
                 </div>
-              </div>
-            )}
-          </div>
-        )}
+              )}
+            </div>
+          )}
+        </div>
       </div>
 
       {showReportModal && reportTarget && (

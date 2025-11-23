@@ -70,14 +70,14 @@ const ReplyInput = ({
   };
 
   return (
-    <div className="mt-3 flex justify-start w-full">
+    <div className="mt-2 md:mt-3 flex justify-start w-full">
       
       {/* 1. 대댓글 작성 버튼 (showInput이 false일 때만 표시) */}
       {!showInput && (
         <Button 
           onClick={handleToggle} 
           variant="ghost" 
-          className="text-sm text-black hover:text-gray-700 font-medium p-0 h-auto"   
+          className="text-xs md:text-sm text-black hover:text-gray-700 font-medium p-0 h-auto"   
         >
           대댓글 작성
         </Button>
@@ -85,14 +85,14 @@ const ReplyInput = ({
 
       {/* 2. 대댓글 입력 창 (showInput이 true일 때만 표시) */}
       {showInput && (
-        <div className="w-full mt-3 p-3 bg-main-bright relative">
+        <div className="w-full mt-2 md:mt-3 p-2 md:p-3 bg-main-bright relative rounded-lg">
           <Textarea 
             autoFocus
             placeholder={`${parentNickname} 님에게 대댓글을 작성하세요...`}
             minRows={2}
             value={replyContent}
             onChange={(e) => setReplyContent(e.target.value)}
-            className="mb-2"
+            className="mb-2 text-sm md:text-base"
           />
 
           <div className="flex justify-end space-x-2">
@@ -101,6 +101,7 @@ const ReplyInput = ({
               onClick={handleToggle} 
               variant="secondary"
               size="sm"
+              className="text-xs md:text-sm px-2 md:px-3 py-1 md:py-1.5"
             >
               취소
             </Button>
@@ -110,6 +111,7 @@ const ReplyInput = ({
               variant="trialStart" 
               size="sm"
               disabled={!replyContent.trim()} // 내용이 없으면 버튼 비활성화
+              className="text-xs md:text-sm px-2 md:px-3 py-1 md:py-1.5"
             >
               제출
             </Button>

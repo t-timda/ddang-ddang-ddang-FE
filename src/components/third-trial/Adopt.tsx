@@ -5,7 +5,7 @@ import ArgumentCheck from "@/components/third-trial/ArgumentCheck";
 import { useThirdTrialStore } from "@/stores/thirdTrialStore";
 import { useBestAdoptItemsQuery } from "@/hooks/thirdTrial/useThirdTrial";
 import { useSecondTrialDetailsQuery } from "@/hooks/secondTrial/useSecondTrial";
-import { useUserProfileQuery } from "@/hooks/api/useUserQuery";
+import { useAuthStore } from "@/stores/useAuthStore";
 import type { AdoptableItemDto } from "@/types/apis/adopt";
 import type { ArgumentData } from "@/components/common/ArgumentCard";
 import {
@@ -34,12 +34,12 @@ export default function Adopt() {
   const { data: detailsRes, isLoading: isDetailsLoading } = useSecondTrialDetailsQuery(caseId ?? undefined);
   const details = detailsRes?.result;
 
-  // 유저 정보 가져오기
-  const { data: userProfile, isLoading: isUserLoading } = useUserProfileQuery({ enabled: true });
+  // 유저 정보 가져오기 (authStore에서)
+  const userId = useAuthStore((state) => state.userId);
 
   // API 데이터를 ArgumentData 형태로 변환하는 헬퍼 함수
   const mapToArgumentData = (item: AdoptableItemDto): ArgumentData => ({
-    id: item.itemType === "DEFENSE" ? item.defenseId : item.id,
+    id: item.id, // id를 그대로 사용
     userNickname: `유저 ${item.userId}`, // 실제 닉네임은 별도 API 필요하면 추가
     userDgree: "변호사", // 등급 정보가 없어 기본값 사용
     content: item.content,
@@ -56,13 +56,32 @@ export default function Adopt() {
       second: [],
     };
 
-    if (!details || !userProfile) return grouped;
+    if (!details || userId === null) {
+      console.log("Adopt - details or userId missing:", { details, userId });
+      return grouped;
+    }
 
-    const userId = userProfile.user_id;
     const isAuthorA = userId === details.argumentA.authorId;
     const isAuthorB = userId === details.argumentB.authorId;
 
+    console.log("Adopt - Author check:", {
+      userId,
+      authorA: details.argumentA.authorId,
+      authorB: details.argumentB.authorId,
+      isAuthorA,
+      isAuthorB,
+      bestItemsCount: bestItems.length,
+    });
+
     bestItems.forEach((item) => {
+      console.log("Adopt - Processing item:", {
+        itemId: item.id,
+        debateSide: item.debateSide,
+        content: item.content.substring(0, 20),
+        isAuthorA,
+        isAuthorB,
+      });
+
       // A 의견 작성자인 경우 A 의견만 포함
       if (item.debateSide === "A" && isAuthorA) {
         grouped.first.push(mapToArgumentData(item));
@@ -73,8 +92,13 @@ export default function Adopt() {
       }
     });
 
+    console.log("Adopt - Grouped results:", {
+      first: grouped.first.length,
+      second: grouped.second.length,
+    });
+
     return grouped;
-  }, [bestItems, details, userProfile]);
+  }, [bestItems, details, userId]);
 
   const currentStepKey =
     THIRD_TRIAL_STEPS[Math.min(currentStepIndex, THIRD_TRIAL_STEPS.length - 1)];
@@ -108,9 +132,8 @@ export default function Adopt() {
   );
 
   const handleNext = () => {
-    if (!details || !userProfile) return;
+    if (!details || userId === null) return;
 
-    const userId = userProfile.user_id;
     const isAuthorA = userId === details.argumentA.authorId;
     const isAuthorB = userId === details.argumentB.authorId;
 
@@ -132,7 +155,7 @@ export default function Adopt() {
   const selectedCountText = `선택된 변론 ${selectedForStep.length}개 / ${MAX_SELECTION_PER_STEP}개`;
 
   // 로딩 상태
-  if (isLoading || isDetailsLoading || isUserLoading) {
+  if (isLoading || isDetailsLoading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <p className="text-main font-bold">채택 가능한 변론을 불러오는 중...</p>
