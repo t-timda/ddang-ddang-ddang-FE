@@ -20,22 +20,22 @@ export default function Start() {
   };
 
   return (
-    <div className="flex flex-col items-center bg-[#FFFFFF] mx-auto w-full max-w-[1440px] min-h-screen">
+    <div className="flex flex-col items-center bg-[#FFFFFF] mx-auto w-full max-w-[1440px] min-h-screen px-4 md:px-0">
       {/* 제목 */}
       <h1
-        className="text-[38px] font-bold text-[#203C77] mt-[78px] mb-[60px]"
+        className="text-[28px] md:text-[38px] font-bold text-[#203C77] mt-[40px] md:mt-[78px] mb-[40px] md:mb-[60px] text-center"
         style={{ fontFamily: "Pretendard", lineHeight: "150%" }}
       >
         밸런스 재판 시작하기
       </h1>
 
       {/* 버튼 그룹 */}
-      <div className="flex gap-[40px] justify-center mb-[40px]">
+      <div className="flex flex-col md:flex-row gap-[20px] md:gap-[40px] justify-center mb-[32px] md:mb-[40px] w-full max-w-[800px]">
         {/* 솔로모드 버튼 */}
         <Button
           variant="secondary"
           onClick={handleSoloClick}
-          className={`w-[380px] h-[123px] ${
+          className={`w-full md:w-[380px] h-[80px] md:h-[123px] ${
             selected === "solo"
               ? "opacity-100"
               : selected === "vs"
@@ -50,7 +50,7 @@ export default function Start() {
         <Button
           variant="third"
           onClick={handleVsClick}
-          className={`w-[380px] h-[123px] ${
+          className={`w-full md:w-[380px] h-[80px] md:h-[123px] ${
             selected === "vs"
               ? "opacity-100"
               : selected === "solo"
@@ -64,9 +64,9 @@ export default function Start() {
 
       {/* 솔로모드 설명 */}
       {selected === "solo" && (
-        <div className="flex justify-center items-center text-center w-[995px] h-[414px] bg-[#E8F2FF] rounded-[15px] px-[92px] py-[87px] mb-[60px]">
+        <div className="flex justify-center items-center text-center w-full max-w-[995px] min-h-[260px] md:min-h-[414px] bg-[#E8F2FF] rounded-[15px] px-6 py-8 md:px-[92px] md:py-[87px] mb-[40px] md:mb-[60px]">
           <p
-            className="text-[20px] font-normal text-[#809AD2] leading-[150%]"
+            className="text-[16px] md:text-[20px] font-normal text-[#809AD2] leading-[150%]"
             style={{ fontFamily: "Pretendard" }}
           >
             솔로모드는 혼자서 밸런스 재판을 체험해보는 모드입니다. <br />
@@ -80,9 +80,9 @@ export default function Start() {
 
       {/* VS모드 설명 */}
       {selected === "vs" && (
-        <div className="flex justify-center items-center text-center w-[995px] h-[414px] bg-[#E8F2FF] rounded-[15px] px-[92px] py-[87px] mb-[60px]">
+        <div className="flex justify-center items-center text-center w-full max-w-[995px] min-h-[260px] md:min-h-[414px] bg-[#E8F2FF] rounded-[15px] px-6 py-8 md:px-[92px] md:py-[87px] mb-[40px] md:mb-[60px]">
           <p
-            className="text-[20px] font-normal text-[#809AD2] leading-[150%]"
+            className="text-[16px] md:text-[20px] font-normal text-[#809AD2] leading-[150%]"
             style={{ fontFamily: "Pretendard" }}
           >
             VS모드는 <b>두 명이 참여하는 대결 모드</b>입니다. <br />
@@ -97,7 +97,7 @@ export default function Start() {
       {selected !== "none" && (
         <Button
           variant="trialStart"
-          className="w-[380px] h-[123px] px-[92px] py-[40px] mt-[40px] mb-[120px]"
+          className="w-full md:w-[380px] h-[80px] md:h-[123px] px-6 md:px-[92px] py-4 md:py-[40px] mt-[24px] md:mt-[40px] mb-[60px] md:mb-[120px]"
           onClick={handleStart}
         >
           재판 시작하기
