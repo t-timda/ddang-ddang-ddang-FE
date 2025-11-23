@@ -47,9 +47,9 @@ const SecondTrialRegister: React.FC = () => {
   // 로딩 상태 처리
   if (isCaseDetailLoading) {
     return (
-      <div className="flex flex-col items-center pt-10 gap-y-10 pb-30">
-        <h1 className="text-2xl font-bold text-center text-main">2차 재판 등록</h1>
-        <p className="text-main">사건 정보를 불러오는 중...</p>
+      <div className="flex flex-col items-center pt-6 md:pt-10 gap-y-6 md:gap-y-10 pb-20 md:pb-30 px-4">
+        <h1 className="text-xl md:text-2xl font-bold text-center text-main">2차 재판 등록</h1>
+        <p className="text-main text-sm md:text-base">사건 정보를 불러오는 중...</p>
       </div>
     );
   }
@@ -57,52 +57,67 @@ const SecondTrialRegister: React.FC = () => {
   // 케이스 상세 정보가 없을 때
   if (!caseDetail) {
     return (
-      <div className="flex flex-col items-center pt-10 gap-y-10 pb-30">
-        <h1 className="text-2xl font-bold text-center text-main">2차 재판 등록</h1>
-        <p className="text-main-red">사건 정보를 불러올 수 없습니다.</p>
+      <div className="flex flex-col items-center pt-6 md:pt-10 gap-y-6 md:gap-y-10 pb-20 md:pb-30 px-4">
+        <h1 className="text-xl md:text-2xl font-bold text-center text-main">2차 재판 등록</h1>
+        <p className="text-main-red text-sm md:text-base">사건 정보를 불러올 수 없습니다.</p>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col items-center pt-10 gap-y-10 pb-30">
-      <h1 className="text-2xl font-bold text-center text-main">2차 재판 등록</h1>
+    <div className="flex flex-col items-center pt-6 md:pt-10 gap-y-6 md:gap-y-10 pb-20 md:pb-30 px-4">
+      <h1 className="text-xl md:text-2xl font-bold text-center text-main">2차 재판 등록</h1>
 
-      <div className="flex gap-[31px]">
-        <div className="w-[513px] h-[447px] bg-main-medium rounded-[30px] flex justify-center items-center flex-col">
-          <span className="text-2xl font-bold text-center text-white">{caseDetail.argumentA.mainArgument}</span>
-          <p className="px-20 py-10 text-white">
-            {caseDetail.argumentA.reasoning}
-          </p>
+      {/* A/B 주장 카드 */}
+      <div className="flex flex-col lg:flex-row gap-4 md:gap-6 lg:gap-[31px] w-full max-w-6xl justify-center items-center">
+        {/* A 카드 - 그림자 레이어 추가 */}
+        <div className="w-full lg:w-[513px] h-[300px] sm:h-[350px] md:h-[400px] lg:h-[447px] bg-main-medium rounded-[20px] md:rounded-[30px] pt-[3px] pb-[16px] md:pt-[4px] md:pb-[24px] px-[4px] md:px-[6px]">
+          <div className="w-full h-full bg-[#94B0EB] rounded-[17px] md:rounded-[26px] flex justify-center items-center flex-col px-4 md:px-8 lg:px-12 py-6 md:py-8">
+            <span className="text-lg sm:text-xl md:text-2xl font-bold text-center text-white mb-2 md:mb-4">
+              {caseDetail.argumentA.mainArgument}
+            </span>
+            <p className="text-xs md:text-sm lg:text-base text-white text-center leading-relaxed">
+              {caseDetail.argumentA.reasoning}
+            </p>
+          </div>
         </div>
-        <div className="w-[513px] h-[447px] bg-main-red rounded-[30px] flex justify-center items-center flex-col">
-          <span className="text-2xl font-bold text-center text-white">{caseDetail.argumentB?.mainArgument}</span>
-          <p className="px-20 py-10 text-white">
-            {caseDetail.argumentB?.reasoning}
-          </p>
+        
+        {/* B 카드 - 그림자 레이어 추가 */}
+        <div className="w-full lg:w-[513px] h-[300px] sm:h-[350px] md:h-[400px] lg:h-[447px] bg-main-red rounded-[20px] md:rounded-[30px] pt-[3px] pb-[16px] md:pt-[4px] md:pb-[24px] px-[4px] md:px-[6px]">
+          <div className="w-full h-full bg-[#FFA7A7] rounded-[17px] md:rounded-[26px] flex justify-center items-center flex-col px-4 md:px-8 lg:px-12 py-6 md:py-8">
+            <span className="text-lg sm:text-xl md:text-2xl font-bold text-center text-white mb-2 md:mb-4">
+              {caseDetail.argumentB?.mainArgument}
+            </span>
+            <p className="text-xs md:text-sm lg:text-base text-white text-center leading-relaxed">
+              {caseDetail.argumentB?.reasoning}
+            </p>
+          </div>
         </div>
       </div>
 
-      <div className="w-[1058px] flex justify-center items-center pb-6">
-        <h1 className="text-main text-24px">
+      {/* 사건 제목 */}
+      <div className="w-full max-w-[1058px] flex justify-center items-center pb-4 md:pb-6 px-4">
+        <h1 className="text-main text-base md:text-lg lg:text-[24px] text-center leading-relaxed">
           {caseDetail.title}
         </h1>
       </div>
 
-      <h1 className="text-2xl font-bold text-center text-main">투표 종료 시간 설정</h1>
+      {/* 투표 종료 시간 설정 */}
+      <h1 className="text-xl md:text-2xl font-bold text-center text-main">투표 종료 시간 설정</h1>
 
       <select
         id="durationSelect"
         value={duration}
         onChange={(e) => setDuration(e.target.value)}
         className="
-          w-[585px] h-[123px]
+          w-full max-w-[585px] h-[80px] md:h-[100px] lg:h-[123px]
           bg-main-bright
-          rounded-[30px]
-          text-lg font-bold text-center
+          rounded-[20px] md:rounded-[30px]
+          text-base md:text-lg font-bold text-center
           flex items-center justify-center
           focus:outline-none focus:ring-2 focus:ring-main-medium
           text-main
+          px-4
         "
       >
         <option value="">시간 선택</option>
@@ -115,10 +130,11 @@ const SecondTrialRegister: React.FC = () => {
         <option value="72">72시간</option>
       </select>
 
+      {/* 시작 버튼 */}
       <Button
         variant="trialStart"
         size="lg"
-        className="w-[585px] h-[123px] rounded-[30px]"
+        className="w-full max-w-[585px] h-[80px] md:h-[100px] lg:h-[123px] rounded-[20px] md:rounded-[30px] text-base md:text-lg"
         onClick={handleStartClick}
         disabled={startSecond.isPending || !duration}
       >

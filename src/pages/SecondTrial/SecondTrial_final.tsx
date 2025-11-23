@@ -40,8 +40,8 @@ const SecondTrial_final: React.FC = () => {
   // 데이터 없음 처리
   if (!details || !voteResult) {
     return (
-      <div className="flex flex-col justify-center items-center min-h-screen gap-4">
-        <p className="text-main-red font-bold text-xl">데이터를 받아오지 못했습니다</p>
+      <div className="flex flex-col justify-center items-center min-h-screen gap-4 px-4">
+        <p className="text-main-red font-bold text-lg md:text-xl text-center">데이터를 받아오지 못했습니다</p>
         <div className="flex gap-3">
           <Button variant="primary" onClick={() => window.location.reload()}>다시 시도</Button>
           <Button variant="ghost" onClick={() => navigate(-1)}>이전으로</Button>
@@ -78,15 +78,10 @@ const SecondTrial_final: React.FC = () => {
     setCaseId(caseId);
 
     // 3차 재판 페이지로 이동
-    // AFTER: 판결 결과 화면으로 자동 이동
-    // BEFORE: 채택 페이지로 이동 (작성자만 버튼 활성화되므로 여기까지 옴)
     navigate(PATH_BUILDERS.thirdTrial(caseId));
   };
 
   // 버튼 활성화 조건
-  // AFTER: 판결이 난 상태 - 누구나 활성화
-  // BEFORE: 판결이 안 난 상태 - 작성자만 활성화
-  // userId가 null이면서 BEFORE 상태면 비활성화
   const isButtonEnabled =
     judgeStatus === "AFTER"
       ? true  // AFTER 상태면 누구나 활성화
@@ -96,90 +91,102 @@ const SecondTrial_final: React.FC = () => {
   const buttonText = judgeStatus === "AFTER" ? "최종심 결과보기" : "최종심으로 가기";
 
   return (
-    <div className="bg-white min-h-screen pt-12 pb-20">
-      <div className="max-w-6xl mx-auto px-4">
+    <div className="bg-white min-h-screen pt-6 md:pt-12 pb-12 md:pb-20">
+      <div className="max-w-6xl mx-auto px-4 md:px-6 lg:px-4">
         {/* 헤더 */}
-        <div className="flex justify-between items-center pb-4 mb-6">
-          <h1 className="text-3xl font-bold text-main">2차 재판</h1>
-          <span className="bg-[#FFE5E5] p-4 rounded-lg text-md font-medium text-main-red">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-4 mb-4 md:mb-6">
+          <h1 className="text-2xl md:text-3xl font-bold text-main">2차 재판</h1>
+          <span className="bg-[#FFE5E5] px-3 py-2 md:p-4 rounded-lg text-sm md:text-md font-medium text-main-red">
             재판종료
           </span>
         </div>
 
         {/* 사건 제목 */}
-        <p className="font-medium mb-8 text-main">
+        <p className="font-medium mb-6 md:mb-8 text-main text-sm md:text-base">
           {details.caseTitle}
         </p>
 
         {/* A/B 카드 */}
-        <div className="flex space-x-8 justify-center mb-12">
+        <div className="flex flex-col lg:flex-row gap-4 md:gap-6 lg:gap-8 lg:justify-between mb-8 md:mb-12">
           <div
             className={clsx(
-              "w-[513px] h-[447px] bg-main-medium rounded-[30px] flex justify-center items-center flex-col",
-              "cursor-default opacity-70 border-gray-300"
+              "w-full lg:w-[513px] h-[300px] sm:h-[350px] md:h-[400px] lg:h-[447px]",
+              "bg-main-medium rounded-[20px] md:rounded-[30px]",
+              "pt-[3px] pb-[16px] md:pt-[4px] md:pb-[24px] px-[4px] md:px-[6px]",
+              "cursor-default opacity-70"
             )}
           >
-            <span className="text-2xl font-bold text-center text-white mb-4">{aMainArgument}</span>
-            <div className="px-20 py-4 text-white text-center">
-              <p className="text-sm">{aReasoning}</p>
+            <div className="w-full h-full bg-[#94B0EB] rounded-[17px] md:rounded-[26px] flex justify-center items-center flex-col px-4 md:px-8 lg:px-12 py-6 md:py-8">
+              <span className="text-lg sm:text-xl md:text-2xl font-bold text-center text-white mb-2 md:mb-4">
+                {aMainArgument}
+              </span>
+              <div className="text-center">
+                <p className="text-xs md:text-sm text-white leading-relaxed">{aReasoning}</p>
+              </div>
             </div>
           </div>
 
           <div
             className={clsx(
-              "w-[513px] h-[447px] bg-main-red rounded-[30px] flex justify-center items-center flex-col",
-              "cursor-default opacity-70 border-gray-300"
+              "w-full lg:w-[513px] h-[300px] sm:h-[350px] md:h-[400px] lg:h-[447px]",
+              "bg-main-red rounded-[20px] md:rounded-[30px]",
+              "pt-[3px] pb-[16px] md:pt-[4px] md:pb-[24px] px-[4px] md:px-[6px]",
+              "cursor-default opacity-70"
             )}
           >
-            <span className="text-2xl font-bold text-center text-white mb-4">{bMainArgument}</span>
-            <div className="px-20 py-4 text-white text-center">
-              <p className="text-sm">{bReasoning}</p>
+            <div className="w-full h-full bg-[#FFA7A7] rounded-[17px] md:rounded-[26px] flex justify-center items-center flex-col px-4 md:px-8 lg:px-12 py-6 md:py-8">
+              <span className="text-lg sm:text-xl md:text-2xl font-bold text-center text-white mb-2 md:mb-4">
+                {bMainArgument}
+              </span>
+              <div className="text-center">
+                <p className="text-xs md:text-sm text-white leading-relaxed">{bReasoning}</p>
+              </div>
             </div>
           </div>
         </div>
 
         {/* 투표 결과 바 */}
-        <div className="flex flex-col items-center mb-12 pt-8">
-          <h2 className="text-2xl font-bold text-main mb-6">2차 재판 투표 결과</h2>
+        <div className="flex flex-col items-center mb-8 md:mb-12 pt-6 md:pt-8">
+          <h2 className="text-xl md:text-2xl font-bold text-main mb-4 md:mb-6">2차 재판 투표 결과</h2>
 
-          <div className="mt-[43px] flex justify-center">
-            <div className="relative w-[995px] h-[44px] bg-[rgba(235,146,146,0.46)] rounded-[30px] overflow-hidden flex items-center justify-between px-[20px]">
+          <div className="mt-6 md:mt-[43px] flex justify-center w-full px-2">
+            <div className="relative w-full max-w-[995px] h-[36px] md:h-[44px] bg-[rgba(235,146,146,0.46)] rounded-[20px] md:rounded-[30px] overflow-hidden flex items-center justify-between px-[12px] md:px-[20px]">
               {/* A측 비율 바 */}
               <div
-                className="absolute left-0 top-0 h-full bg-[#809AD2] rounded-[30px] transition-all duration-500"
+                className="absolute left-0 top-0 h-full bg-[#809AD2] rounded-[20px] md:rounded-[30px] transition-all duration-500"
                 style={{ width: `${ratioA}%` }}
               >
                 {/* A가 승리했을 때 입체감 효과 */}
                 {aWins && (
                   <div 
-                    className="absolute top-0 left-0 h-[40%] w-full rounded-t-[30px] bg-gradient-to-b from-white/30 to-transparent"
+                    className="absolute top-0 left-0 h-[40%] w-full rounded-t-[20px] md:rounded-t-[30px] bg-gradient-to-b from-white/30 to-transparent"
                   />
                 )}
               </div>
               
               {/* B측 비율 바 (우측에서 시작) */}
               <div
-                className="absolute right-0 top-0 h-full bg-[rgba(235,146,146,0.8)] rounded-[30px] transition-all duration-500"
+                className="absolute right-0 top-0 h-full bg-[rgba(235,146,146,0.8)] rounded-[20px] md:rounded-[30px] transition-all duration-500"
                 style={{ width: `${ratioB}%` }}
               >
                 {/* B가 승리했을 때 입체감 효과 */}
                 {!aWins && (
                   <div 
-                    className="absolute top-0 left-0 h-[40%] w-full rounded-t-[30px] bg-gradient-to-b from-white/30 to-transparent"
+                    className="absolute top-0 left-0 h-[40%] w-full rounded-t-[20px] md:rounded-t-[30px] bg-gradient-to-b from-white/30 to-transparent"
                   />
                 )}
               </div>
               
               {/* 비율 텍스트 */}
-              <div className="relative z-10 flex w-full justify-between items-center px-[20px]">
+              <div className="relative z-10 flex w-full justify-between items-center px-[8px] md:px-[20px]">
                 <p className={clsx(
-                  "text-[16px] font-bold leading-[150%]",
+                  "text-xs md:text-[16px] font-bold leading-[150%]",
                   aWins ? "text-white drop-shadow-md" : "text-white"
                 )}>
                   A입장 {ratioA}%
                 </p>
                 <p className={clsx(
-                  "text-[16px] font-bold leading-[150%]",
+                  "text-xs md:text-[16px] font-bold leading-[150%]",
                   !aWins ? "text-white drop-shadow-md" : "text-white"
                 )}>
                   B입장 {ratioB}%
@@ -189,18 +196,18 @@ const SecondTrial_final: React.FC = () => {
           </div>
 
           {totalVotes > 0 && (
-            <p className="mt-4 text-main text-sm">총 {totalVotes}명이 투표했습니다.</p>
+            <p className="mt-3 md:mt-4 text-main text-xs md:text-sm">총 {totalVotes}명이 투표했습니다.</p>
           )}
         </div>
 
         {/* 최종심 결과보기 */}
-        <div className="mt-8 flex justify-center w-full">
+        <div className="mt-6 md:mt-8 flex justify-center w-full">
           <Button
             variant="trialStart"
             size="lg"
             onClick={handleGoToThirdTrial}
             disabled={!isButtonEnabled}
-            className="w-[585px] h-[123px] rounded-[30px]"
+            className="w-full max-w-[585px] h-[80px] md:h-[100px] lg:h-[123px] rounded-[20px] md:rounded-[30px] text-base md:text-lg"
           >
             {buttonText}
           </Button>

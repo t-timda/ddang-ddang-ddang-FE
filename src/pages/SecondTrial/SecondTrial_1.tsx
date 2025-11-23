@@ -50,10 +50,6 @@ const SecondTrial_1 = () => {
     // deadline 파싱 및 투표 가능 여부 판단
     const deadlineDate = details?.deadline ? parseLocalDateTimeArray(details.deadline) : null;
     const isVoteTime = deadlineDate && details?.deadline ? !isDeadlinePassed(details.deadline) : false;
-    {/*
-    // 변론 가능 여부에 대한 시간제한은 빼기로 했음.
-    const isArgumentTime = isVoteTime; // 변론도 동일 조건으로 가정
-    */}
 
     // 투표 처리
     const handleVote = async () => {
@@ -119,8 +115,8 @@ const SecondTrial_1 = () => {
     // 데이터 로드 실패
     if (!details) {
         return (
-            <div className="flex flex-col justify-center items-center min-h-screen">
-                <p className="text-main-red font-bold text-xl mb-4">데이터를 받아오지 못했습니다</p>
+            <div className="flex flex-col justify-center items-center min-h-screen px-4">
+                <p className="text-main-red font-bold text-lg md:text-xl mb-4 text-center">데이터를 받아오지 못했습니다</p>
                 <Button variant="primary" onClick={() => navigate(-1)}>
                     이전 페이지로
                 </Button>
@@ -129,13 +125,13 @@ const SecondTrial_1 = () => {
     }
 
     return (
-        <div className="bg-white min-h-screen pt-12 pb-20">
-            <div className="max-w-6xl mx-auto px-4">
+        <div className="bg-white min-h-screen pt-6 md:pt-12 pb-12 md:pb-20">
+            <div className="max-w-6xl mx-auto px-4 md:px-6 lg:px-4">
                 
                 {/* 1. 헤더 및 타이머 */}
-                <div className="flex justify-between items-center pb-4 mb-6">
-                    <h1 className="text-3xl font-bold text-main">2차 재판</h1>
-                    <span className="bg-main-bright p-4 rounded-lg text-md font-medium text-main">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-4 mb-4 md:mb-6">
+                    <h1 className="text-2xl md:text-3xl font-bold text-main">2차 재판</h1>
+                    <span className="bg-main-bright px-3 py-2 md:p-4 rounded-lg text-sm md:text-md font-medium text-main whitespace-nowrap">
                         {deadlineDate
                             ? `마감: ${formatDateTime(deadlineDate)}`
                             : '마감 시간 정보 없음'}
@@ -143,54 +139,74 @@ const SecondTrial_1 = () => {
                 </div>
 
                 {/* 2. 상황 설명 */}
-                <p className="font-medium mb-8 text-main">
+                <p className="font-medium mb-6 md:mb-8 text-main text-sm md:text-base">
                     {details.caseTitle}
                 </p>
 
                 {/* 3. 주장 선택 카드 */}
-                <div className="flex space-x-8 justify-center mb-12">
+                <div className="flex flex-col lg:flex-row gap-4 md:gap-6 lg:gap-8 lg:justify-between mb-8 md:mb-12">
                     {/* A. 찬성 블록 */}
                     <div
                         onClick={() => isVoteTime && setSelectedSide('A')}
                         className={clsx(
-                            "w-[513px] h-[447px] bg-main-medium rounded-[30px] flex justify-center items-center flex-col",
+                            "w-full lg:w-[513px] h-[300px] sm:h-[350px] md:h-[400px] lg:h-[447px]",
+                            "bg-main-medium rounded-[20px] md:rounded-[30px]",
+                            "pt-[3px] pb-[16px] md:pt-[4px] md:pb-[24px] px-[4px] md:px-[6px]",
                             isVoteTime ? 'cursor-pointer' : 'cursor-default',
-                            selectedSide === 'A' ? 'border-4 border-blue-500 shadow-lg scale-[1.02]' : 'border-4 border-transparent hover:border-blue-400',
+                            selectedSide === 'A' ? 'ring-4 ring-main-medium shadow-2xl scale-[1.02]' : 'hover:ring-2 hover:ring-blue-400',
                             !isVoteTime && 'opacity-70'
                         )}
                     >
-                        <h2 className="text-2xl font-bold text-center text-white mb-4">{details.argumentA.mainArgument}</h2>
-                        <p className="px-20 py-10 text-white text-center">
-                            {details.argumentA.reasoning}
-                        </p>
+                        <div className={clsx(
+                            "w-full h-full bg-[#94B0EB] rounded-[17px] md:rounded-[26px]",
+                            "flex justify-center items-center flex-col transition-all px-4 md:px-8 lg:px-12 py-6 md:py-8",
+                            selectedSide === 'A' && 'shadow-inner'
+                        )}>
+                            <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-center text-white mb-2 md:mb-4">
+                                {details.argumentA.mainArgument}
+                            </h2>
+                            <p className="text-sm md:text-base text-white text-center leading-relaxed">
+                                {details.argumentA.reasoning}
+                            </p>
+                        </div>
                     </div>
 
                     {/* B. 반대 블록 */}
                     <div
                         onClick={() => isVoteTime && setSelectedSide('B')}
                         className={clsx(
-                            "w-[513px] h-[447px] bg-main-red rounded-[30px] flex justify-center items-center flex-col",
+                            "w-full lg:w-[513px] h-[300px] sm:h-[350px] md:h-[400px] lg:h-[447px]",
+                            "bg-main-red rounded-[20px] md:rounded-[30px]",
+                            "pt-[3px] pb-[16px] md:pt-[4px] md:pb-[24px] px-[4px] md:px-[6px]",
                             isVoteTime ? 'cursor-pointer' : 'cursor-default',
-                            selectedSide === 'B' ? 'border-4 border-red-500 shadow-lg scale-[1.02]' : 'border-4 border-transparent hover:border-red-400',
+                            selectedSide === 'B' ? 'ring-4 ring-red-500 shadow-2xl scale-[1.02]' : 'hover:ring-2 hover:ring-red-400',
                             !isVoteTime && 'opacity-70'
                         )}
                     >
-                        <h2 className="text-2xl font-bold text-center text-white mb-4">{details.argumentB.mainArgument}</h2>
-                        <p className="px-20 py-10 text-white text-center">
-                            {details.argumentB.reasoning}
-                        </p>
+                        <div className={clsx(
+                            "w-full h-full bg-[#FFA7A7] rounded-[17px] md:rounded-[26px]",
+                            "flex justify-center items-center flex-col transition-all px-4 md:px-8 lg:px-12 py-6 md:py-8",
+                            selectedSide === 'B' && 'shadow-inner'
+                        )}>
+                            <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-center text-white mb-2 md:mb-4">
+                                {details.argumentB.mainArgument}
+                            </h2>
+                            <p className="text-sm md:text-base text-white text-center leading-relaxed">
+                                {details.argumentB.reasoning}
+                            </p>
+                        </div>
                     </div>
                 </div>
 
                 {/* 4. 투표하기 버튼 */}
-                <div className="flex justify-center mb-12">
+                <div className="flex justify-center mb-8 md:mb-12">
                     {isVoteTime ? (
                         <Button 
                             variant="trialStart" 
                             size="lg" 
                             onClick={handleVote}
                             disabled={!selectedSide || postVoteMutation.isPending} 
-                            className="w-[585px] h-[123px] rounded-[30px]"
+                            className="w-full max-w-[585px] h-[80px] md:h-[100px] lg:h-[123px] rounded-[20px] md:rounded-[30px] text-base md:text-lg"
                         >
                             {postVoteMutation.isPending ? '투표 중...' : (isVoted ? '재투표하기' : '투표하기')}
                         </Button>
@@ -198,7 +214,7 @@ const SecondTrial_1 = () => {
                         <Button 
                             variant="trialStart" 
                             size="lg" 
-                            className="w-[585px] h-[123px] rounded-[30px]"
+                            className="w-full max-w-[585px] h-[80px] md:h-[100px] lg:h-[123px] rounded-[20px] md:rounded-[30px] text-base md:text-lg"
                             onClick={() => navigate(`${PATHS.SECOND_TRIAL_FINAL}/${caseId}`)}
                         >
                             투표 결과보기
@@ -206,57 +222,55 @@ const SecondTrial_1 = () => {
                     )}
                 </div>
                 
-                {/* 5. 변론 입력 섹션 (마감 시간 전에만 표시) */}
-                { (
-                    <>
-                        <h2 className="text-2xl font-bold mb-4 border-t border-main pt-8 text-main">변호</h2>
-                        <div className="bg-main-bright p-6 rounded-lg mb-8"> 
-                            <div className="flex items-start space-x-4 mb-4">
-                                <div className="flex flex-col w-full space-y-4"> 
-                                    <select
-                                        id="argumentSideSelect"
-                                        value={newArgumentSide}
-                                        onChange={(e) => setNewArgumentSide(e.target.value as 'A' | 'B')}
-                                        className="
-                                        w-40 p-3 border border-main-medium rounded-md bg-white 
-                                        flex items-center justify-center 
-                                        text-center text-main
-                                        appearance-auto
-                                        focus:outline-none focus:ring-2 focus:ring-main-medium
-                                        "
-                                    >
-                                        <option value="">입장 선택</option>
-                                        <option value="A">A 의견</option>
-                                        <option value="B">B 의견</option>
-                                    </select>
-                                    
-                                    <Textarea 
-                                        placeholder="선택한 입장의 변호의견을 제시해주세요." 
-                                        minRows={3} 
-                                        maxRows={6} 
-                                        value={newArgument}
-                                        onChange={(e) => setNewArgument(e.target.value)}
-                                        className="w-full bg-white border-main-medium"
-                                    />
-                                </div>
-                            </div>
-                            
-                            <div className="flex justify-end">
-                                <Button 
-                                    variant="primary" 
-                                    className="mt-2"
-                                    onClick={handleSubmitArgument}
-                                    disabled={!newArgument.trim() || postDefenseMutation.isPending}
+                {/* 5. 변론 입력 섹션 */}
+                <>
+                    <h2 className="text-xl md:text-2xl font-bold mb-3 md:mb-4 border-t border-main pt-6 md:pt-8 text-main">변호</h2>
+                    <div className="bg-main-bright p-4 md:p-6 rounded-lg mb-6 md:mb-8"> 
+                        <div className="flex items-start space-x-4 mb-4">
+                            <div className="flex flex-col w-full space-y-3 md:space-y-4"> 
+                                <select
+                                    id="argumentSideSelect"
+                                    value={newArgumentSide}
+                                    onChange={(e) => setNewArgumentSide(e.target.value as 'A' | 'B')}
+                                    className="
+                                    w-full sm:w-40 p-2 md:p-3 border border-main-medium rounded-md bg-white 
+                                    flex items-center justify-center 
+                                    text-center text-main text-sm md:text-base
+                                    appearance-auto
+                                    focus:outline-none focus:ring-2 focus:ring-main-medium
+                                    "
                                 >
-                                    {postDefenseMutation.isPending ? '등록 중...' : '등록하기'}
-                                </Button>
+                                    <option value="">입장 선택</option>
+                                    <option value="A">A 의견</option>
+                                    <option value="B">B 의견</option>
+                                </select>
+                                
+                                <Textarea 
+                                    placeholder="선택한 입장의 변호의견을 제시해주세요." 
+                                    minRows={3} 
+                                    maxRows={6} 
+                                    value={newArgument}
+                                    onChange={(e) => setNewArgument(e.target.value)}
+                                    className="w-full bg-white border-main-medium text-sm md:text-base"
+                                />
                             </div>
                         </div>
-                    </>
-                )}
+                        
+                        <div className="flex justify-end">
+                            <Button 
+                                variant="primary" 
+                                className="mt-2 text-sm md:text-base"
+                                onClick={handleSubmitArgument}
+                                disabled={!newArgument.trim() || postDefenseMutation.isPending}
+                            >
+                                {postDefenseMutation.isPending ? '등록 중...' : '등록하기'}
+                            </Button>
+                        </div>
+                    </div>
+                </>
                 
                 {/* 탭 네비게이션 */}
-                <div className="flex space-x-2 mb-6 pb-2">
+                <div className="flex flex-wrap gap-2 mb-4 md:mb-6 pb-2">
                     {(['all', 'A', 'B'] as const).map((tab) => (
                         <Button 
                             key={tab}
@@ -264,7 +278,7 @@ const SecondTrial_1 = () => {
                             size="sm"
                             onClick={() => setCurrentTab(tab as Tab)}
                             className={clsx(
-                                "min-w-[80px]",
+                                "min-w-[70px] md:min-w-[80px] text-xs md:text-sm",
                                 currentTab !== tab && 'text-main hover:bg-gray-300'
                             )}
                         >
@@ -282,7 +296,7 @@ const SecondTrial_1 = () => {
                                 caseId={caseId!}
                                 defenseId={arg.defenseId}
                                 authorNickname={arg.authorNickname}
-                                authorRank={arg.authorRank} // 추가
+                                authorRank={arg.authorRank}
                                 side={arg.side}
                                 content={arg.content}
                                 likesCount={arg.likesCount}
@@ -290,7 +304,7 @@ const SecondTrial_1 = () => {
                             />
                         ))
                     ) : (
-                        <p className="text-center text-main py-10 bg-gray-50 rounded-lg">
+                        <p className="text-center text-main py-8 md:py-10 bg-gray-50 rounded-lg text-sm md:text-base">
                             {currentTab === 'all' 
                                 ? '제출된 변론 논거가 없습니다.' 
                                 : `${currentTab}측 변론 논거가 없습니다.`}
