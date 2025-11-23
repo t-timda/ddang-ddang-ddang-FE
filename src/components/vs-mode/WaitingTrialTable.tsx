@@ -18,15 +18,20 @@ interface WaitingTrialTableProps {
 const WaitingTrialTable: React.FC<WaitingTrialTableProps> = ({
   cases,
   startIndex,
-  totalCount,
   onCaseClick,
 }) => {
   return (
     <div className="bg-white rounded-lg overflow-hidden border-2 border-gray-300">
       <div className="grid grid-cols-12 gap-4 bg-main-bright px-6 py-4 font-bold text-main-medium">
-        <div className="col-span-1 text-center border-r border-gray-300">순서</div>
-        <div className="col-span-3 text-center border-r border-gray-300">주장</div>
-        <div className="col-span-6 text-center border-r border-gray-300">주제</div>
+        <div className="col-span-1 text-center border-r border-gray-300">
+          순서
+        </div>
+        <div className="col-span-3 text-center border-r border-gray-300">
+          주장
+        </div>
+        <div className="col-span-6 text-center border-r border-gray-300">
+          주제
+        </div>
         <div className="col-span-2 text-center">등록한 시간</div>
       </div>
 
@@ -36,17 +41,22 @@ const WaitingTrialTable: React.FC<WaitingTrialTableProps> = ({
         </div>
       ) : (
         <div className="divide-y divide-gray-200">
-          {cases.map((caseItem, idx) => (
-            <WaitingTrialItem
-              key={caseItem.caseId}
-              index={totalCount - (startIndex + idx)}
-              caseId={caseItem.caseId}
-              title={caseItem.title}
-              argumentAMain={caseItem.argumentAMain}
-              createdAt={caseItem.createdAt}
-              onClick={() => onCaseClick(caseItem.caseId)}
-            />
-          ))}
+          {cases.map((caseItem, idx) => {
+            // 페이지 기준 1, 2, 3, ... 순서로 보이게
+            const displayIndex = startIndex + idx + 1;
+
+            return (
+              <WaitingTrialItem
+                key={caseItem.caseId}
+                index={displayIndex}
+                caseId={caseItem.caseId}
+                title={caseItem.title}
+                argumentAMain={caseItem.argumentAMain}
+                createdAt={caseItem.createdAt}
+                onClick={() => onCaseClick(caseItem.caseId)}
+              />
+            );
+          })}
         </div>
       )}
     </div>
