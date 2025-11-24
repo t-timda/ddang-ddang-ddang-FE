@@ -297,7 +297,7 @@ const ArgumentCard: React.FC<ArgumentCardProps> = ({
             {activeReplyInput === null && (
               <div className="mt-2 p-3 rounded-md bg-main-bright">
                 <div className="flex items-center gap-2 mb-2">
-                  <label className="text-sm text-main">타입</label>
+                  <label className="text-sm text-main">의견</label>
                   <select
                     value={rebuttalType}
                     onChange={(e) => setRebuttalType(e.target.value as "A" | "B")}

@@ -136,61 +136,61 @@ const RebuttalItem: React.FC<RebuttalItemProps> = ({
             : 'bg-main-bright'
         }`}
       >
-        <div className="flex justify-between items-start">
-          <div className="flex-1">
-            <div className="flex items-center gap-2 text-main font-semibold">
-              <RankBadge 
-                rank={rebuttal.authorRank || "말싸움 풋내기"} 
-                nickname={rebuttal.authorNickname}
-                size="sm"
-              />
-              <span className={`px-2 py-0.5 rounded-xl text-xs font-semibold ${typeColorClass} ${typeBgClass}`}>
-                {rebuttal.type} 의견
+        {/* 첫 번째 줄: 명패+닉네임+의견 (왼쪽) | 신고하기+좋아요 (오른쪽) */}
+        <div className="flex justify-between items-center mb-2">
+          {/* 왼쪽: 명패 + 닉네임 + 의견 */}
+          <div className="flex items-center gap-2">
+            <RankBadge 
+              rank={rebuttal.authorRank || "말싸움 풋내기"} 
+              nickname={rebuttal.authorNickname}
+              size="sm"
+            />
+            <span className={`px-2 py-0.5 rounded-xl text-xs font-semibold ${typeColorClass} ${typeBgClass}`}>
+              {rebuttal.type} 의견
+            </span>
+          </div>
+
+          {/* 오른쪽: 신고하기 + 좋아요 */}
+          <div className="flex items-center gap-2 flex-shrink-0">
+            {/* 신고하기 버튼 */}
+            <button
+              onClick={() => onReport(rebuttal.rebuttalId)}
+              className="flex items-center gap-1 text-[10px] md:text-xs px-1 md:px-2 py-1 text-red-500 hover:text-red-700"
+              title="신고하기"
+            >
+              <Siren className="w-3 h-3 md:w-4 md:h-4" />
+              <span className="hidden md:inline">신고하기</span>
+            </button>
+            
+            {/* 좋아요 버튼 */}
+            <button
+              onClick={() => onLike(rebuttal.rebuttalId)}
+              disabled={isLikePending || isMyComment}
+              className="flex items-center gap-1 md:gap-2 text-main disabled:opacity-50"
+              aria-label="반론 좋아요"
+              title={isMyComment ? "내 댓글에는 좋아요를 누를 수 없습니다" : ""}
+            >
+              <ThumbUpIcon className="w-4 h-4 md:w-5 md:h-5" />
+              <span className="text-[10px] md:text-sm">
+                {rebuttal.likesCount}
+                <span className="hidden md:inline">명이 이 의견에 찬성합니다</span>
               </span>
-            </div>
-
-            {/* 신고하기 + 좋아요 버튼 */}
-            <div className="flex flex-row items-center gap-2 flex-shrink-0">
-              {/* 신고하기 버튼 - 모바일은 아이콘만, 데스크톱은 텍스트 포함 */}
-              <button
-                onClick={() => onReport(rebuttal.rebuttalId)}
-                className="flex items-center gap-1 text-[10px] md:text-xs px-1 md:px-2 py-1 text-red-500 hover:text-red-700"
-                title="신고하기"
-              >
-                <Siren className="w-3 h-3 md:w-4 md:h-4" />
-                <span className="hidden md:inline">신고하기</span>
-              </button>
-              
-              {/* 좋아요 버튼 - 모바일은 아이콘+숫자만, 데스크톱은 텍스트 포함 */}
-              <button
-                onClick={() => onLike(rebuttal.rebuttalId)}
-                disabled={isLikePending || isMyComment}
-                className="flex items-center gap-1 md:gap-2 text-main disabled:opacity-50"
-                aria-label="반론 좋아요"
-                title={isMyComment ? "내 댓글에는 좋아요를 누를 수 없습니다" : ""}
-              >
-                <ThumbUpIcon className="w-4 h-4 md:w-5 md:h-5" />
-                <span className="text-[10px] md:text-sm">
-                  {rebuttal.likesCount}
-                  <span className="hidden md:inline">명이 이 의견에 찬성합니다</span>
-                </span>
-              </button>
-            </div>
+            </button>
           </div>
-
-          {/* 댓글 본문 */}
-          <div className="mt-1 text-sm md:text-base text-main break-words">
-            {renderContentWithMentions(rebuttal.content)}
-          </div>
-          
-          {/* 답글 달기 버튼 */}
-          <button
-            onClick={handleReplyClick}
-            className="mt-2 text-[10px] md:text-xs text-main hover:underline"
-          >
-            ↳ 답글 달기
-          </button>
         </div>
+
+        {/* 두 번째 줄: 댓글 본문 */}
+        <div className="text-sm md:text-base text-main break-words mb-2">
+          {renderContentWithMentions(rebuttal.content)}
+        </div>
+        
+        {/* 세 번째 줄: 답글 달기 버튼 */}
+        <button
+          onClick={handleReplyClick}
+          className="text-[10px] md:text-xs text-main hover:underline"
+        >
+          ↳ 답글 달기
+        </button>
       </div>
 
       {/* 답글 입력창 - 이 댓글의 ID가 activeReplyInput과 일치할 때만 표시 */}
@@ -207,7 +207,7 @@ const RebuttalItem: React.FC<RebuttalItemProps> = ({
           </div>
           
           <div className="flex items-center gap-2 mb-2">
-            <label className="text-xs md:text-sm text-main">타입</label>
+            <label className="text-xs md:text-sm text-main">의견</label>
             <select
               value={replyType}
               onChange={(e) => setReplyType(e.target.value as "A" | "B")}
