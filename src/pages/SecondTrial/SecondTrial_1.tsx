@@ -153,7 +153,7 @@ const SecondTrial_1 = () => {
                             "bg-main-medium rounded-[20px] md:rounded-[30px]",
                             "pt-[3px] pb-[16px] md:pt-[4px] md:pb-[24px] px-[4px] md:px-[6px]",
                             isVoteTime ? 'cursor-pointer' : 'cursor-default',
-                            selectedSide === 'A' ? 'ring-4 ring-main-medium shadow-2xl scale-[1.02]' : 'hover:ring-2 hover:ring-blue-400',
+                            selectedSide === 'A' ? 'shadow-2xl scale-[1.02]' : '',
                             !isVoteTime && 'opacity-70'
                         )}
                     >
@@ -179,7 +179,7 @@ const SecondTrial_1 = () => {
                             "bg-main-red rounded-[20px] md:rounded-[30px]",
                             "pt-[3px] pb-[16px] md:pt-[4px] md:pb-[24px] px-[4px] md:px-[6px]",
                             isVoteTime ? 'cursor-pointer' : 'cursor-default',
-                            selectedSide === 'B' ? 'ring-4 ring-red-500 shadow-2xl scale-[1.02]' : 'hover:ring-2 hover:ring-red-400',
+                            selectedSide === 'B' ? 'shadow-2xl scale-[1.02]' : '',
                             !isVoteTime && 'opacity-70'
                         )}
                     >
