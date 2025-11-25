@@ -29,12 +29,12 @@ export default function Verdict() {
   return (
     <div className="flex flex-col items-center bg-white mx-auto w-full max-w-[1440px] min-h-screen pb-[100px] text-[#203C77] font-[Pretendard]">
       {/* 제목 */}
-      <h1 className="text-[38px] font-bold text-center mt-[84px] leading-[150%]">
+      <h1 className="text-[38px] font-bold text-center mt-10 leading-[150%]">
         최종 판결
       </h1>
 
       {/* 파란 박스 */}
-      <div className="relative w-[995px] h-[634px] bg-[#6596DA] rounded-[30px] mt-[84px]">
+      <div className="relative w-[995px] h-[634px] bg-[#6596DA] rounded-[30px] mt-10">
         {/* A입장 / VS / B입장 */}
         <div className="flex justify-center items-center pt-[57px] gap-[82px] text-white text-[38px] font-bold leading-[150%]">
           <p>A입장</p>
@@ -72,7 +72,7 @@ export default function Verdict() {
         initial={{ opacity: 0, y: 24, scale: 0.98 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 1.5, ease: "easeOut" }}
-        className="absolute top-[151px] right-[44px] w-[496px] h-[513px] bg-[#FFFFF6] rounded-[7px] flex flex-col items-center pt-[30px] text-[#EBAD27]"
+        className="absolute top-[151px] right-[44px] w-[496px] h-[450px] bg-[#FFFFF6] rounded-[7px] flex flex-col items-center text-[#EBAD27]"
       >
           <p className="absolute left-[39px] top-[29px] text-[14px] leading-[150%] font-['Gapyeong_Hanseokbong']">
             사건번호 - 01
@@ -91,11 +91,14 @@ export default function Verdict() {
             판결문
           </h2>
 
-          <p className="absolute top-[150px] left-1/2 -translate-x-1/2 w-[420px] text-[15px] leading-[150%] text-center text-[#EBAD27] font-normal font-['Gapyeong_Hanseokbong'] whitespace-pre-line">
-            {content}
-          </p>
+          {/* 스크롤 가능한 판결문 영역 */}
+          <div className="absolute top-[150px] left-1/2 -translate-x-1/2 w-[420px] h-[240px] overflow-y-auto scrollbar-thin scrollbar-thumb-[#EBAD27] scrollbar-track-[#FFFFF6]">
+            <p className="text-[15px] leading-[150%] text-center text-[#EBAD27] font-normal font-['Gapyeong_Hanseokbong'] whitespace-pre-line px-2">
+              {content}
+            </p>
+          </div>
 
-          <p className="absolute top-[403px] left-1/2 -translate-x-1/2 w-[420px] text-[15px] font-bold leading-[150%] text-center text-[#EBAD27] font-['Gapyeong_Hanseokbong']">
+          <p className="absolute bottom-[30px] left-1/2 -translate-x-1/2 w-[420px] text-[15px] font-bold leading-[150%] text-center text-[#EBAD27] font-['Gapyeong_Hanseokbong']">
             {verdict}입장 논리의 승리!
           </p>
         </motion.div>
@@ -137,11 +140,27 @@ export default function Verdict() {
       </div>
 
       {/* 하단 버튼 2개 */}
-      <div className="mt-[84px] flex justify-center gap-[32px]">
+      <div className="mt-[60px] md:mt-[84px] flex flex-col md:flex-row justify-center gap-[16px] md:gap-[32px] w-full max-w-[995px] px-4">
         {/* 재판 히스토리 보기 */}
-        <Button onClick={() => setShowHistoryModal(true)}>재판 히스토리 보기</Button>
+        <Button
+          variant="trialStart"
+          className="w-full md:w-[380px] h-[80px] md:h-[123px]"
+          onClick={() => setShowHistoryModal(true)}
+        >
+          <span className="text-white text-[22px] md:text-[36px] font-bold leading-normal">
+            재판 히스토리 보기
+          </span>
+        </Button>
         {/* 여기서 마치기 → 홈으로 */}
-        <Button onClick={() => {reset(); navigate('/');}}>홈으로</Button>
+        <Button
+          variant="secondary"
+          className="w-full md:w-[380px] h-[80px] md:h-[123px]"
+          onClick={() => {reset(); navigate('/');}}
+        >
+          <span className="text-white text-[22px] md:text-[36px] font-bold leading-normal">
+            홈으로
+          </span>
+        </Button>
       </div>
 
       {/* 판결 히스토리 모달 */}

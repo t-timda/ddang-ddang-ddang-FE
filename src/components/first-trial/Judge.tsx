@@ -37,12 +37,12 @@ export default function Judge() {
   return (
     <div className="flex flex-col items-center bg-white mx-auto w-full max-w-[1440px] px-4 md:px-[40px] min-h-screen pb-[100px] text-[#203C77] font-[Pretendard]">
       {/* 제목 */}
-      <h1 className="text-[28px] md:text-[38px] font-bold text-center mt-[40px] md:mt-[84px] leading-[150%]">
+      <h1 className="text-[28px] md:text-[38px] font-bold text-center mt-10 leading-[150%]">
         초심 최종 판결
       </h1>
 
       {/* 파란 박스 */}
-      <div className="relative w-full max-w-[995px] h-[634px] bg-[#6596DA] rounded-[30px] mt-[40px] md:mt-[84px]">
+      <div className="relative w-full max-w-[995px] h-[634px] bg-[#6596DA] rounded-[30px] mt-10">
         {/* 상단: A vs B  */}
         <div className="flex justify-center items-start pt-[40px] md:pt-[57px] gap-[24px] md:gap-[56px] text-white font-bold px-4 md:px-0">
           <p className="w-[45%] md:w-[300px] text-[20px] md:text-[28px] leading-[150%] text-center break-keep">

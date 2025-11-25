@@ -65,7 +65,7 @@ const TrialListItem = ({ trial }: TrialListItemProps) => {
                     text: "승리", 
                     bgClass: "bg-main-medium text-white",
                     isOngoing: false,
-                    roundText: "최종 심리 완료"
+                    roundText: "최종심 완료"
                 };
             }
             if (trial.caseResult === "LOSE") {
@@ -73,14 +73,14 @@ const TrialListItem = ({ trial }: TrialListItemProps) => {
                     text: "패배", 
                     bgClass: "bg-main-red text-white",
                     isOngoing: false,
-                    roundText: "최종 심리 완료"
+                    roundText: "최종심 완료"
                 };
             }
             return { 
                 text: "종료", 
                 bgClass: "bg-gray-400 text-white",
                 isOngoing: false,
-                roundText: "최종 심리 완료"
+                roundText: "최종심 완료"
             };
         }
         
@@ -120,7 +120,7 @@ const TrialListItem = ({ trial }: TrialListItemProps) => {
         } else if (trial.status === "THIRD") {
             navigate(`${PATHS.THIRD_TRIAL}/${trial.id}`);
         } else {
-            navigate(`${PATHS.FIRST_TRIAL}?caseId=${trial.id}`);
+            navigate(`${PATHS.FIRST_TRIAL}/${trial.id}`);
         }
     };
 

@@ -37,7 +37,7 @@ export const AchievementsTab: React.FC<AchievementsTabProps> = ({
                 key={achievement.achievementId} 
                 className="flex flex-col items-center"
               >
-                <div className="w-full bg-[#EFEFEF] rounded-lg p-3 md:p-4 mb-2 md:mb-3 hover:bg-gray-100 transition-colors">
+                <div className="w-full rounded-lg p-3 transition-colors">
                   <div className="w-full aspect-square">
                     <img 
                       src={achievement.achievementIconUrl} 

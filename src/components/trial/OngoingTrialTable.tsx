@@ -33,7 +33,7 @@ const OngoingTrialTable: React.FC<OngoingTrialTableProps> = ({
         <div className="col-span-4 text-center border-r border-gray-300">주제</div>
         <div className="col-span-3 text-center border-r border-gray-300">A 주장</div>
         <div className="col-span-3 text-center border-r border-gray-300">B 주장</div>
-        <div className="col-span-1 text-center">참여 변호사 현황</div>
+        <div className="col-span-1 text-center">2차/3차</div>
       </div>
 
       {/* 테이블 바디 */}

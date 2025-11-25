@@ -136,7 +136,7 @@ const SecondTrialRegister: React.FC = () => {
       <Button
         variant="trialStart"
         size="lg"
-        className="w-full max-w-[585px] h-[80px] md:h-[100px] lg:h-[123px] rounded-[20px] md:rounded-[30px] text-base md:text-lg"
+        className="w-full max-w-[585px] h-[80px] md:h-[100px] lg:h-[123px] rounded-[20px] md:rounded-[30px] text-base"
         onClick={handleStartClick}
         disabled={startSecond.isPending || !duration}
       >

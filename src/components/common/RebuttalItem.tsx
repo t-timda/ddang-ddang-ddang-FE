@@ -129,13 +129,16 @@ const RebuttalItem: React.FC<RebuttalItemProps> = ({
   };
   
   return (
-    <div style={{ paddingLeft: depth > 0 ? `${Math.min(depth * 16, 48)}px` : '0px' }}>
-      <div 
+    <div style={{
+      paddingLeft: depth > 0 ? `${Math.min(depth * 16, 48)}px` : '0px',
+      paddingRight: depth > 0 ? `${Math.min(depth * 8, 24)}px` : '0px'
+    }}>
+      <div
         ref={rebuttalRef}
         className={`p-2 md:p-3 rounded-lg transition-all duration-300 ${
-          isHighlighted 
-            ? 'bg-yellow-100 border-2 border-yellow-400 animate-pulse' 
-            : 'bg-main-bright'
+          isHighlighted
+            ? 'bg-yellow-100 border-2 border-yellow-400 animate-pulse'
+            : 'bg-white'
         }`}
       >
         {/* 첫 번째 줄: 명패+닉네임+의견 (왼쪽) | 신고하기+좋아요 (오른쪽) */}
@@ -197,7 +200,7 @@ const RebuttalItem: React.FC<RebuttalItemProps> = ({
 
       {/* 답글 입력창 - 이 댓글의 ID가 activeReplyInput과 일치할 때만 표시 */}
       {isThisInputActive && (
-        <div className="mt-2 p-2 md:p-3 rounded-md bg-main-bright">
+        <div className="mt-2 p-2 md:p-3 rounded-md bg-white border border-gray-200">
           <div className="text-[10px] md:text-xs text-main mb-2 flex justify-between items-center">
             <span>@{rebuttal.authorNickname}에게 답글 작성 중...</span>
             <button

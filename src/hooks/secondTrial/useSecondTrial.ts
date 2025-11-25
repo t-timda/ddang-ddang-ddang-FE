@@ -72,9 +72,10 @@ export const usePostRebuttalMutation = () => {
   return useMutation({
     // body만 받도록 수정 (defenseId는 body 안에 포함)
     mutationFn: (body: RebuttalRequest) => postRebuttal(body),
-    onSuccess: () => {
+    onSuccess: (_data, variables) => {
+      // 특정 defenseId의 rebuttals 쿼리를 무효화
+      queryClient.invalidateQueries({ queryKey: ["rebuttals", variables.defenseId] });
       queryClient.invalidateQueries({ queryKey: ["secondTrialDetails"] });
-      queryClient.invalidateQueries({ queryKey: ["rebuttals"] });
     },
   });
 };

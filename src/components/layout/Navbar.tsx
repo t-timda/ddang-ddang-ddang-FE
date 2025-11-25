@@ -277,7 +277,10 @@ export default function Navbar() {
                 ✕
               </button>
             </div>
-            <NotificationDropdown onClose={() => setIsNotificationOpen(false)} />
+            <NotificationDropdown
+              isFullScreen
+              onClose={() => setIsNotificationOpen(false)}
+            />
           </div>
         </div>
       )}
