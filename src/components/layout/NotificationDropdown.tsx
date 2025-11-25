@@ -6,9 +6,10 @@ import GrayBell from "@/assets/svgs/grayBell.svg?react";
 
 interface NotificationDropdownProps {
   onClose: () => void;
+  isFullScreen?: boolean;
 }
 
-const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ onClose }) => {
+const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ onClose, isFullScreen = false }) => {
   const navigate = useNavigate();
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { notifications, clearNotifications, setHighlightRebuttal, markAsRead, removeNotification } = useNotificationStore();
@@ -88,10 +89,14 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ onClose }) 
     }
   };
 
+  const containerClass = isFullScreen
+    ? "relative w-full h-full bg-white flex flex-col p-4"
+    : "absolute top-full right-0 mt-2 w-96 bg-white rounded-lg shadow-2xl border border-gray-200 z-[9999] max-h-[500px] overflow-hidden flex flex-col p-4";
+
   return (
     <div
       ref={dropdownRef}
-      className="absolute top-full right-0 mt-2 w-96 bg-white rounded-lg shadow-2xl border border-gray-200 z-[9999] max-h-[500px] overflow-hidden flex flex-col p-4"
+      className={containerClass}
     >
       {/* 헤더 */}
       <div className="flex items-center justify-between mb-3">

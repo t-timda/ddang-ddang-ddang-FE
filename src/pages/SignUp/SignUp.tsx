@@ -28,10 +28,12 @@ function getErrorMessage(e: unknown) {
 export default function SignupPage() {
   const [name, setName] = useState("");
   const [pw, setPw] = useState("");
+  const [pwConfirm, setPwConfirm] = useState("");
   const [emailLocal, setEmailLocal] = useState("");
   const [emailDomain, setEmailDomain] = useState(""); // placeholder 상태
   const [code, setCode] = useState("");
   const [showPw, setShowPw] = useState(false);
+  const [showPwConfirm, setShowPwConfirm] = useState(false);
   const nav = useNavigate();
   const emailLocalRef = useRef<HTMLInputElement | null>(null);
   const emailDomainRef = useRef<HTMLSelectElement | null>(null);
@@ -46,9 +48,13 @@ export default function SignupPage() {
     () => emailLocal.trim().length > 0 && emailDomain !== "",
     [emailLocal, emailDomain]
   );
+  const passwordsMatch = useMemo(
+    () => pw.length > 0 && pwConfirm.length > 0 && pw === pwConfirm,
+    [pw, pwConfirm]
+  );
   const canSubmit = useMemo(
-    () => !!(name && pw && code.trim().length > 0),
-    [name, pw, code]
+    () => !!(name && pw && pwConfirm && code.trim().length > 0 && passwordsMatch),
+    [name, pw, pwConfirm, code, passwordsMatch]
   );
 
   const sendCodeMut = useSendEmailCodeMutation();
@@ -106,6 +112,10 @@ export default function SignupPage() {
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!canSubmit || !email) return;
+    if (!passwordsMatch) {
+      showError("비밀번호가 일치하지 않습니다.");
+      return;
+    }
 
     try {
       await verifyCodeMut.mutateAsync({ email, code });
@@ -261,6 +271,47 @@ export default function SignupPage() {
                   <PasswordIcon className="h-[20px] w-[20px] opacity-80" />
                 </button>
               </div>
+            </div>
+
+            {/* 비밀번호 확인 */}
+            <div className="flex flex-col gap-2">
+              <Label>비밀번호 확인</Label>
+              <div className="relative">
+                <input
+                  type={showPwConfirm ? "text" : "password"}
+                  value={pwConfirm}
+                  onChange={(e) => setPwConfirm(e.target.value)}
+                  placeholder="비밀번호를 다시 입력해주세요"
+                  name="password-confirm"
+                  autoComplete="new-password"
+                  className="
+                    h-[64px] w-full rounded-[10px]
+                    bg-main-bright px-[20px] pr-[52px]
+                    text-[16px] text-main outline-none
+                    placeholder:text-main
+                    focus:ring-2 focus:ring-main-medium
+                  "
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPwConfirm((v) => !v)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2"
+                  aria-label={showPwConfirm ? "비밀번호 확인 숨기기" : "비밀번호 확인 보기"}
+                >
+                  <PasswordIcon className="h-[20px] w-[20px] opacity-80" />
+                </button>
+              </div>
+              {pwConfirm.length > 0 && (
+                <p
+                  className={`text-sm ${
+                    passwordsMatch ? "text-main" : "text-main-red"
+                  }`}
+                >
+                  {passwordsMatch
+                    ? "비밀번호가 일치합니다."
+                    : "비밀번호가 일치하지 않습니다."}
+                </p>
+              )}
             </div>
 
             <div className="flex items-start justify-between pt-2">

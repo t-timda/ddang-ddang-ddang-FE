@@ -36,7 +36,7 @@ const JudgmentHistoryModal: React.FC<JudgmentHistoryModalProps> = ({
         onClick={(e) => e.stopPropagation()}
       >
         {/* 모달 헤더 */}
-        <div className="sticky top-0 bg-white border-b-2 border-main-bright p-6 flex justify-between items-center">
+        <div className="sticky top-0 bg-white border-b-2 border-main-bright p-6 flex justify-between items-center z-10">
           <h2 className="text-2xl font-bold text-main">
             사건 #{caseId} 재판 히스토리
           </h2>
@@ -111,13 +111,6 @@ const JudgmentHistoryModal: React.FC<JudgmentHistoryModalProps> = ({
               ))}
             </div>
           )}
-        </div>
-
-        {/* 모달 푸터 */}
-        <div className="sticky bottom-0 bg-white border-t-2 border-main-bright p-6 flex justify-end">
-          <Button onClick={onClose} variant="primary">
-            닫기
-          </Button>
         </div>
       </div>
     </div>

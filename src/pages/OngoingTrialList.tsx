@@ -60,7 +60,7 @@ const OngoingTrialList: React.FC = () => {
         {/* 헤더 */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-[#203C77] mb-3">
-            현재 진행중인 재판
+            참여 가능한 재판
           </h1>
           <p className="text-gray-500">
             현재 많은 변호사들이 참여중인 재판을 살펴봐요!

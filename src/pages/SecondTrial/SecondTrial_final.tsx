@@ -219,7 +219,7 @@ const SecondTrial_final: React.FC = () => {
             size="lg"
             onClick={handleGoToThirdTrial}
             disabled={!isButtonEnabled}
-            className={`w-full max-w-[585px] h-[80px] md:h-[100px] lg:h-[123px] rounded-[20px] md:rounded-[30px] text-base md:text-lg ${
+            className={`w-full max-w-[585px] h-[80px] md:h-[100px] lg:h-[123px] rounded-[20px] md:rounded-[30px] text-base ${
               !isButtonEnabled
                 ? "bg-gray-300 text-gray-500 cursor-not-allowed hover:bg-gray-300"
                 : ""

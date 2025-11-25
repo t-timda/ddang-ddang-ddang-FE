@@ -208,7 +208,7 @@ const SecondTrial_1 = () => {
                             size="lg" 
                             onClick={handleVote}
                             disabled={!selectedSide || postVoteMutation.isPending} 
-                            className="w-full max-w-[585px] h-[80px] md:h-[100px] lg:h-[123px] rounded-[20px] md:rounded-[30px] text-base md:text-lg"
+                            className="w-full max-w-[585px] h-[80px] md:h-[100px] lg:h-[123px] rounded-[20px] md:rounded-[30px] text-base"
                         >
                             {postVoteMutation.isPending ? '투표 중...' : (isVoted ? '재투표하기' : '투표하기')}
                         </Button>
@@ -216,7 +216,7 @@ const SecondTrial_1 = () => {
                         <Button 
                             variant="trialStart" 
                             size="lg" 
-                            className="w-full max-w-[585px] h-[80px] md:h-[100px] lg:h-[123px] rounded-[20px] md:rounded-[30px] text-base md:text-lg"
+                            className="w-full max-w-[585px] h-[80px] md:h-[100px] lg:h-[123px] rounded-[20px] md:rounded-[30px] text-base"
                             onClick={() => navigate(`${PATHS.SECOND_TRIAL_FINAL}/${caseId}`)}
                         >
                             투표 결과보기

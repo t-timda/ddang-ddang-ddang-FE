@@ -35,6 +35,7 @@ const CARD_WIDTH = 340;
 const CARD_GAP = 16;
 const AUTO_SLIDE_INTERVAL = 4000;
 const CAROUSEL_TRANSITION_MS = 500;
+const MOBILE_MAX_WIDTH = 768; // tailwind md breakpoint 이하를 모바일로 간주
 const CAROUSEL_BREAKPOINTS = [
   { minWidth: 1280, visibleCount: 4 },
   { minWidth: 1024, visibleCount: 3 },
@@ -47,6 +48,8 @@ const DEFAULT_VISIBLE_COUNT =
 
 const getVisibleCountForWidth = (width: number | null | undefined) => {
   if (!width && width !== 0) return DEFAULT_VISIBLE_COUNT;
+  // md 이하에서는 모바일 뷰로 1개만 노출
+  if (width <= MOBILE_MAX_WIDTH) return 1;
 
   return (
     CAROUSEL_BREAKPOINTS.find((bp) => width >= bp.minWidth)?.visibleCount ??
@@ -58,6 +61,9 @@ const MainPage = () => {
   // 캐러셀 시작 인덱스
   const [startIndex, setStartIndex] = useState(0);
   const [cardWidth, setCardWidth] = useState(CARD_WIDTH);
+  const [isMobile, setIsMobile] = useState(() =>
+    typeof window === "undefined" ? false : window.innerWidth <= MOBILE_MAX_WIDTH
+  );
   const [visibleCount, setVisibleCount] = useState(() =>
     typeof window === "undefined"
       ? getVisibleCountForWidth(null)
@@ -69,6 +75,11 @@ const MainPage = () => {
   // 로그인 모달
   const [showLoginModal, setShowLoginModal] = useState(false);
   const viewportRef = useRef<HTMLDivElement | null>(null);
+  const autoSlideTimerRef = useRef<number | null>(null);
+
+  // 버튼 쿨타임
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+  const buttonCooldownRef = useRef<NodeJS.Timeout | null>(null);
 
   const { showError } = useToast();
 
@@ -76,10 +87,14 @@ const MainPage = () => {
     if (typeof window === "undefined") return;
 
     const handleResize = () => {
-      const nextVisibleCount = getVisibleCountForWidth(window.innerWidth);
+      const width = window.innerWidth;
+      const nextVisibleCount = getVisibleCountForWidth(width);
+      const nextIsMobile = width <= MOBILE_MAX_WIDTH;
+
       setVisibleCount((prev) =>
         prev === nextVisibleCount ? prev : nextVisibleCount
       );
+      setIsMobile(nextIsMobile);
     };
 
     handleResize();
@@ -144,43 +159,47 @@ const MainPage = () => {
   };
 
   // HOT 재판 리스트 (API → 카드용 데이터)
-  const hotList =
-  hotQ.data?.data?.result?.map((c) => ({
-    id: c.caseId,
-    title:
-      c.mainArguments && c.mainArguments.length >= 2
-        ? `${c.mainArguments[0]} VS ${c.mainArguments[1]}`
-        : c.title,
-    originalTitle: c.title,
-    mainArguments: c.mainArguments,
-    participateCnt: c.participateCnt ?? 0,
-  })) ?? [];
+  const apiHotList =
+    hotQ.data?.data?.result?.map((c) => ({
+      id: c.caseId,
+      title:
+        c.mainArguments && c.mainArguments.length >= 2
+          ? `${c.mainArguments[0]} VS ${c.mainArguments[1]}`
+          : c.title,
+      originalTitle: c.title,
+      mainArguments: c.mainArguments,
+      participateCnt: c.participateCnt ?? 0,
+    })) ?? [];
 
-  const lastUpdated = hotQ.data?.lastUpdated 
+  // 빈 배열이면 fallback 데이터 사용
+  const hotList = apiHotList.length > 0 ? apiHotList : hotDebatesFallback;
+
+  const lastUpdated = hotQ.data?.lastUpdated
     ? formatUpdateTime(hotQ.data.lastUpdated)
     : '';
 
   const totalSlides = hotList.length;
   const shouldLoop = totalSlides > visibleCount;
-  const carouselItems = useMemo(
-    () =>
-      shouldLoop ? [...hotList, ...hotList.slice(0, visibleCount)] : hotList,
-    [hotList, shouldLoop, visibleCount]
-  );
+  const cloneCount = shouldLoop ? visibleCount : 0;
+
+  // 무한 루프를 위해 앞/뒤로 가시 카드 수만큼만 복제
+  const carouselItems = useMemo(() => {
+    if (!shouldLoop || totalSlides === 0) return hotList;
+    const headClones = hotList.slice(-cloneCount);
+    const tailClones = hotList.slice(0, cloneCount);
+    return [...headClones, ...hotList, ...tailClones];
+  }, [hotList, shouldLoop, totalSlides, cloneCount]);
+
   const finiteMaxIndex = useMemo(
     () => Math.max(totalSlides - visibleCount, 0),
     [totalSlides, visibleCount]
   );
 
+  // 초기 위치: 복제영역을 지나 첫 실 카드부터 시작
   useEffect(() => {
-    setStartIndex((prev) => {
-      if (shouldLoop) {
-        if (totalSlides === 0) return 0;
-        return prev % totalSlides;
-      }
-      return Math.min(prev, finiteMaxIndex);
-    });
-  }, [shouldLoop, finiteMaxIndex, totalSlides]);
+    const initialIndex = shouldLoop && totalSlides > 0 ? cloneCount : 0;
+    setStartIndex(initialIndex);
+  }, [shouldLoop, totalSlides, cloneCount]);
 
   useEffect(() => {
     const updateCardWidth = () => {
@@ -205,60 +224,119 @@ const MainPage = () => {
     return () => window.removeEventListener("resize", updateCardWidth);
   }, [visibleCount]);
 
+  // 쿨타임 적용 함수
+  const applyCooldown = useCallback(() => {
+    setIsButtonDisabled(true);
+    if (buttonCooldownRef.current) {
+      clearTimeout(buttonCooldownRef.current);
+    }
+    buttonCooldownRef.current = setTimeout(() => {
+      setIsButtonDisabled(false);
+    }, 500); // 1초 쿨타임
+  }, []);
+
+  // cleanup
+  useEffect(() => {
+    return () => {
+      if (buttonCooldownRef.current) {
+        clearTimeout(buttonCooldownRef.current);
+      }
+    };
+  }, []);
+
+  const clearAutoSlide = useCallback(() => {
+    if (autoSlideTimerRef.current) {
+      window.clearInterval(autoSlideTimerRef.current);
+      autoSlideTimerRef.current = null;
+    }
+  }, []);
+
+  const startAutoSlide = useCallback(() => {
+    if (!shouldLoop || totalSlides === 0 || isMobile) return;
+    clearAutoSlide();
+    autoSlideTimerRef.current = window.setInterval(() => {
+      setStartIndex((prev) => prev + 1);
+    }, AUTO_SLIDE_INTERVAL);
+  }, [clearAutoSlide, shouldLoop, totalSlides, isMobile]);
+
+  const restartAutoSlide = useCallback(() => {
+    if (!shouldLoop || totalSlides === 0) return;
+    startAutoSlide();
+  }, [shouldLoop, totalSlides, startAutoSlide]);
+
   // 이전 화살표
   const handlePrevSingle = useCallback(() => {
-    console.log("이전 슬라이드 클릭");
-    if (shouldLoop) {
-      if (startIndex === 0) {
-        if (totalSlides === 0) return;
-        setIsTransitionEnabled(false);
-        requestAnimationFrame(() => {
-          setStartIndex(totalSlides - 1);
-          requestAnimationFrame(() => setIsTransitionEnabled(true));
-        });
-        return;
-      }
-      setStartIndex((prevIndex) => Math.max(prevIndex - 1, 0));
-      return;
-    }
+    if (isButtonDisabled) return;
 
-    setStartIndex((prevIndex) => Math.max(prevIndex - 1, 0));
-  }, [shouldLoop, startIndex, totalSlides]);
+    applyCooldown();
+
+    if (shouldLoop) {
+      setStartIndex((prev) => prev - 1);
+      restartAutoSlide();
+    } else {
+      setStartIndex((prevIndex) => Math.max(prevIndex - 1, 0));
+    }
+  }, [shouldLoop, isButtonDisabled, applyCooldown, restartAutoSlide]);
 
   // 다음 화살표
   const handleNextSingle = useCallback(() => {
+    if (isButtonDisabled) return;
+
+    applyCooldown();
+
     if (shouldLoop) {
-      setStartIndex((prevIndex) => prevIndex + 1);
+      setStartIndex((prev) => prev + 1);
+      restartAutoSlide();
     } else {
       setStartIndex((prevIndex) => Math.min(prevIndex + 1, finiteMaxIndex));
     }
-    console.log("다음 슬라이드 클릭");
-  }, [shouldLoop, finiteMaxIndex]);
+  }, [shouldLoop, finiteMaxIndex, isButtonDisabled, applyCooldown, restartAutoSlide]);
 
   useEffect(() => {
-    if (!shouldLoop) return;
-    const timer = window.setInterval(() => {
-      setStartIndex((prev) => prev + 1);
-    }, AUTO_SLIDE_INTERVAL);
+    startAutoSlide();
+    return () => clearAutoSlide();
+  }, [startAutoSlide, clearAutoSlide]);
 
-    return () => window.clearInterval(timer);
-  }, [shouldLoop, totalSlides, visibleCount]);
-
+  // 무한 루프 리셋 로직 (복제 영역 진입 시 점프)
   useEffect(() => {
-    if (!shouldLoop) return;
-    if (totalSlides === 0) return;
-    if (startIndex < totalSlides) return;
+    if (!shouldLoop || totalSlides === 0) return;
 
-    const timeoutId = window.setTimeout(() => {
-      setIsTransitionEnabled(false);
-      requestAnimationFrame(() => {
-        setStartIndex(0);
-        requestAnimationFrame(() => setIsTransitionEnabled(true));
-      });
-    }, CAROUSEL_TRANSITION_MS);
+    const firstRealIndex = cloneCount;
+    const lastRealIndex = cloneCount + totalSlides - 1;
 
-    return () => window.clearTimeout(timeoutId);
-  }, [shouldLoop, startIndex, totalSlides]);
+    if (startIndex > lastRealIndex) {
+      const timer = setTimeout(() => {
+        setIsTransitionEnabled(false);
+        setStartIndex(startIndex - totalSlides);
+        requestAnimationFrame(() => {
+          setIsTransitionEnabled(true);
+        });
+      }, CAROUSEL_TRANSITION_MS);
+      return () => clearTimeout(timer);
+    }
+
+    if (startIndex < firstRealIndex) {
+      const timer = setTimeout(() => {
+        setIsTransitionEnabled(false);
+        setStartIndex(startIndex + totalSlides);
+        requestAnimationFrame(() => {
+          setIsTransitionEnabled(true);
+        });
+      }, CAROUSEL_TRANSITION_MS);
+      return () => clearTimeout(timer);
+    }
+  }, [startIndex, shouldLoop, totalSlides, cloneCount]);
+
+  const currentSlideIndex =
+    totalSlides === 0
+      ? 0
+      : (((shouldLoop ? startIndex - cloneCount : startIndex) % totalSlides) + totalSlides) %
+        totalSlides;
+
+  const isPrevDisabled =
+    isButtonDisabled || (!shouldLoop && startIndex <= 0);
+  const isNextDisabled =
+    isButtonDisabled || (!shouldLoop && startIndex >= finiteMaxIndex);
 
   return (
     <div className="bg-white min-h-screen w-full flex items-center flex-col">
@@ -444,9 +522,15 @@ const MainPage = () => {
       <section className="bg-main-bright w-full py-4 md:pt-8 md:pb-20">
         {/* 제목 + 전체 재판 보기 버튼 */}
         <div className="flex px-4 md:px-[120px] justify-between items-center p-2 md:pt-10 flex-col md:flex-row gap-4 md:gap-0 text-center md:text-left">
-          <h2 className="text-2xl font-bold text-main">
-            현재 진행중인 가장 핫한 재판에 참여해보세요
-          </h2>
+          {isMobile ? (
+            <h2 className="text-3xl font-bold text-main">
+              현재 진행중인 가장 핫한 재판에 참여해보세요
+            </h2>
+          ) : (
+            <h2 className="text-2xl font-bold text-main">
+              진행중인 가장 핫한 재판
+            </h2>
+          )}
           <Button
             variant="bright_main"
             className="
@@ -456,6 +540,7 @@ const MainPage = () => {
               active:translate-y-[2px]
               active:shadow-[0_4px_0_0_rgba(62,116,214,0.8)]
               transition-all
+              text-lg font-bold
             "
             onClick={() => navigate(PATHS.ONGOING_TRIALS)}
           >
@@ -482,8 +567,8 @@ const MainPage = () => {
             <Button
               onClick={handlePrevSingle}
               variant="white"
-              disabled={!shouldLoop && startIndex === 0}
-              className="hidden md:flex absolute left-[46px] top-1/2 -translate-y-1/2 rounded-full w-13 h-13 z-10 items-center justify-center"
+              disabled={isPrevDisabled}
+              className="hidden md:flex absolute left-[46px] top-1/2 -translate-y-1/2 rounded-full w-13 h-13 z-10 items-center justify-center transition-opacity disabled:opacity-40"
             >
               <Left className="w-6 h-6" title="이전 논쟁" />
             </Button>
@@ -492,29 +577,39 @@ const MainPage = () => {
               <div
                 className="flex"
                 style={{
-                  transform: `translateX(${translateSingleValue}px)`,
                   gap: `${CARD_GAP}px`,
+                  transform: `translateX(${translateSingleValue}px)`,
                   transition: isTransitionEnabled
-                    ? `transform ${CAROUSEL_TRANSITION_MS}ms ease`
-                    : "none",
+                    ? `transform ${CAROUSEL_TRANSITION_MS}ms ease-in-out`
+                    : 'none',
                 }}
               >
-                {carouselItems.map((debate, index) => (
-                  <div
-                    key={`${debate.id}-${index}`}
-                    className="flex-shrink-0"
-                    style={{ width: `${Math.max(cardWidth, 0)}px` }}
-                  >
-                    <HotDebateCard debate={debate} />
-                  </div>
-                ))}
+                {carouselItems.map((debate, index) => {
+                  // 복제 포함 트랙에서 실제 원본 인덱스 계산
+                  const originalIndex =
+                    totalSlides > 0
+                      ? (index - cloneCount + totalSlides) % totalSlides
+                      : index;
+                  const isFirstCard = originalIndex === 0;
+
+                  return (
+                    <div
+                      key={`${debate.id}-${index}`}
+                      className="flex-shrink-0"
+                      style={{ width: `${Math.max(cardWidth, 0)}px` }}
+                    >
+                      <HotDebateCard debate={debate} isFirst={isFirstCard} />
+                    </div>
+                  );
+                })}
               </div>
             </div>
             {/* 오른쪽 화살표 (데스크톱만) */}
           <Button
             onClick={handleNextSingle}
             variant="white"
-            className="hidden md:flex absolute right-[46px] top-1/2 -translate-y-1/2 rounded-full w-13 h-13 cursor-pointer z-10 items-center justify-center"
+            disabled={isNextDisabled}
+            className="hidden md:flex absolute right-[46px] top-1/2 -translate-y-1/2 rounded-full w-13 h-13 cursor-pointer z-10 items-center justify-center transition-opacity disabled:opacity-40 disabled:cursor-not-allowed"
           >
             <Right className="w-6 h-6" title="다음 논쟁" />
           </Button>
@@ -525,9 +620,12 @@ const MainPage = () => {
             {Array.from({ length: totalSlides }).map((_, index) => (
               <button
                 key={index}
-                onClick={() => setStartIndex(index)}
+                onClick={() => {
+                  setStartIndex(shouldLoop ? index + cloneCount : index);
+                  restartAutoSlide();
+                }}
                 className={`transition-all duration-300 rounded-full
-                  ${startIndex % totalSlides === index
+                  ${currentSlideIndex === index
                     ? 'w-8 h-2 bg-main'
                     : 'w-2 h-2 bg-main-medium'
                   }`}

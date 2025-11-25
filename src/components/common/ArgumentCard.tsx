@@ -271,28 +271,35 @@ const ArgumentCard: React.FC<ArgumentCardProps> = ({
 
         {/* 펼친 영역 */}
         {expanded && (
-          <div className="mt-4 bg-main-bright">
+          <div className="mt-4 bg-main-bright rounded-lg p-3">
             {isRebuttalsLoading ? (
-              <div className="text-sm text-gray-500">의견을 불러오는 중...</div>
+              <div className="text-center py-8 text-main">
+                <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-main mb-2"></div>
+                <p className="text-sm">의견을 불러오는 중...</p>
+              </div>
             ) : rebuttals.length === 0 ? (
-              <div className="text-sm text-gray-500">등록된 의견이 없습니다.</div>
+              <div className="text-center pt-6 text-sm text-gray-500">
+                등록된 의견이 없습니다
+              </div>
             ) : (
-              rebuttals.map((r) => (
-                <RebuttalItem
-                  key={r.rebuttalId}
-                  rebuttal={r}
-                  depth={0}
-                  defenseId={defenseId}
-                  onLike={handleLikeRebuttal}
-                  isLikePending={toggleRebuttalLikeMutation.isPending}
-                  postRebuttalMutation={postRebuttalMutation}
-                  defaultRebuttalType={rebuttalType}
-                  onReport={(rebuttalId) => handleReport(rebuttalId, "REBUTTAL")} 
-                  currentUserNickname={currentUserNickname}
-                  activeReplyInput={activeReplyInput}
-                  setActiveReplyInput={setActiveReplyInput}
-                />
-              ))
+              <div className="space-y-3">
+                {rebuttals.map((r) => (
+                  <RebuttalItem
+                    key={r.rebuttalId}
+                    rebuttal={r}
+                    depth={0}
+                    defenseId={defenseId}
+                    onLike={handleLikeRebuttal}
+                    isLikePending={toggleRebuttalLikeMutation.isPending}
+                    postRebuttalMutation={postRebuttalMutation}
+                    defaultRebuttalType={rebuttalType}
+                    onReport={(rebuttalId) => handleReport(rebuttalId, "REBUTTAL")}
+                    currentUserNickname={currentUserNickname}
+                    activeReplyInput={activeReplyInput}
+                    setActiveReplyInput={setActiveReplyInput}
+                  />
+                ))}
+              </div>
             )}
 
             {/* 최상위 의견 입력 */}
