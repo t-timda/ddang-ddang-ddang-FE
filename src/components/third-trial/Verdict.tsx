@@ -27,7 +27,7 @@ export default function Verdict() {
   const judgeImage = judgeIllustrationUrl;
 
   return (
-    <div className="flex flex-col items-center bg-white mx-auto w-full max-w-[1440px] min-h-screen pb-[100px] text-[#203C77] font-[Pretendard]">
+    <div className="flex flex-col items-center bg-white mx-auto w-full max-w-[1440px] min-h-[calc(100vh-98px)] pb-[100px] text-[#203C77] font-[Pretendard]">
       {/* 제목 */}
       <h1 className="text-[38px] font-bold text-center mt-10 leading-[150%]">
         최종 판결

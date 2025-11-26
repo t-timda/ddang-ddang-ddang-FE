@@ -21,9 +21,7 @@ type TrialListItemProps = {
 const TrialListItem = ({ trial }: TrialListItemProps) => {
     const navigate = useNavigate();
     const [isExpanded, setIsExpanded] = useState(false);
-
-    console.log("TrialListItem trial:", trial); // trial 데이터 콘솔 출력
-
+    
     const RightArrowIcon: React.FC<{ size: number }> = ({ size }) => (
         <svg 
             className={`w-[${size}px] h-[${size}px]`} 
@@ -182,16 +180,15 @@ const TrialListItem = ({ trial }: TrialListItemProps) => {
                         <div className="flex items-center">
                             <span className="font-semibold text-main w-28">승패여부:</span>
                             <span className={`font-bold ${
-                              trial.caseResult === "WIN" ? "text-main-medium" :
-                              trial.caseResult === "LOSE" ? "text-main-red" :
-                              trial.caseResult === "SOLO" ? "text-main-medium" :
-                              "text-gray-600"
+                                trial.caseResult === "WIN" ? "text-main-medium" :
+                                trial.caseResult === "LOSE" ? "text-main-red" :
+                                trial.caseResult === "SOLO" ? "text-main-medium" :
+                                "text-gray-600"
                             }`}>
-                              {trial.caseResult === "WIN" ? "승리" :
-                               trial.caseResult === "LOSE" ? "패배" :
-                               trial.caseResult === "SOLO" ? "완료" :
-                               trial.caseResult === "PENDING" ? "진행중" :
-                               "미정"}
+                                {trial.caseResult === "WIN" ? "승리" :
+                                 trial.caseResult === "LOSE" ? "패배" :
+                                 trial.caseResult === "SOLO" ? "완료" :
+                                 "진행중"}
                             </span>
                         </div>
                         <div className="flex items-center">

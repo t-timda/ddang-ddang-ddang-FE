@@ -13,6 +13,7 @@ import {
 import type { DefenseRequest, VoteRequest } from '@/types/apis/secondTrial';
 import { parseLocalDateTimeArray, formatDateTime, isDeadlinePassed } from '@/utils/dateUtils';
 import { useToast } from '@/hooks/useToast';
+import { motion } from 'framer-motion';
 
 // 탭 상태 타입
 type Tab = 'all' | 'A' | 'B';
@@ -127,7 +128,7 @@ const SecondTrial_1 = () => {
     }
 
     return (
-        <div className="bg-white min-h-screen pt-6 md:pt-12 pb-12 md:pb-20">
+        <div className="bg-white min-h-[calc(100vh-98px)] pt-6 md:pt-12 pb-12 md:pb-20">
             <div className="max-w-6xl mx-auto px-4 md:px-6 lg:px-4">
                 
                 {/* 1. 헤더 및 타이머 */}
@@ -148,7 +149,10 @@ const SecondTrial_1 = () => {
                 {/* 3. 주장 선택 카드 */}
                 <div className="flex flex-col lg:flex-row gap-4 md:gap-6 lg:gap-8 lg:justify-between mb-8 md:mb-12">
                     {/* A. 찬성 블록 */}
-                    <div
+                    <motion.div
+                        initial={{ opacity: 0, x: -80 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 1.2, ease: [0.25, 0.46, 0.45, 0.94] }}
                         onClick={() => isVoteTime && setSelectedSide('A')}
                         className={clsx(
                             "w-full lg:w-[513px] h-[300px] sm:h-[350px] md:h-[400px] lg:h-[447px]",
@@ -171,10 +175,13 @@ const SecondTrial_1 = () => {
                                 {details.argumentA.reasoning}
                             </p>
                         </div>
-                    </div>
+                    </motion.div>
 
                     {/* B. 반대 블록 */}
-                    <div
+                    <motion.div
+                        initial={{ opacity: 0, x: 80 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 1.2, ease: [0.25, 0.46, 0.45, 0.94] }}
                         onClick={() => isVoteTime && setSelectedSide('B')}
                         className={clsx(
                             "w-full lg:w-[513px] h-[300px] sm:h-[350px] md:h-[400px] lg:h-[447px]",
@@ -197,7 +204,7 @@ const SecondTrial_1 = () => {
                                 {details.argumentB.reasoning}
                             </p>
                         </div>
-                    </div>
+                    </motion.div>
                 </div>
 
                 {/* 4. 투표하기 버튼 */}

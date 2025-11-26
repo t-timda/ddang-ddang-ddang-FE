@@ -23,7 +23,7 @@ import { useToast } from "@/hooks/useToast";
 const MyPage = () => {
   const authStore = useAuthStore();
   const isAuthenticated = !!authStore.accessToken;
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const { showSuccess, showError, showWarning } = useToast();
 
   const {
@@ -39,7 +39,6 @@ const MyPage = () => {
     ongoingTrialsWithType,
     defenseListWithResult,
     allItems,
-    isLargeScreen,
   } = useMyPageData(isAuthenticated);
 
   const updateProfileMutation = useUpdateUserProfileMutation();
@@ -110,6 +109,48 @@ const MyPage = () => {
       defenseSortType
     );
 
+  //정렬 기준 통일: createdAt / updatedAt / participatedAt / defendedAt / joinedAt 중 있는 값 사용
+  const getTimeValue = (item: any) => {
+    const dateString =
+      item.createdAt ||
+      item.updatedAt ||
+      item.participatedAt ||
+      item.defendedAt ||
+      item.joinedAt;
+
+    if (dateString) {
+      const time = new Date(dateString).getTime();
+      if (!Number.isNaN(time)) return time;
+    }
+
+    if (typeof item.id === "number") return item.id;
+    const parsedId = Number(item.id);
+    if (!Number.isNaN(parsedId)) return parsedId;
+
+    return 0;
+  };
+
+  // 전체 재판
+  const sortedAllItems = useMemo(() => {
+    const copied = [...filteredAllItems];
+    copied.sort((a, b) => getTimeValue(b) - getTimeValue(a));
+    return copied;
+  }, [filteredAllItems]);
+
+  // 진행중인 재판
+  const sortedOngoingTrials = useMemo(() => {
+    const copied = [...filteredOngoingTrials];
+    copied.sort((a, b) => getTimeValue(b) - getTimeValue(a));
+    return copied;
+  }, [filteredOngoingTrials]);
+
+  // 나의 변호 전적
+  const sortedDefenseList = useMemo(() => {
+    const copied = [...filteredDefenseList];
+    copied.sort((a, b) => getTimeValue(b) - getTimeValue(a));
+    return copied;
+  }, [filteredDefenseList]);
+
   const paginatedAchievements = useMemo(() => {
     const achievements = achievementsData?.result ?? [];
     const startIndex = (achievementPage - 1) * ACHIEVEMENTS_PER_PAGE;
@@ -117,33 +158,22 @@ const MyPage = () => {
     return achievements.slice(startIndex, endIndex);
   }, [achievementsData, achievementPage]);
 
-  // 최신순 정렬 (caseId 내림차순)
-  const sortedAllItems = useMemo(() => {
-    return [...allItems].sort((a, b) => Number(b.caseId) - Number(a.caseId));
-  }, [allItems]);
-
-  const sortedOngoingTrials = useMemo(() => {
-    return [...filteredOngoingTrials].sort((a, b) => Number(b.caseId) - Number(a.caseId));
-  }, [filteredOngoingTrials]);
-
-  const sortedDefenseList = useMemo(() => {
-    return [...filteredDefenseList].sort((a, b) => Number(b.caseId) - Number(a.caseId));
-  }, [filteredDefenseList]);
-
-  // 페이지네이션 적용
-  const paginatedSortedAllItems = useMemo(() => {
+  // 전체 재판
+  const paginatedAllItems = useMemo(() => {
     const startIndex = (allPage - 1) * ITEMS_PER_PAGE;
     const endIndex = startIndex + ITEMS_PER_PAGE;
     return sortedAllItems.slice(startIndex, endIndex);
   }, [sortedAllItems, allPage]);
 
-  const paginatedSortedOngoingTrials = useMemo(() => {
+  // 진행중인 재판
+  const paginatedOngoingTrials = useMemo(() => {
     const startIndex = (ongoingPage - 1) * ITEMS_PER_PAGE;
     const endIndex = startIndex + ITEMS_PER_PAGE;
     return sortedOngoingTrials.slice(startIndex, endIndex);
   }, [sortedOngoingTrials, ongoingPage]);
 
-  const paginatedSortedDefenseList = useMemo(() => {
+  // 변호 전적
+  const paginatedDefenseList = useMemo(() => {
     const startIndex = (defensePage - 1) * ITEMS_PER_PAGE;
     const endIndex = startIndex + ITEMS_PER_PAGE;
     return sortedDefenseList.slice(startIndex, endIndex);
@@ -152,12 +182,12 @@ const MyPage = () => {
   const achievementTotalPages = Math.ceil(
     (achievementsData?.result?.length ?? 0) / ACHIEVEMENTS_PER_PAGE
   );
-  const allTotalPages = Math.ceil(filteredAllItems.length / ITEMS_PER_PAGE);
+  const allTotalPages = Math.ceil(sortedAllItems.length / ITEMS_PER_PAGE);
   const ongoingTotalPages = Math.ceil(
-    filteredOngoingTrials.length / ITEMS_PER_PAGE
+    sortedOngoingTrials.length / ITEMS_PER_PAGE
   );
   const defenseTotalPages = Math.ceil(
-    filteredDefenseList.length / ITEMS_PER_PAGE
+    sortedDefenseList.length / ITEMS_PER_PAGE
   );
 
   const handleEditMode = () => setIsEditMode(true);
@@ -258,7 +288,7 @@ const MyPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white py-6 md:py-12">
+    <div className="min-h-[calc(100vh-98px)] bg-white py-6 md:py-12">
       <div className="max-w-6xl mx-auto px-4 md:px-6 lg:px-4 flex flex-col">
         <div className="w-full">
           <h2 className="text-2xl md:text-[38px] font-bold text-main mb-3 md:mb-4 pb-2">
@@ -380,17 +410,17 @@ const MyPage = () => {
                 defenseSortType={defenseSortType}
                 setDefenseSortType={setDefenseSortType}
                 allItems={allItems}
-                paginatedAllItems={paginatedSortedAllItems}
+                paginatedAllItems={paginatedAllItems}
                 allPage={allPage}
                 allTotalPages={allTotalPages}
                 setAllPage={setAllPage}
                 filteredOngoingTrials={filteredOngoingTrials}
-                paginatedOngoingTrials={paginatedSortedOngoingTrials}
+                paginatedOngoingTrials={paginatedOngoingTrials}
                 ongoingPage={ongoingPage}
                 ongoingTotalPages={ongoingTotalPages}
                 setOngoingPage={setOngoingPage}
                 filteredDefenseList={filteredDefenseList}
-                paginatedDefenseList={paginatedSortedDefenseList}
+                paginatedDefenseList={paginatedDefenseList}
                 defensePage={defensePage}
                 defenseTotalPages={defenseTotalPages}
                 setDefensePage={setDefensePage}

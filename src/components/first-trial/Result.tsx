@@ -7,7 +7,7 @@ export default function Result() {
   const { setStep } = useFirstTrialStore();
 
   return (
-    <div className="flex flex-col items-center bg-white mx-auto w-full max-w-[1440px] min-h-screen text-[#203C77] font-[Pretendard] px-4 md:px-0">
+    <div className="flex flex-col items-center bg-white mx-auto w-full max-w-[1440px] min-h-[calc(100vh-98px)] text-[#203C77] font-[Pretendard] px-4 md:px-0">
       <h1 className="text-[28px] md:text-[38px] font-bold text-center mt-[40px] md:mt-[78px] leading-[150%]">
         초심
       </h1>

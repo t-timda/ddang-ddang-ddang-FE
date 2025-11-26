@@ -20,7 +20,7 @@ export default function Start() {
   };
 
   return (
-    <div className="flex flex-col items-center bg-[#FFFFFF] mx-auto w-full max-w-[1440px] min-h-screen px-4 md:px-0">
+    <div className="flex flex-col items-center bg-[#FFFFFF] mx-auto w-full max-w-[1440px] min-h-[calc(100vh-98px)] px-4 md:px-0">
       {/* 제목 */}
       <h1
         className="text-[28px] md:text-[38px] font-bold text-[#203C77] mt-[40px] md:mt-[78px] mb-[40px] md:mb-[60px] text-center"

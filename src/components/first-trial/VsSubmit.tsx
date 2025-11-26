@@ -60,7 +60,7 @@ export default function VsSubmit() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen w-full max-w-[1440px] mx-auto bg-[#FFFFFF] font-[Pretendard] text-[#203C77] px-4 md:px-0">
+    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-98px)] w-full max-w-[1440px] mx-auto bg-[#FFFFFF] font-[Pretendard] text-[#203C77] px-4 md:px-0">
       {/* 상단 */}
       <div className="flex items-center justify-between w-full max-w-[995px] mt-[40px] md:mt-[60px]">
         <h1 className="text-[28px] md:text-[38px] font-bold text-center flex-1">

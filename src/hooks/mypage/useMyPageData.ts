@@ -108,10 +108,14 @@ export const useMyPageData = (isAuthenticated: boolean) => {
     }));
   }, [defenseListWithType, caseResultsMap]);
 
-  // 전체: 진행중인 재판 + 변호전적 합치기
+  // 전체: 내가 만든 재판 + 진행중인 재판 + 변호전적 합치기
   const allItems = useMemo(() => {
-    return [...ongoingTrialsWithType, ...defenseListWithType];
-  }, [ongoingTrialsWithType, defenseListWithType]);
+    return [
+      ...trialListData,           // 내가 만든 재판 목록 추가
+      ...ongoingTrialsWithType,   // 진행중인 재판
+      ...defenseListWithResult      // 변호전적
+    ];
+  }, [trialListData, ongoingTrialsWithType, defenseListWithResult]);
 
   return {
     userData,

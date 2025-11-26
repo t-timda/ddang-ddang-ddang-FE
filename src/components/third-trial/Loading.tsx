@@ -1,7 +1,8 @@
 import { useEffect } from "react";
+import { motion } from "framer-motion";
+import FileIcon from "@/assets/svgs/file.svg?react";
 import { useThirdTrialStore } from "@/stores/thirdTrialStore";
 import { useThirdJudgmentQuery } from "@/hooks/thirdTrial/useThirdTrial";
-import VerdictLoadingGif from "@/assets/gifs/판결영상.gif";
 
 export default function Loading() {
   const setStep = useThirdTrialStore((s) => s.setStep);
@@ -18,19 +19,39 @@ export default function Loading() {
     if (isSuccess && judgmentData?.result) {
       const timer = setTimeout(() => {
         setStep("verdict");
-      }, 3000); // 최소 3초 대기 (GIF 재생)
+      }, 3000); // 최소 3초 대기
       return () => clearTimeout(timer);
     }
   }, [isSuccess, judgmentData, setStep]);
 
   return (
-    <div className="w-full h-[calc(100vh-98px)] flex flex-col items-center justify-center">
-      <p className="text-gray-600 mt-4">최종 판결을 준비하고 있습니다…</p>
-      <img
-        src={VerdictLoadingGif}
-        alt="판결 로딩 애니메이션"
-        className="w-auto max-h-[calc(100vh-98px)] rounded-lg shadow"
-      />
+    <div className="flex flex-col items-center bg-white mx-auto w-full max-w-[1440px] min-h-[calc(100vh-98px)] text-[#203C77] font-[Pretendard] px-4 md:px-0">
+      <h1 className="text-[28px] md:text-[38px] font-bold text-center mt-[40px] md:mt-[78px] leading-relaxed">
+        최종심
+      </h1>
+
+      <div className="flex flex-col items-center justify-center mt-[60px] md:mt-[100px] w-full max-w-[395px] h-[320px] md:h-[448px] rounded-[60px] md:rounded-[100px] bg-main-medium/20 overflow-hidden relative">
+        <motion.div
+          initial={{ y: 100, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{
+            duration: 1,
+            ease: "easeOut",
+            repeat: Infinity,
+            repeatType: "loop",
+            repeatDelay: 0.5,
+          }}
+          className="flex flex-col items-center"
+        >
+          <FileIcon
+            className="w-[160px] h-[160px] md:w-[229px] md:h-[229px] mb-[16px] md:mb-[20px]"
+            title="입장문 제출중 아이콘"
+          />
+          <p className="text-[24px] md:text-[36px] font-bold leading-tight text-center">
+            입장문 제출중..
+          </p>
+        </motion.div>
+      </div>
     </div>
   );
 }
