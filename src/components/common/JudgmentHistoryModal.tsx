@@ -2,6 +2,7 @@ import React from "react";
 import { useFinalJudgmentHistoryQuery } from "@/hooks/cases/useCases";
 import Button from "@/components/common/Button";
 import clsx from "clsx";
+import { useNavigate } from "react-router-dom";
 
 type JudgmentHistoryModalProps = {
   caseId: number;
@@ -12,6 +13,8 @@ const JudgmentHistoryModal: React.FC<JudgmentHistoryModalProps> = ({
   caseId,
   onClose,
 }) => {
+  const navigate = useNavigate();
+
   // 선택된 케이스의 판결 히스토리 조회
   const { data: historyRes, isLoading: isHistoryLoading } = useFinalJudgmentHistoryQuery(caseId);
   const judgmentHistory = historyRes?.result ?? [];
@@ -107,11 +110,23 @@ const JudgmentHistoryModal: React.FC<JudgmentHistoryModalProps> = ({
                       </p>
                     </div>
                   )}
+
+                  {/* 우측 하단 재판 참여하기 버튼 */}
+                  <div className="flex justify-end mt-8">
+                    <button
+                      className="bg-main text-white px-6 py-2 rounded-lg font-bold shadow hover:bg-main-medium transition"
+                      onClick={() => navigate(`/secondtrial/1/${caseId}`)}
+                    >
+                      재판 참여하기
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
           )}
         </div>
+
+        
       </div>
     </div>
     </>

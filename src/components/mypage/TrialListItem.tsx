@@ -4,7 +4,7 @@ import Button from '@/components/common/Button';
 import { PATHS } from '@/constants';
 
 export type CaseStatus = "DONE" | "SECOND" | "THIRD" | "PENDING" | "FIRST";
-export type CaseResult = "WIN" | "LOSE" | "PENDING";
+export type CaseResult = "WIN" | "LOSE" | "PENDING" | "SOLO";
 
 export type TrialData = {
     id: number;
@@ -21,7 +21,9 @@ type TrialListItemProps = {
 const TrialListItem = ({ trial }: TrialListItemProps) => {
     const navigate = useNavigate();
     const [isExpanded, setIsExpanded] = useState(false);
-    
+
+    console.log("TrialListItem trial:", trial); // trial 데이터 콘솔 출력
+
     const RightArrowIcon: React.FC<{ size: number }> = ({ size }) => (
         <svg 
             className={`w-[${size}px] h-[${size}px]`} 
@@ -74,6 +76,14 @@ const TrialListItem = ({ trial }: TrialListItemProps) => {
                     bgClass: "bg-main-red text-white",
                     isOngoing: false,
                     roundText: "최종심 완료"
+                };
+            }
+            if (trial.caseResult === "SOLO") {
+                return { 
+                    text: "완료", 
+                    bgClass: "bg-main-medium text-white",
+                    isOngoing: false,
+                    roundText: "솔로모드 완료"
                 };
             }
             return { 
@@ -172,13 +182,16 @@ const TrialListItem = ({ trial }: TrialListItemProps) => {
                         <div className="flex items-center">
                             <span className="font-semibold text-main w-28">승패여부:</span>
                             <span className={`font-bold ${
-                                trial.caseResult === "WIN" ? "text-main-medium" :
-                                trial.caseResult === "LOSE" ? "text-main-red" :
-                                "text-gray-600"
+                              trial.caseResult === "WIN" ? "text-main-medium" :
+                              trial.caseResult === "LOSE" ? "text-main-red" :
+                              trial.caseResult === "SOLO" ? "text-main-medium" :
+                              "text-gray-600"
                             }`}>
-                                {trial.caseResult === "WIN" ? "승리" :
-                                 trial.caseResult === "LOSE" ? "패배" :
-                                 "진행중"}
+                              {trial.caseResult === "WIN" ? "승리" :
+                               trial.caseResult === "LOSE" ? "패배" :
+                               trial.caseResult === "SOLO" ? "완료" :
+                               trial.caseResult === "PENDING" ? "진행중" :
+                               "미정"}
                             </span>
                         </div>
                         <div className="flex items-center">

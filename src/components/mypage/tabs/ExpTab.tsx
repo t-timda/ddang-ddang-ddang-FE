@@ -117,7 +117,7 @@ export const ExpTab: React.FC<ExpTabProps> = ({ currentRank, currentExp, nicknam
         {/* 텍스트 오버레이 - 칭호 닉네임 순서로 한 줄에 */}
         <div className="absolute inset-0 flex items-center justify-center">
           <p className={`${currentRankTextColor} font-bold text-[10px] md:text-xs`}>
-            {currentRank} {nickname || "닉네임"}
+            {currentRank}
           </p>
         </div>
       </div>

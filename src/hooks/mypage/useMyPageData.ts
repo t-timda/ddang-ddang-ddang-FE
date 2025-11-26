@@ -64,7 +64,7 @@ export const useMyPageData = (isAuthenticated: boolean) => {
       title: caseItem.title,
       mySide: caseItem.mainArguments[0] || "",
       status: caseItem.status,
-      caseResult: "PENDING" as CaseResult,
+      caseResult: caseItem.caseResult,
       type: 'ongoing' as const,
       mode: '솔로모드',
     })) ?? [];
