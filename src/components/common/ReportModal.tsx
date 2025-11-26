@@ -12,11 +12,12 @@ interface ReportModalProps {
   onSuccess?: () => void;
 }
 
-const REPORT_REASONS: { value: ReportReason; label: string }[] = [
-  { value: "PROFANITY", label: "욕설 및 비방" },
-  { value: "SPAM", label: "스팸 또는 광고" },
-  { value: "HARASSMENT", label: "괴롭힘" },
-  { value: "INAPPROPRIATE", label: "부적절한 콘텐츠" },
+const REPORT_REASON_OPTIONS: { value: ReportReason; label: string }[] = [
+  { value: "PROFANITY", label: "욕설/비하 발언" },
+  { value: "SLANDER", label: "인신공격/명예훼손" },
+  { value: "SPAM", label: "도배/스팸" },
+  { value: "ADVERTISEMENT", label: "상업적 광고" },
+  { value: "OBSCENE", label: "음란성/부적절한 홍보" },
   { value: "OTHER", label: "기타" },
 ];
 
@@ -87,11 +88,11 @@ const ReportModal: React.FC<ReportModalProps> = ({
             <select
               value={selectedReason}
               onChange={(e) => setSelectedReason(e.target.value as ReportReason)}
-              className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:border-main"
+              className="w-full p-2 border rounded"
             >
-              {REPORT_REASONS.map((reason) => (
-                <option key={reason.value} value={reason.value}>
-                  {reason.label}
+              {REPORT_REASON_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
                 </option>
               ))}
             </select>
@@ -105,7 +106,7 @@ const ReportModal: React.FC<ReportModalProps> = ({
               value={customReason}
               onChange={(e) => setCustomReason(e.target.value)}
               rows={4}
-              className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:border-main"
+              className="w-full p-2 border rounded"
               placeholder="신고 사유를 상세히 입력해주세요."
             />
           </div>

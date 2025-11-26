@@ -202,26 +202,28 @@ const SecondTrial_1 = () => {
 
                 {/* 4. 투표하기 버튼 */}
                 <div className="flex justify-center mb-8 md:mb-12">
-                    {isVoteTime ? (
-                        <Button 
-                            variant="trialStart" 
-                            size="lg" 
-                            onClick={handleVote}
-                            disabled={!selectedSide || postVoteMutation.isPending} 
-                            className="w-full max-w-[585px] h-[80px] md:h-[100px] lg:h-[123px] rounded-[20px] md:rounded-[30px] text-base"
-                        >
-                            {postVoteMutation.isPending ? '투표 중...' : (isVoted ? '재투표하기' : '투표하기')}
-                        </Button>
-                    ) : (
-                        <Button 
-                            variant="trialStart" 
-                            size="lg" 
-                            className="w-full max-w-[585px] h-[80px] md:h-[100px] lg:h-[123px] rounded-[20px] md:rounded-[30px] text-base"
-                            onClick={() => navigate(`${PATHS.SECOND_TRIAL_FINAL}/${caseId}`)}
-                        >
-                            투표 결과보기
-                        </Button>
-                    )}
+                  {isVoteTime ? (
+                    <Button 
+                      variant="trialStart" 
+                      size="lg" 
+                      onClick={handleVote}
+                      disabled={!selectedSide || postVoteMutation.isPending} 
+                      className="w-full max-w-[585px] h-[80px] md:h-[100px] lg:h-[123px] rounded-[20px] md:rounded-[30px] text-base"
+                    >
+                      {postVoteMutation.isPending
+                        ? '투표 중...'
+                        : (details.userVote ? '재투표하기' : '투표하기')}
+                    </Button>
+                  ) : (
+                    <Button 
+                      variant="trialStart" 
+                      size="lg" 
+                      className="w-full max-w-[585px] h-[80px] md:h-[100px] lg:h-[123px] rounded-[20px] md:rounded-[30px] text-base"
+                      onClick={() => navigate(`${PATHS.SECOND_TRIAL_FINAL}/${caseId}`)}
+                    >
+                      투표 결과보기
+                    </Button>
+                  )}
                 </div>
                 
                 {/* 5. 변론 입력 섹션 */}

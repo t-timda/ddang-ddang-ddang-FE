@@ -117,23 +117,37 @@ const MyPage = () => {
     return achievements.slice(startIndex, endIndex);
   }, [achievementsData, achievementPage]);
 
-  const paginatedAllItems = useMemo(() => {
+  // 최신순 정렬 (caseId 내림차순)
+  const sortedAllItems = useMemo(() => {
+    return [...allItems].sort((a, b) => Number(b.caseId) - Number(a.caseId));
+  }, [allItems]);
+
+  const sortedOngoingTrials = useMemo(() => {
+    return [...filteredOngoingTrials].sort((a, b) => Number(b.caseId) - Number(a.caseId));
+  }, [filteredOngoingTrials]);
+
+  const sortedDefenseList = useMemo(() => {
+    return [...filteredDefenseList].sort((a, b) => Number(b.caseId) - Number(a.caseId));
+  }, [filteredDefenseList]);
+
+  // 페이지네이션 적용
+  const paginatedSortedAllItems = useMemo(() => {
     const startIndex = (allPage - 1) * ITEMS_PER_PAGE;
     const endIndex = startIndex + ITEMS_PER_PAGE;
-    return filteredAllItems.slice(startIndex, endIndex);
-  }, [filteredAllItems, allPage]);
+    return sortedAllItems.slice(startIndex, endIndex);
+  }, [sortedAllItems, allPage]);
 
-  const paginatedOngoingTrials = useMemo(() => {
+  const paginatedSortedOngoingTrials = useMemo(() => {
     const startIndex = (ongoingPage - 1) * ITEMS_PER_PAGE;
     const endIndex = startIndex + ITEMS_PER_PAGE;
-    return filteredOngoingTrials.slice(startIndex, endIndex);
-  }, [filteredOngoingTrials, ongoingPage]);
+    return sortedOngoingTrials.slice(startIndex, endIndex);
+  }, [sortedOngoingTrials, ongoingPage]);
 
-  const paginatedDefenseList = useMemo(() => {
+  const paginatedSortedDefenseList = useMemo(() => {
     const startIndex = (defensePage - 1) * ITEMS_PER_PAGE;
     const endIndex = startIndex + ITEMS_PER_PAGE;
-    return filteredDefenseList.slice(startIndex, endIndex);
-  }, [filteredDefenseList, defensePage]);
+    return sortedDefenseList.slice(startIndex, endIndex);
+  }, [sortedDefenseList, defensePage]);
 
   const achievementTotalPages = Math.ceil(
     (achievementsData?.result?.length ?? 0) / ACHIEVEMENTS_PER_PAGE
@@ -366,17 +380,17 @@ const MyPage = () => {
                 defenseSortType={defenseSortType}
                 setDefenseSortType={setDefenseSortType}
                 allItems={allItems}
-                paginatedAllItems={paginatedAllItems}
+                paginatedAllItems={paginatedSortedAllItems}
                 allPage={allPage}
                 allTotalPages={allTotalPages}
                 setAllPage={setAllPage}
                 filteredOngoingTrials={filteredOngoingTrials}
-                paginatedOngoingTrials={paginatedOngoingTrials}
+                paginatedOngoingTrials={paginatedSortedOngoingTrials}
                 ongoingPage={ongoingPage}
                 ongoingTotalPages={ongoingTotalPages}
                 setOngoingPage={setOngoingPage}
                 filteredDefenseList={filteredDefenseList}
-                paginatedDefenseList={paginatedDefenseList}
+                paginatedDefenseList={paginatedSortedDefenseList}
                 defensePage={defensePage}
                 defenseTotalPages={defenseTotalPages}
                 setDefensePage={setDefensePage}
