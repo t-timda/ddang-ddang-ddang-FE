@@ -57,7 +57,7 @@ export default function VsJudge() {
   }
 
   return (
-    <div className="flex flex-col items-center bg-white mx-auto w-full max-w-[1440px] px-4 md:px-[40px] min-h-screen pb-[100px] text-[#203C77] font-[Pretendard]">
+    <div className="flex flex-col items-center bg-white mx-auto w-full max-w-[1440px] px-4 md:px-[40px] min-h-[calc(100vh-98px)] pb-[100px] text-[#203C77] font-[Pretendard]">
       {/* 제목 */}
       <h1 className="text-[28px] md:text-[38px] font-bold text-center mt-10">
         초심 최종 판결

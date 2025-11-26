@@ -99,7 +99,7 @@ const ArgumentCard: React.FC<ArgumentCardProps> = ({
   const rebuttals = useMemo(() => {
     if (!rawRebuttals || rawRebuttals.length === 0) return [];
     return [...rawRebuttals].sort((a, b) => (b.likesCount || 0) - (a.likesCount || 0));
-  }, [JSON.stringify(rawRebuttals.map(r => ({ id: r.rebuttalId, likes: r.likesCount })))]);
+  }, [rawRebuttals]);
 
   const repliesCount = useMemo(() => {
     const countReplies = (items: RebuttalItemType[]): number => {

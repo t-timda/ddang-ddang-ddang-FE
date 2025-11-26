@@ -19,8 +19,12 @@ const NotificationToast: React.FC = () => {
 
   if (!currentToast) return null;
 
+  console.log('NotificationToast:', currentToast);
+
   const handleClick = () => {
-    if (currentToast.rebuttalId) {
+    if (currentToast.type === "JUDGMENT_COMPLETE" && currentToast.caseId) {
+      navigate(`/secondtrial/final/${currentToast.caseId}`);
+    } else if (currentToast.rebuttalId) {
       setHighlightRebuttal(currentToast.rebuttalId);
       if (currentToast.caseId) {
         navigate(`/secondtrial/1/${currentToast.caseId}?rebuttalId=${currentToast.rebuttalId}`);
@@ -32,7 +36,6 @@ const NotificationToast: React.FC = () => {
     } else if (currentToast.judgmentId) {
       navigate(`/secondtrial/final/${currentToast.judgmentId}`);
     }
-    
     hideToast();
   };
 
@@ -80,7 +83,11 @@ const NotificationToast: React.FC = () => {
               {currentToast.authorNickname}
             </p>
           )}
-          <p className="font-semibold">{currentToast.message}</p>
+          <p className="font-semibold">
+            {currentToast.type === "JUDGMENT_COMPLETE"
+              ? "재판이 완료되었습니다"
+              : currentToast.message}
+          </p>
           <p className="text-xs mt-1 opacity-80">클릭하여 확인하기</p>
         </div>
 

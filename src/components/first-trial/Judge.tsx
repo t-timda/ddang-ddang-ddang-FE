@@ -5,6 +5,7 @@ import { useFirstTrialStore } from "@/stores/firstTrialStore";
 import { useNavigate } from "react-router-dom";
 import { PATHS, PATH_BUILDERS } from "@/constants";
 import { useToast } from "@/hooks/useToast";
+import { motion } from "framer-motion";
 
 import {
   useFirstCaseDetailQuery,
@@ -35,7 +36,7 @@ export default function Judge() {
   const winnerRatio = ratioA >= ratioB ? ratioA : ratioB;
 
   return (
-    <div className="flex flex-col items-center bg-white mx-auto w-full max-w-[1440px] px-4 md:px-[40px] min-h-screen pb-[100px] text-[#203C77] font-[Pretendard]">
+    <div className="flex flex-col items-center bg-white mx-auto w-full max-w-[1440px] px-4 md:px-[40px] min-h-[calc(100vh-98px)] pb-[100px] text-[#203C77] font-[Pretendard]">
       {/* 제목 */}
       <h1 className="text-[28px] md:text-[38px] font-bold text-center mt-10 leading-[150%]">
         초심 최종 판결
@@ -75,7 +76,12 @@ export default function Judge() {
         />
 
         {/* 우측: 판결문 */}
-        <div className="absolute top-[130px] md:top-[151px] right-[12px] md:right-[44px] w-[320px] md:w-[496px] h-[420px] md:h-[513px] bg-[#FFFFF6] rounded-[7px] flex flex-col items-center pt-[30px] text-[#EBAD27]">
+        <motion.div
+          initial={{ opacity: 0, y: 24, scale: 0.98 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 1.5, ease: "easeOut" }}
+          className="absolute top-[130px] md:top-[151px] right-[12px] md:right-[44px] w-[320px] md:w-[496px] h-[420px] md:h-[450px] bg-[#FFFFF6] rounded-[7px] flex flex-col items-center text-[#EBAD27]"
+        >
           <p className="absolute left-[20px] md:left-[39px] top-[20px] md:top-[29px] text-[12px] md:text-[14px] leading-[150%] font-['Gapyeong_Hanseokbong']">
             사건번호 - {caseId ?? "?"}
           </p>
@@ -90,18 +96,21 @@ export default function Judge() {
             판결문
           </h2>
 
-          <p className="absolute top-[130px] md:top-[150px] left-1/2 -translate-x-1/2 w-[280px] md:w-[420px] text-[12px] md:text-[13px] leading-[150%] text-center text-[#EBAD27] font-normal font-['Gapyeong_Hanseokbong']">
-            사건명: {title}
-          </p>
+          {/* 스크롤 가능한 판결문 영역 */}
+          <div className="absolute top-[130px] md:top-[150px] left-1/2 -translate-x-1/2 w-[280px] md:w-[420px] h-[240px] overflow-y-auto scrollbar-thin scrollbar-thumb-[#EBAD27] scrollbar-track-[#FFFFF6]">
+            <p className="text-lg md:text-[13px] leading-[150%] text-center text-[#EBAD27] font-normal font-['Gapyeong_Hanseokbong'] mb-4">
+              사건명: {title}
+            </p>
 
-          <p className="absolute top-[180px] md:top-[200px] left-1/2 -translate-x-1/2 w-[280px] md:w-[420px] text-[13px] md:text-[15px] leading-[150%] text-center text-[#EBAD27] font-normal font-['Gapyeong_Hanseokbong']">
-            {conclusion}
-          </p>
-
-          <p className="absolute top-[290px] md:top-[320px] left-1/2 -translate-x-1/2 w-[280px] md:w-[420px] text-[13px] md:text-[15px] font-bold leading-[150%] text-center text-[#EBAD27] font-['Gapyeong_Hanseokbong']">
-            {verdict}
-          </p>
-        </div>
+            <p className="text-[13px] md:text-[15px] leading-[150%] text-center text-[#EBAD27] font-normal font-['Gapyeong_Hanseokbong'] whitespace-pre-line px-2">
+              {conclusion}
+            </p>
+            <br />
+            <p className="text-[13px] md:text-[15px] leading-[150%] text-center text-[#EBAD27] font-normal font-['Gapyeong_Hanseokbong'] whitespace-pre-line px-2">
+              {verdict}
+            </p>
+          </div>
+        </motion.div>
       </div>
 
       {/* 승률 바 상단 문구 */}

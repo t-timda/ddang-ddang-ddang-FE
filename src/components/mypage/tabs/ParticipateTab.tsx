@@ -52,6 +52,7 @@ export const ParticipateTab: React.FC<ParticipateTabProps> = ({
   defenseTotalPages,
   setDefensePage,
 }) => {
+
   return (
     <div className="pt-4">
       <h3 className="text-xl md:text-2xl font-bold text-main mb-4 md:mb-6">참여한 재판 목록</h3>

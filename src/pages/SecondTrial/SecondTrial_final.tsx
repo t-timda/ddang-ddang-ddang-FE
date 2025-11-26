@@ -103,7 +103,7 @@ const SecondTrial_final: React.FC = () => {
   }
 
   return (
-    <div className="bg-white min-h-screen pt-6 md:pt-12 pb-12 md:pb-20">
+    <div className="bg-white min-h-[calc(100vh-98px)] pt-6 md:pt-12 pb-12 md:pb-20">
       <div className="max-w-6xl mx-auto px-4 md:px-6 lg:px-4">
         {/* 헤더 */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-4 mb-4 md:mb-6">

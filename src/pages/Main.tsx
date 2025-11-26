@@ -17,6 +17,7 @@ import { useUserProfileQuery } from "@/hooks/api/useUserQuery";
 import { usePostLoginMutation } from "@/hooks/auth/useAuthMutations";
 import CircleArrowIcon from "@/assets/icons/CircleArrow";
 import { useToast } from "@/hooks/useToast";
+import { motion } from "framer-motion";
 
 
 // HOT 재판 더미 데이터 (API 실패 시 사용)
@@ -339,11 +340,16 @@ const MainPage = () => {
     isButtonDisabled || (!shouldLoop && startIndex >= finiteMaxIndex);
 
   return (
-    <div className="bg-white min-h-screen w-full flex items-center flex-col">
+    <div className="bg-white min-h-[calc(100vh-98px)] w-full flex items-center flex-col">
       {/* 상단 영역 */}
       <section className="flex flex-col md:flex-row items-center w-full max-w-7xl p-4 justify-center gap-[30px] my-10">
         {/* 왼쪽: 슬로건 + 로그인 박스 (UI 데코) */}
-        <div className="flex flex-col gap-[32px] w-full md:w-[380px]">
+        <motion.div
+          initial={{ opacity: 0, x: -80 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 1.2, ease: [0.25, 0.46, 0.45, 0.94] }}
+          className="flex flex-col gap-[32px] w-full md:w-[380px]"
+        >
           <h1 className="text-main font-bold text-[36px] leading-[150%] text-center md:text-left">
             일상의 고민, <br />
             AI와 함께 재판해보세요
@@ -472,10 +478,15 @@ const MainPage = () => {
               </div>
             )}
           </div>
-        </div>
+        </motion.div>
 
         {/* 오른쪽: 첫 재판 시작 패널 */}
-        <div className="flex-1 flex flex-col gap-3 justify-between bg-[#6596DA] rounded-2xl p-[64px] px-4 md:px-[64px] w-full md:w-[790px] h-[509px] relative transition">
+        <motion.div
+          initial={{ opacity: 0, x: 80 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 1.2, ease: [0.25, 0.46, 0.45, 0.94] }}
+          className="flex-1 flex flex-col gap-3 justify-between bg-[#6596DA] rounded-2xl p-[64px] px-4 md:px-[64px] w-full md:w-[790px] h-[509px] relative"
+        >
           <div className="w-full md:w-[45%]">
             <h2 className="text-3xl font-bold text-white">
               AI판사와 밸런스 재판
@@ -515,7 +526,7 @@ const MainPage = () => {
             alt="판사 아이콘"
             className="absolute bottom-0 right-10 w-[55%] max-w-md h-auto"
           />
-        </div>
+        </motion.div>
       </section>
 
       {/* HOT 재판 캐러셀 */}

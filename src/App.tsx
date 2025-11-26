@@ -1,4 +1,3 @@
-
 import { Route, Routes, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import Main from "@/pages/Main";
@@ -22,6 +21,7 @@ import Toast from "@/components/common/Toast";
 import UserOngoingList from "@/pages/UserOngoingList";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { userApi } from "@/apis/user/userApi";
+import FloatingGuideButton from "@/components/common/FloatingGuideButton";
 
 function App() {
   const { pathname } = useLocation();
@@ -98,6 +98,9 @@ function App() {
 
       {/* 일반 토스트 */}
       <Toast />
+
+      {/* 테스트용 라우터 */}
+      <FloatingGuideButton />
     </>
   );
 }

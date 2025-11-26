@@ -44,7 +44,7 @@ const JoinTrialPage: React.FC = () => {
   }
 
   return (
-    <div className="bg-white min-h-screen pt-12 pb-8">
+    <div className="bg-white min-h-[calc(100vh-98px)] pt-12 pb-8">
       <div className="max-w-6xl mx-auto px-4">
         {/* 헤더 */}
         <div className="mb-12">
