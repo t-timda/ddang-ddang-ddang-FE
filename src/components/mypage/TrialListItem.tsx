@@ -4,7 +4,7 @@ import Button from '@/components/common/Button';
 import { PATHS } from '@/constants';
 
 export type CaseStatus = "DONE" | "SECOND" | "THIRD" | "PENDING" | "FIRST";
-export type CaseResult = "WIN" | "LOSE" | "PENDING" | "SOLO";
+export type CaseResult = "WIN" | "LOSE" | "PENDING" | "ONGOING" | "SOLO";
 
 export type TrialData = {
     id: number;
@@ -12,6 +12,7 @@ export type TrialData = {
     mySide: string;
     status: CaseStatus;
     caseResult: CaseResult;
+    mode?: "SOLO" | "PARTY";
 };
 
 type TrialListItemProps = {
@@ -59,39 +60,59 @@ const TrialListItem = ({ trial }: TrialListItemProps) => {
     );
     
     const getDisplayInfo = () => {
+        // DONE 상태 처리
         if (trial.status === "DONE") {
             if (trial.caseResult === "WIN") {
-                return { 
-                    text: "승리", 
+                return {
+                    text: "승리",
                     bgClass: "bg-main-medium text-white",
                     isOngoing: false,
                     roundText: "최종심 완료"
                 };
             }
             if (trial.caseResult === "LOSE") {
-                return { 
-                    text: "패배", 
+                return {
+                    text: "패배",
                     bgClass: "bg-main-red text-white",
                     isOngoing: false,
                     roundText: "최종심 완료"
                 };
             }
             if (trial.caseResult === "SOLO") {
-                return { 
-                    text: "완료", 
+                return {
+                    text: "완료",
                     bgClass: "bg-main-medium text-white",
                     isOngoing: false,
                     roundText: "솔로모드 완료"
                 };
             }
-            return { 
-                text: "종료", 
+            return {
+                text: "종료",
                 bgClass: "bg-gray-400 text-white",
                 isOngoing: false,
                 roundText: "최종심 완료"
             };
         }
-        
+
+        // THIRD 상태 처리: 솔로모드면 완료, 파티모드면 진행중
+        if (trial.status === "THIRD") {
+            if (trial.mode === "SOLO") {
+                return {
+                    text: "완료",
+                    bgClass: "bg-main-medium text-white",
+                    isOngoing: false,
+                    roundText: "3차 재판 완료"
+                };
+            }
+            return {
+                text: "진행중",
+                bgClass: "bg-gray-400 text-white",
+                isOngoing: true,
+                roundText: "최종심 진행중"
+            };
+        }
+
+        // SECOND 상태 처리
         if (trial.status === "SECOND") {
             return {
                 text: "진행중",
@@ -101,15 +122,7 @@ const TrialListItem = ({ trial }: TrialListItemProps) => {
             };
         }
 
-        if (trial.status === "THIRD") {
-            return {
-                text: "진행중",
-                bgClass: "bg-gray-400 text-white",
-                isOngoing: true,
-                roundText: "최종심 진행중"
-            };
-        }
-
+        // FIRST 상태 또는 기타
         return {
             text: "진행중",
             bgClass: "bg-gray-400 text-white",

@@ -85,7 +85,7 @@ export type CaseRecord = {
   caseId: number;
   title: string;
   status: "PENDING" | "FIRST" | "SECOND" | "THIRD" | "DONE"; // 상태
-  caseResult: "WIN" | "LOSE" | "PENDING"; // 결과
+  caseResult: "WIN" | "LOSE" | "PENDING" | "ONGOING" | "SOLO"; // 결과
   mainArguments: string[]; // 주요 주장
 };
 

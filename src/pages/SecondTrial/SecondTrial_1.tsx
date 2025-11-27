@@ -210,11 +210,11 @@ const SecondTrial_1 = () => {
                 {/* 4. 투표하기 버튼 */}
                 <div className="flex justify-center mb-8 md:mb-12">
                   {isVoteTime ? (
-                    <Button 
-                      variant="trialStart" 
-                      size="lg" 
+                    <Button
+                      variant="trialStart"
+                      size="lg"
                       onClick={handleVote}
-                      disabled={!selectedSide || postVoteMutation.isPending} 
+                      disabled={!selectedSide || postVoteMutation.isPending}
                       className="w-full max-w-[585px] h-[80px] md:h-[100px] lg:h-[123px] rounded-[20px] md:rounded-[30px] text-base"
                     >
                       {postVoteMutation.isPending
@@ -222,9 +222,9 @@ const SecondTrial_1 = () => {
                         : (details.userVote ? '재투표하기' : '투표하기')}
                     </Button>
                   ) : (
-                    <Button 
-                      variant="trialStart" 
-                      size="lg" 
+                    <Button
+                      variant="trialStart"
+                      size="lg"
                       className="w-full max-w-[585px] h-[80px] md:h-[100px] lg:h-[123px] rounded-[20px] md:rounded-[30px] text-base"
                       onClick={() => navigate(`${PATHS.SECOND_TRIAL_FINAL}/${caseId}`)}
                     >
@@ -232,7 +232,32 @@ const SecondTrial_1 = () => {
                     </Button>
                   )}
                 </div>
-                
+
+                {/* 광고 섹션 */}
+                {details.isAd && details.adImageUrl && (
+                  <div className="mb-8 md:mb-12">
+                    <div className="relative rounded-lg overflow-hidden">
+                      <img
+                        src={details.adImageUrl}
+                        alt="광고"
+                        className="w-full h-auto object-cover"
+                      />
+                      {details.adLink && (
+                        <div className="mt-4 flex justify-center">
+                          <a
+                            href={details.adLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center justify-center px-6 py-3 bg-main text-white font-semibold rounded-lg hover:bg-main-medium transition-colors"
+                          >
+                            자세히 보기
+                          </a>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
                 {/* 5. 변론 입력 섹션 */}
                 <>
                     <h2 className="text-xl md:text-2xl font-bold mb-3 md:mb-4 border-t border-main pt-6 md:pt-8 text-main">변호</h2>

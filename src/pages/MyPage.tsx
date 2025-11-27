@@ -36,6 +36,7 @@ const MyPage = () => {
     currentRank,
     currentExp,
     achievementsData,
+    trialListData,
     ongoingTrialsWithType,
     defenseListWithResult,
     allItems,
@@ -49,6 +50,7 @@ const MyPage = () => {
   const initialTab = searchParams.get("tab") || "profile";
   const initialSubTab = searchParams.get("subtab") as
     | "전체"
+    | "재판전적"
     | "진행중"
     | "변호전적"
     | null;
@@ -59,13 +61,14 @@ const MyPage = () => {
   const [selectedMenu, setSelectedMenu] = useState(initialTab);
   const [sortType, setSortType] = useState<CaseResult | "정렬">("정렬");
   const [defenseSortType, setDefenseSortType] = useState<
-    "정렬" | "WIN" | "LOSE" | "PENDING" | "LIKE"
+    "정렬" | "전체" | "WIN" | "LOSE" | "PENDING" | "LIKE"
   >("정렬");
   const [participateTab, setParticipateTab] = useState<
-    "전체" | "진행중" | "변호전적"
+    "전체" | "재판전적" | "진행중" | "변호전적"
   >(initialSubTab || "전체");
 
   const [allPage, setAllPage] = useState(1);
+  const [trialPage, setTrialPage] = useState(1);
   const [ongoingPage, setOngoingPage] = useState(1);
   const [defensePage, setDefensePage] = useState(1);
   const [achievementPage, setAchievementPage] = useState(1);
@@ -94,7 +97,7 @@ const MyPage = () => {
 
     if (
       subtab &&
-      (subtab === "전체" || subtab === "진행중" || subtab === "변호전적")
+      (subtab === "전체" || subtab === "재판전적" || subtab === "진행중" || subtab === "변호전적")
     ) {
       setParticipateTab(subtab);
     }
@@ -165,6 +168,13 @@ const MyPage = () => {
     return sortedAllItems.slice(startIndex, endIndex);
   }, [sortedAllItems, allPage]);
 
+  // 나의 재판 전적
+  const paginatedTrialItems = useMemo(() => {
+    const startIndex = (trialPage - 1) * ITEMS_PER_PAGE;
+    const endIndex = startIndex + ITEMS_PER_PAGE;
+    return trialListData.slice(startIndex, endIndex);
+  }, [trialListData, trialPage]);
+
   // 진행중인 재판
   const paginatedOngoingTrials = useMemo(() => {
     const startIndex = (ongoingPage - 1) * ITEMS_PER_PAGE;
@@ -183,6 +193,7 @@ const MyPage = () => {
     (achievementsData?.result?.length ?? 0) / ACHIEVEMENTS_PER_PAGE
   );
   const allTotalPages = Math.ceil(sortedAllItems.length / ITEMS_PER_PAGE);
+  const trialTotalPages = Math.ceil(trialListData.length / ITEMS_PER_PAGE);
   const ongoingTotalPages = Math.ceil(
     sortedOngoingTrials.length / ITEMS_PER_PAGE
   );
@@ -414,6 +425,11 @@ const MyPage = () => {
                 allPage={allPage}
                 allTotalPages={allTotalPages}
                 setAllPage={setAllPage}
+                trialItems={trialListData}
+                paginatedTrialItems={paginatedTrialItems}
+                trialPage={trialPage}
+                trialTotalPages={trialTotalPages}
+                setTrialPage={setTrialPage}
                 filteredOngoingTrials={filteredOngoingTrials}
                 paginatedOngoingTrials={paginatedOngoingTrials}
                 ongoingPage={ongoingPage}

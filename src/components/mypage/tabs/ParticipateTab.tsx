@@ -6,17 +6,22 @@ import DefenseListItem from "@/components/mypage/DefenseListItem";
 import Pagination from "@/components/vs-mode/Pagination";
 
 interface ParticipateTabProps {
-  participateTab: "전체" | "진행중" | "변호전적";
-  setParticipateTab: (tab: "전체" | "진행중" | "변호전적") => void;
+  participateTab: "전체" | "재판전적" | "진행중" | "변호전적";
+  setParticipateTab: (tab: "전체" | "재판전적" | "진행중" | "변호전적") => void;
   sortType: CaseResult | '정렬';
   setSortType: (type: CaseResult | '정렬') => void;
-  defenseSortType: '정렬' | 'WIN' | 'LOSE' | 'PENDING' | 'LIKE';
-  setDefenseSortType: (type: '정렬' | 'WIN' | 'LOSE' | 'PENDING' | 'LIKE') => void;
+  defenseSortType: '정렬' | '전체' | 'WIN' | 'LOSE' | 'PENDING' | 'LIKE';
+  setDefenseSortType: (type: '정렬' | '전체' | 'WIN' | 'LOSE' | 'PENDING' | 'LIKE') => void;
   allItems: any[];
   paginatedAllItems: any[];
   allPage: number;
   allTotalPages: number;
   setAllPage: (page: number) => void;
+  trialItems: any[]; // 나의 재판 전적
+  paginatedTrialItems: any[];
+  trialPage: number;
+  trialTotalPages: number;
+  setTrialPage: (page: number) => void;
   filteredOngoingTrials: any[];
   paginatedOngoingTrials: any[];
   ongoingPage: number;
@@ -41,6 +46,11 @@ export const ParticipateTab: React.FC<ParticipateTabProps> = ({
   allPage,
   allTotalPages,
   setAllPage,
+  trialItems,
+  paginatedTrialItems,
+  trialPage,
+  trialTotalPages,
+  setTrialPage,
   filteredOngoingTrials,
   paginatedOngoingTrials,
   ongoingPage,
@@ -63,10 +73,11 @@ export const ParticipateTab: React.FC<ParticipateTabProps> = ({
 
   const sortedAllItems = useMemo(() => {
     // 정렬 로직 (예: 승리, 패배, 진행중, 완료 순)
-    const sortOrder = {
+    const sortOrder: Record<string, number> = {
       WIN: 1,
       LOSE: 2,
       PENDING: 3,
+      ONGOING: 3,
       SOLO: 4,
       "전체": 5,
     };
@@ -100,13 +111,23 @@ export const ParticipateTab: React.FC<ParticipateTabProps> = ({
           </button>
           <button
             className={`px-3 md:px-4 py-2 font-semibold transition-colors text-sm md:text-base whitespace-nowrap ${
+              participateTab === "재판전적"
+                ? "text-main border-b-2 border-main"
+                : "text-gray-500 hover:text-main"
+            }`}
+            onClick={() => setParticipateTab("재판전적")}
+          >
+            나의 재판 전적
+          </button>
+          <button
+            className={`px-3 md:px-4 py-2 font-semibold transition-colors text-sm md:text-base whitespace-nowrap ${
               participateTab === "진행중"
                 ? "text-main border-b-2 border-main"
                 : "text-gray-500 hover:text-main"
             }`}
             onClick={() => setParticipateTab("진행중")}
           >
-            내가 진행중인 재판
+            진행중인 재판
           </button>
           <button
             className={`px-3 md:px-4 py-2 font-semibold transition-colors text-sm md:text-base whitespace-nowrap ${
@@ -170,12 +191,14 @@ export const ParticipateTab: React.FC<ParticipateTabProps> = ({
                 {filteredAllItems.slice((allPage - 1) * 10, allPage * 10).map((item, idx) => (
                   <div key={`all-${idx}`}>
                     <p className="text-xs md:text-sm text-main mb-2">
-                      {item.type === 'ongoing' 
+                      {item.type === 'trial'
+                        ? `내가 생성한 재판`
+                        : item.type === 'ongoing'
                         ? `내가 진행중인 재판`
                         : '나의 변호 전적'
                       }
                     </p>
-                    {item.type === 'ongoing' ? (
+                    {item.type === 'trial' || item.type === 'ongoing' ? (
                       <TrialListItem trial={item as any} />
                     ) : (
                       <DefenseListItem defense={item as any} />
@@ -193,6 +216,39 @@ export const ParticipateTab: React.FC<ParticipateTabProps> = ({
             ) : (
               <div className="text-center py-8 md:py-10 text-gray-500 bg-gray-50 rounded-lg text-sm md:text-base">
                 참여한 내역이 없습니다.
+              </div>
+            )}
+          </div>
+        </>
+      )}
+
+      {participateTab === "재판전적" && (
+        <>
+          <div className="mb-3 md:mb-4">
+            <span className="text-base md:text-lg text-main">({trialItems.length}개의 재판)</span>
+          </div>
+          <div className="space-y-3 md:space-y-4">
+            {paginatedTrialItems.length > 0 ? (
+              <>
+                {paginatedTrialItems.map((trial, idx) => (
+                  <div key={`trial-${idx}`}>
+                    <p className="text-xs md:text-sm text-main mb-2">
+                      내가 생성한 재판
+                    </p>
+                    <TrialListItem trial={trial} />
+                  </div>
+                ))}
+                {trialTotalPages > 1 && (
+                  <Pagination
+                    currentPage={trialPage}
+                    totalPages={trialTotalPages}
+                    onPageChange={setTrialPage}
+                  />
+                )}
+              </>
+            ) : (
+              <div className="text-center py-8 md:py-10 text-gray-500 bg-gray-50 rounded-lg text-sm md:text-base">
+                생성한 재판이 없습니다.
               </div>
             )}
           </div>

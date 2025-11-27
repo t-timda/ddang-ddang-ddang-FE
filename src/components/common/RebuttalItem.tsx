@@ -3,6 +3,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useToast } from "@/hooks/useToast";
 import { useNotificationStore } from "@/stores/useNotificationStore";
+import { useAuthStore } from "@/stores/useAuthStore";
 import type { RebuttalItem as RebuttalItemType, RebuttalRequest } from "@/types/apis/secondTrial";
 import { renderContentWithMentions } from "@/utils/mentionRenderer";
 import { getRankNicknameFrame } from "@/utils/rankImageMapper";
@@ -128,6 +129,8 @@ const RebuttalItem: React.FC<RebuttalItemProps> = ({
     }
   };
   
+  const isAuthenticated = !!useAuthStore().accessToken;
+
   return (
     <div style={{
       paddingLeft: depth > 0 ? `${Math.min(depth * 16, 48)}px` : '0px',
@@ -170,15 +173,26 @@ const RebuttalItem: React.FC<RebuttalItemProps> = ({
             {/* 좋아요 버튼 */}
             <button
               onClick={() => onLike(rebuttal.rebuttalId)}
-              disabled={isLikePending || isMyComment}
-              className="flex items-center gap-1 md:gap-2 text-main disabled:opacity-50"
+              disabled={
+                !isAuthenticated ||
+                isLikePending ||
+                currentUserNickname === rebuttal.authorNickname
+              }
+              className="flex items-center gap-2 text-main disabled:opacity-50"
               aria-label="반론 좋아요"
-              title={isMyComment ? "내 댓글에는 좋아요를 누를 수 없습니다" : ""}
+              title={
+                !isAuthenticated
+                  ? "로그인 후 좋아요를 누를 수 있습니다"
+                  : currentUserNickname === rebuttal.authorNickname
+                  ? "내 반론에는 좋아요를 누를 수 없습니다"
+                  : ""
+              }
             >
-              <ThumbUpIcon className="w-4 h-4 md:w-5 md:h-5" />
-              <span className="text-[10px] md:text-sm">
-                {rebuttal.likesCount}
-                <span className="hidden md:inline">명이 이 의견에 찬성합니다</span>
+              <ThumbUpIcon className={rebuttal.isLikedByMe ? "opacity-60" : ""} />
+              <span className="text-md">
+                {!isAuthenticated
+                  ? "로그인 후 이용 가능합니다"
+                  : `${rebuttal.likesCount}명이 이 의견에 찬성합니다`}
               </span>
             </button>
           </div>
