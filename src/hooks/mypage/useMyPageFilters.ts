@@ -7,14 +7,12 @@ export const useMyPageFilters = (
   ongoingTrialsWithType: any[],
   defenseListWithResult: any[],
   sortType: CaseResult | '정렬',
-  defenseSortType: '정렬' | 'WIN' | 'LOSE' | 'PENDING' | 'LIKE'
+  defenseSortType: '정렬' | '전체' | 'WIN' | 'LOSE' | 'PENDING' | 'LIKE'
 ) => {
   // 전체 필터링
   const filteredAllItems = useMemo(() => {
     if (sortType === '정렬') return allItems;
-    return allItems.filter(item => 
-      item.type === 'ongoing' && (item as any).caseResult === sortType
-    );
+    return allItems.filter(item => item.caseResult === sortType);
   }, [allItems, sortType]);
 
   // 진행중인 재판 필터링
@@ -26,23 +24,24 @@ export const useMyPageFilters = (
   // 변호전적 필터링
   const filteredDefenseList = useMemo(() => {
     let list = [...defenseListWithResult];
-    
+
     if (defenseSortType === 'LIKE') {
       return list.sort((a, b) => b.likeCount - a.likeCount);
     }
-    
+
     if (defenseSortType === 'WIN') {
       return list.filter(d => d.caseResult === 'WIN');
     }
-    
+
     if (defenseSortType === 'LOSE') {
       return list.filter(d => d.caseResult === 'LOSE');
     }
-    
+
     if (defenseSortType === 'PENDING') {
-      return list.filter(d => d.caseResult === 'PENDING');
+      return list.filter(d => d.caseResult === 'PENDING' || d.caseResult === 'ONGOING');
     }
-    
+
+    // '정렬' 또는 '전체'는 모든 항목 반환
     return list;
   }, [defenseListWithResult, defenseSortType]);
 

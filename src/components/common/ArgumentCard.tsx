@@ -23,6 +23,7 @@ import ReportModal from "./ReportModal";
 import ThumbUpIcon from "@/assets/svgs/thumbs-up.svg?react";
 import Siren from "@/assets/svgs/Siren.svg?react";
 import RankBadge from "./RankBadge";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 export interface ArgumentData {
   id: number;
@@ -58,6 +59,7 @@ const ArgumentCard: React.FC<ArgumentCardProps> = ({
   const [searchParams] = useSearchParams();
   const { showError } = useToast();
   const { setHighlightRebuttal } = useNotificationStore();
+  const isAuthenticated = !!useAuthStore().accessToken;
 
   // 칭호 명패 이미지
   const rankFrameImage = getRankNicknameFrame(authorRank);
@@ -67,7 +69,11 @@ const ArgumentCard: React.FC<ArgumentCardProps> = ({
   const postRebuttalMutation = usePostRebuttalMutation();
   const toggleRebuttalLikeMutation = useToggleRebuttalLikeMutation();
   const toggleDefenseLikeMutation = useToggleDefenseLikeMutation();
-  const { data: userProfile } = useUserProfileQuery({ enabled: true });
+  const { data: userProfile } = useUserProfileQuery({
+    enabled: isAuthenticated,
+    suspense: false,
+    useErrorBoundary: false,
+  });
 
   // States
   const [expanded, setExpanded] = useState(false);
@@ -235,13 +241,27 @@ const ArgumentCard: React.FC<ArgumentCardProps> = ({
             </button>
             <button
               onClick={handleToggleDefenseLike}
-              disabled={toggleDefenseLikeMutation.isPending || isMyDefense}
+              disabled={
+                !isAuthenticated ||
+                toggleDefenseLikeMutation.isPending ||
+                isMyDefense
+              }
               className="flex items-center gap-2 text-main disabled:opacity-50"
-              aria-label="방어변론 좋아요"
-              title={isMyDefense ? "내 방어변론에는 좋아요를 누를 수 없습니다" : ""}
+              aria-label="반론 좋아요"
+              title={
+                !isAuthenticated
+                  ? "로그인 후 좋아요를 누를 수 있습니다"
+                  : isMyDefense
+                  ? "내 반론에는 좋아요를 누를 수 없습니다"
+                  : ""
+              }
             >
               <ThumbUpIcon className={likedDefense ? "opacity-60" : ""} />
-              <span className="text-md">{defenseLikes}명이 이 의견에 찬성합니다</span>
+              <span className="text-md">
+                {!isAuthenticated
+                  ? "로그인 후 이용 가능합니다"
+                  : `${defenseLikes}명이 이 의견에 찬성합니다`}
+              </span>
             </button>
           </div>
         </div>

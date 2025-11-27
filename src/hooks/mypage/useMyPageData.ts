@@ -8,10 +8,9 @@ import {
   useUserRankQuery, 
   useUserCasesQuery 
 } from "@/hooks/api/useUserQuery";
-import { 
-  useMyDefensesQuery, 
-  useMyOngoingCasesQuery, 
-  useCasesResultsQuery 
+import {
+  useMyDefensesQuery,
+  useMyOngoingCasesQuery
 } from "@/hooks/home/useHome";
 
 export const useMyPageData = (isAuthenticated: boolean) => {
@@ -47,18 +46,20 @@ export const useMyPageData = (isAuthenticated: boolean) => {
   const currentExp = rankData?.result?.exp ?? 0;
 
   // 내가 생성한 재판 목록
-  const trialListData: TrialData[] = useMemo(() => {
+  const trialListData = useMemo(() => {
     return casesData?.result?.map(caseItem => ({
       id: caseItem.caseId,
       title: caseItem.title,
       mySide: caseItem.mainArguments[0] || "",
       status: caseItem.status,
       caseResult: caseItem.caseResult,
+      mode: caseItem.caseResult === "SOLO" ? "SOLO" as const : undefined,
+      type: 'trial' as const, // type 속성 추가
     })) ?? [];
   }, [casesData]);
 
   // 진행중인 재판 목록
-  const ongoingTrialsWithType: Array<TrialData & { type: 'ongoing', mode?: string }> = useMemo(() => {
+  const ongoingTrialsWithType: Array<TrialData & { type: 'ongoing', mode?: "SOLO" | "PARTY" }> = useMemo(() => {
     return ongoingCasesData?.result?.map(caseItem => ({
       id: caseItem.caseId,
       title: caseItem.title,
@@ -66,47 +67,20 @@ export const useMyPageData = (isAuthenticated: boolean) => {
       status: caseItem.status,
       caseResult: caseItem.caseResult,
       type: 'ongoing' as const,
-      mode: '솔로모드',
+      mode: "SOLO" as const, // API에서 mode 정보가 오면 여기에 매핑
     })) ?? [];
   }, [ongoingCasesData]);
 
-  // 변호 전적
-  const defenseListWithType = useMemo(() => {
+  // 변호 전적 (이제 API 응답에 caseResult가 포함되어 있으므로 추가 호출 불필요)
+  const defenseListWithResult = useMemo(() => {
     const defenses = defensesData?.result?.defenses ?? [];
     const rebuttals = defensesData?.result?.rebuttals ?? [];
-    return [...defenses, ...rebuttals].map(d => ({ ...d, type: 'defense' as const }));
-  }, [defensesData]);
-
-  // 변호 전적의 모든 caseId 추출
-  const defenseCaseIds = useMemo(() => {
-    return [...new Set(defenseListWithType.map(d => d.caseId))];
-  }, [defenseListWithType]);
-
-  // 각 재판의 결과 가져오기
-  const caseResultsQueries = useCasesResultsQuery(defenseCaseIds);
-
-  // caseId -> caseResult 매핑
-  const caseResultsMap = useMemo(() => {
-    const map = new Map<number, { caseResult: CaseResult; status: string }>();
-    caseResultsQueries.forEach((query) => {
-      if (query.data) {
-        map.set(query.data.caseId, {
-          caseResult: query.data.caseResult as CaseResult,
-          status: query.data.status
-        });
-      }
-    });
-    return map;
-  }, [caseResultsQueries]);
-
-  // 변호 전적에 재판 결과 추가
-  const defenseListWithResult = useMemo(() => {
-    return defenseListWithType.map(defense => ({
-      ...defense,
-      caseResult: caseResultsMap.get(defense.caseId)?.caseResult || 'PENDING' as CaseResult,
-      caseStatus: caseResultsMap.get(defense.caseId)?.status || 'PENDING'
+    return [...defenses, ...rebuttals].map(d => ({
+      ...d,
+      type: 'defense' as const,
+      caseStatus: d.caseResult === 'ONGOING' ? 'SECOND' : 'DONE' // caseResult로부터 status 추론
     }));
-  }, [defenseListWithType, caseResultsMap]);
+  }, [defensesData]);
 
   // 전체: 내가 만든 재판 + 진행중인 재판 + 변호전적 합치기
   const allItems = useMemo(() => {

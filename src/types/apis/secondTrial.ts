@@ -59,6 +59,9 @@ export interface SecondTrialDetailsResponse {
     reasoning: string;
     authorId: number;
   };
+  isAd?: boolean;
+  adLink?: string;
+  adImageUrl?: string;
 }
 
 /* 좋아요 */

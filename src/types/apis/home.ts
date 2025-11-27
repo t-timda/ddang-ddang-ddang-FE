@@ -1,10 +1,25 @@
-// 로그인 사용자 - 내가 쓴 변론/반론 목록
+// 로그인 사용자 - 내가 쓴 변론 목록
 export type MyDefenseItem = {
   caseId: number;
+  defenseId: number;
   debateSide: "A" | "B";
   title?: string;
   content: string;
   likeCount: number;
+  caseResult: "WIN" | "LOSE" | "ONGOING" | "PENDING";
+  isBlind: boolean;
+};
+
+// 로그인 사용자 - 내가 쓴 반론 목록
+export type MyRebuttalItem = {
+  caseId: number;
+  defenseId: number;
+  rebuttalId: number;
+  debateSide: "A" | "B";
+  content: string;
+  likeCount: number;
+  caseResult: "WIN" | "LOSE" | "ONGOING" | "PENDING";
+  isBlind: boolean;
 };
 
 export type GetMyDefensesResponse = {
@@ -13,7 +28,7 @@ export type GetMyDefensesResponse = {
   message: string;
   result: {
     defenses: MyDefenseItem[];
-    rebuttals: MyDefenseItem[];
+    rebuttals: MyRebuttalItem[];
   };
   error: null | Record<string, unknown>;
 };
@@ -23,6 +38,7 @@ export type OngoingCaseItem = {
   caseId: number;
   title: string;
   status: "FIRST" | "SECOND" | "THIRD" | "DONE";
+  caseResult: "WIN" | "LOSE" | "ONGOING" | "PENDING";
   mainArguments: string[]; // 스웨거 예시 기준
 };
 
@@ -40,6 +56,9 @@ export type HotCaseItem = {
   title: string;
   mainArguments: string[];
   participateCnt?: number;
+  isAd?: boolean;
+  adLink?: string;
+  adImageUrl?: string;
 };
 
 export type GetHotCasesResponse = {

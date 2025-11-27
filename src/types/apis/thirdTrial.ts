@@ -31,6 +31,9 @@ export type ThirdTrialJudgmentResponse = ApiResponse<{
   ratioB: number;
   adoptedDefenses: number[];
   adoptedRebuttals: number[];
+  isAd?: boolean;
+  adLink?: string;
+  adImageUrl?: string;
 }>;
 
 // 3차 재판 상태 변경 요청
