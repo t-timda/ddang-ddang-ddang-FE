@@ -20,6 +20,9 @@ export default function Verdict() {
   const content = judgmentData?.result?.content || "판결문을 불러오는 중입니다.";
   const ratioA = judgmentData?.result?.ratioA || 50;
   const ratioB = judgmentData?.result?.ratioB || 50;
+  const isAd = judgmentData?.result?.isAd;
+  const adLink = judgmentData?.result?.adLink;
+  const adImageUrl = judgmentData?.result?.adImageUrl;
 
   // ratioA와 ratioB 비교하여 승자 결정
   const verdict = ratioA > ratioB ? "A" : "B";
@@ -138,6 +141,33 @@ export default function Verdict() {
           </div>
         </div>
       </div>
+
+      {/* 광고 섹션 */}
+      {isAd && adImageUrl && (
+        <div className="mt-[60px] flex justify-center w-full max-w-[995px] px-4">
+          <div className="w-full">
+            <div className="relative rounded-lg overflow-hidden">
+              <img
+                src={adImageUrl}
+                alt="광고"
+                className="w-full h-auto object-cover"
+              />
+              {adLink && (
+                <div className="mt-6 flex justify-center">
+                  <a
+                    href={adLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center px-8 py-4 bg-main text-white text-lg font-semibold rounded-lg hover:bg-main-medium transition-colors"
+                  >
+                    자세히 보기
+                  </a>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* 하단 버튼 2개 */}
       <div className="mt-[60px] md:mt-[84px] flex flex-col md:flex-row justify-center gap-[16px] md:gap-[32px] w-full max-w-[995px] px-4">

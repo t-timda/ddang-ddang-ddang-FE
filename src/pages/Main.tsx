@@ -170,6 +170,9 @@ const MainPage = () => {
       originalTitle: c.title,
       mainArguments: c.mainArguments,
       participateCnt: c.participateCnt ?? 0,
+      isAd: c.isAd,
+      adLink: c.adLink,
+      adImageUrl: c.adImageUrl,
     })) ?? [];
 
   // 빈 배열이면 fallback 데이터 사용

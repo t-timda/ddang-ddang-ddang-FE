@@ -8,8 +8,11 @@ type Debate = {
   id: number;
   title: string;
   originalTitle?: string;
-  participateCnt: number; 
-  mainArguments?: string[]; 
+  participateCnt: number;
+  mainArguments?: string[];
+  isAd?: boolean;
+  adLink?: string;
+  adImageUrl?: string;
 };
 
 type HotDebateCardProps = {
@@ -56,6 +59,15 @@ const HotDebateCard = ({ debate, isFirst = false }: HotDebateCardProps) => {
           ${isFirst ? 'shadow-lg bg-gradient-to-r from-[#E9F3FF] to-[#FFFFFF]' : 'bg-white'}
         `}
       >
+        {/* 광고 배지 */}
+        {debate.isAd && (
+          <div className="absolute top-[22px] right-4">
+            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-main-bright text-gray-900">
+              AD
+            </span>
+          </div>
+        )}
+
         {/* 제목 영역 */}
         <div className="flex flex-col space-y-0.5">
           {titleParts.map((part, index) => (
