@@ -70,9 +70,7 @@ const ArgumentCard: React.FC<ArgumentCardProps> = ({
   const toggleRebuttalLikeMutation = useToggleRebuttalLikeMutation();
   const toggleDefenseLikeMutation = useToggleDefenseLikeMutation();
   const { data: userProfile } = useUserProfileQuery({
-    enabled: isAuthenticated,
-    suspense: false,
-    useErrorBoundary: false,
+    enabled: isAuthenticated
   });
 
   // States
