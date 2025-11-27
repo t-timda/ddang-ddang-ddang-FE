@@ -78,3 +78,48 @@ body {
   line-height: var(--leading-relaxed);
   color: #000000;
 }
+
+/* 스크롤바 색상 커스텀 */
+.scrollbar-main-bright {
+  scrollbar-width: thin;
+  scrollbar-color: #e8f2ff transparent; 
+}
+
+/* Chrome, Edge, Safari */
+.scrollbar-main-bright::-webkit-scrollbar {
+  width: 8px;
+  background: transparent;
+}
+.scrollbar-main-bright::-webkit-scrollbar-thumb {
+  background: #e8f2ff;
+  border-radius: 8px;
+}
+
+.scrollbar-main-red {
+  scrollbar-width: thin;
+  scrollbar-color: #ffe5e5 transparent; /* main-red, transparent track */
+}
+
+.scrollbar-main-red::-webkit-scrollbar {
+  width: 8px;
+  background: transparent;
+}
+.scrollbar-main-red::-webkit-scrollbar-thumb {
+  background: #ff6b6b; /* main-red */
+  border-radius: 8px;
+}
+
+/* Chrome, Edge, Safari에서 스크롤바의 위아래 버튼(arrow)을 숨김 */
+.scrollbar-main-bright::-webkit-scrollbar-button,
+.scrollbar-main-red::-webkit-scrollbar-button {
+  display: none;
+  height: 0;
+  width: 0;
+}
+
+.scrollbar-hidden {
+  scrollbar-width: none; /* Firefox */
+}
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none; /* Chrome, Edge, Safari */
+}

@@ -155,7 +155,9 @@ const SecondTrial_1 = () => {
                         transition={{ duration: 1.2, ease: [0.25, 0.46, 0.45, 0.94] }}
                         onClick={() => isVoteTime && setSelectedSide('A')}
                         className={clsx(
-                            "w-full lg:w-[513px] h-[300px] sm:h-[350px] md:h-[400px] lg:h-[447px]",
+                            "w-full lg:w-[513px]",
+                            // ↓ 높이 줄이기
+                            "h-[220px] sm:h-[260px] md:h-[300px] lg:h-[340px]",
                             "bg-main-medium rounded-[20px] md:rounded-[30px]",
                             "pt-[3px] pb-[16px] md:pt-[4px] md:pb-[24px] px-[4px] md:px-[6px]",
                             isVoteTime ? 'cursor-pointer' : 'cursor-default',
@@ -163,17 +165,22 @@ const SecondTrial_1 = () => {
                             !isVoteTime && 'opacity-70'
                         )}
                     >
-                        <div className={clsx(
+                        <div
+                          className={clsx(
                             "w-full h-full bg-[#94B0EB] rounded-[17px] md:rounded-[26px]",
                             "flex justify-center items-center flex-col transition-all px-4 md:px-8 lg:px-12 py-6 md:py-8",
                             selectedSide === 'A' && 'shadow-inner'
-                        )}>
-                            <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-center text-white mb-2 md:mb-4">
-                                {details.argumentA.mainArgument}
-                            </h2>
-                            <p className="text-sm md:text-base text-white text-center leading-relaxed">
-                                {details.argumentA.reasoning}
-                            </p>
+                          )}
+                        >
+                          <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-center text-white mb-2 md:mb-4">
+                            {details.argumentA.mainArgument}
+                          </h2>
+                          <div
+                            className="scrollbar-hidden overflow-y-auto text-sm md:text-base text-white text-center leading-relaxed w-full max-h-[90px] md:max-h-[140px] lg:max-h-[180px]"
+                            style={{ wordBreak: "break-word" }}
+                          >
+                            {details.argumentA.reasoning}
+                          </div>
                         </div>
                     </motion.div>
 
@@ -184,7 +191,8 @@ const SecondTrial_1 = () => {
                         transition={{ duration: 1.2, ease: [0.25, 0.46, 0.45, 0.94] }}
                         onClick={() => isVoteTime && setSelectedSide('B')}
                         className={clsx(
-                            "w-full lg:w-[513px] h-[300px] sm:h-[350px] md:h-[400px] lg:h-[447px]",
+                            "w-full lg:w-[513px]",
+                            "h-[220px] sm:h-[260px] md:h-[300px] lg:h-[340px]",
                             "bg-main-red rounded-[20px] md:rounded-[30px]",
                             "pt-[3px] pb-[16px] md:pt-[4px] md:pb-[24px] px-[4px] md:px-[6px]",
                             isVoteTime ? 'cursor-pointer' : 'cursor-default',
@@ -192,17 +200,22 @@ const SecondTrial_1 = () => {
                             !isVoteTime && 'opacity-70'
                         )}
                     >
-                        <div className={clsx(
+                        <div
+                          className={clsx(
                             "w-full h-full bg-[#FFA7A7] rounded-[17px] md:rounded-[26px]",
                             "flex justify-center items-center flex-col transition-all px-4 md:px-8 lg:px-12 py-6 md:py-8",
                             selectedSide === 'B' && 'shadow-inner'
-                        )}>
-                            <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-center text-white mb-2 md:mb-4">
-                                {details.argumentB.mainArgument}
-                            </h2>
-                            <p className="text-sm md:text-base text-white text-center leading-relaxed">
-                                {details.argumentB.reasoning}
-                            </p>
+                          )}
+                        >
+                          <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-center text-white mb-2 md:mb-4">
+                            {details.argumentB.mainArgument}
+                          </h2>
+                          <div
+                            className="scrollbar-hidden overflow-y-auto text-sm md:text-base text-white text-center leading-relaxed w-full max-h-[90px] md:max-h-[140px] lg:max-h-[180px]"
+                            style={{ wordBreak: "break-word" }}
+                          >
+                            {details.argumentB.reasoning}
+                          </div>
                         </div>
                     </motion.div>
                 </div>

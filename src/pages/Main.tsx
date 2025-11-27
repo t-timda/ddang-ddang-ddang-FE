@@ -490,7 +490,7 @@ const MainPage = () => {
           transition={{ duration: 1.2, ease: [0.25, 0.46, 0.45, 0.94] }}
           className="flex-1 flex flex-col gap-3 justify-between bg-[#6596DA] rounded-2xl p-[64px] px-4 md:px-[64px] w-full md:w-[790px] h-[509px] relative"
         >
-          <div className="w-full md:w-[45%]">
+          <div className="w-full md:w-[45%] flex flex-col items-center md:items-start text-center md:text-left">
             <h2 className="text-3xl font-bold text-white">
               AI판사와 밸런스 재판
             </h2>
@@ -502,32 +502,37 @@ const MainPage = () => {
             </p>
           </div>
 
-          <Button
-            variant="white"
-            size="lg"
-            className="
-              cursor-pointer py-6 w-[45%] rounded-[999px]
-              shadow-[0_6px_0_0_rgba(62,116,214,0.7)]
-              hover:shadow-[0_8px_0_0_rgba(62,116,214,0.8)]
-              active:translate-y-[2px]
-              active:shadow-[0_4px_0_0_rgba(62,116,214,0.8)]
-              transition-all
-            "
-            onClick={() => {
-              if (accessToken) {
-                navigate(PATHS.FIRST_TRIAL);
-              } else {
-                setShowLoginModal(true);
-              }
-            }}
-          >
-            재판 시작하기
-          </Button>
+          {/* 모바일에서 중앙 정렬, 데스크탑에서는 기존대로 */}
+          <div className="w-full flex justify-center md:justify-start">
+            <Button
+              variant="white"
+              size="lg"
+              className="
+                mx-auto md:mx-0
+                cursor-pointer py-6 w-[80%] md:w-[45%] rounded-[999px]
+                shadow-[0_6px_0_0_rgba(62,116,214,0.7)]
+                hover:shadow-[0_8px_0_0_rgba(62,116,214,0.8)]
+                active:translate-y-[2px]
+                active:shadow-[0_4px_0_0_rgba(62,116,214,0.8)]
+                transition-all
+              "
+              onClick={() => {
+                if (accessToken) {
+                  navigate(PATHS.FIRST_TRIAL);
+                } else {
+                  setShowLoginModal(true);
+                }
+              }}
+            >
+              재판 시작하기
+            </Button>
+          </div>
 
+          {/* 데스크탑에서만 판사 이미지 노출 */}
           <img
             src={firstJudgeIllustrationUrl}
             alt="판사 아이콘"
-            className="absolute bottom-0 right-10 w-[55%] max-w-md h-auto"
+            className="hidden md:block absolute bottom-0 right-10 w-[55%] max-w-md h-auto"
           />
         </motion.div>
       </section>
