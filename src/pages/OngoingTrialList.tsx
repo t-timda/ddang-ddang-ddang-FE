@@ -3,7 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { PATH_BUILDERS } from "@/constants";
 import OngoingTrialTable from "@/components/trial/OngoingTrialTable";
 import Pagination from "@/components/vs-mode/Pagination";
-import { useOngoingCasesQuery } from "@/hooks/cases/useCases";
+import {
+  useOngoingCasesQuery,
+  useFinishedCasesQuery,
+} from "@/hooks/cases/useCases";
 
 const OngoingTrialList: React.FC = () => {
   const navigate = useNavigate();
@@ -11,12 +14,27 @@ const OngoingTrialList: React.FC = () => {
   const itemsPerPage = 10;
 
   // 진행중인 재판 목록 조회
-  const { data: ongoingCasesRes, isLoading } = useOngoingCasesQuery();
-  const apiCases = ongoingCasesRes?.result ?? [];
+  const { data: ongoingCasesRes, isLoading: isOngoingLoading } =
+    useOngoingCasesQuery();
+
+  // 완료된 재판 목록 조회 (DONE)
+  const { data: finishedCasesRes, isLoading: isFinishedLoading } =
+    useFinishedCasesQuery();
+
+  // 여기서는 그냥 "원본 응답"만 들고 있고
+  const apiOngoingCases = ongoingCasesRes?.result;
+  const apiFinishedCases = finishedCasesRes?.result;
+
+  // 진행중 + DONE 사건을 한 배열로 합치기 (실제 결합은 useMemo 안에서)
+  const apiCases = useMemo(() => {
+    const ongoing = apiOngoingCases ?? [];
+    const finished = apiFinishedCases ?? [];
+    return [...ongoing, ...finished];
+  }, [apiOngoingCases, apiFinishedCases]);
 
   // API 응답을 테이블 형식에 맞게 변환
   const cases = useMemo(() => {
-    return apiCases.map(apiCase => ({
+    return apiCases.map((apiCase) => ({
       caseId: apiCase.caseId,
       title: apiCase.title,
       argumentAMain: apiCase.mainArguments[0] || "A 입장",
@@ -28,7 +46,7 @@ const OngoingTrialList: React.FC = () => {
     }));
   }, [apiCases]);
 
-  // caseId 내림차순 정렬 (최신 케이스가 높은 ID를 가진다고 가정)
+  // caseId 내림차순 정렬
   const sortedCases = useMemo(() => {
     return [...cases].sort((a, b) => b.caseId - a.caseId);
   }, [cases]);
@@ -45,6 +63,8 @@ const OngoingTrialList: React.FC = () => {
     // 2차 재판 페이지로 이동
     navigate(PATH_BUILDERS.secondTrialRoundOne(caseId));
   };
+
+  const isLoading = isOngoingLoading || isFinishedLoading;
 
   if (isLoading) {
     return (
