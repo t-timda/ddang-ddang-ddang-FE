@@ -76,9 +76,12 @@ export interface VoteRequest {
 }
 
 export interface VoteResultResponse {
-  ratioA: number;
-  ratioB: number;
   totalVotes: number;
+  acount: number;
+  bcount: number;
+  apercent: number;
+  bpercent: number;
+  // ...기타 필드
 }
 
 export interface RebuttalRequest {
