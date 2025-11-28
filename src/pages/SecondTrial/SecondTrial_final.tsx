@@ -51,8 +51,8 @@ const SecondTrial_final: React.FC = () => {
   }
 
   // 투표 결과 (API 값만 사용)
-  const ratioA = Math.max(0, Math.min(100, Math.round(voteResult.ratioA ?? 0)));
-  const ratioB = Math.max(0, Math.min(100, Math.round(voteResult.ratioB ?? (100 - ratioA))));
+  const ratioA = Math.round(voteResult.apercent ?? 0);
+  const ratioB = Math.round(voteResult.bpercent ?? 0);
   const totalVotes = voteResult.totalVotes ?? 0;
 
   // 어느 쪽이 이겼는지 판단
@@ -162,45 +162,34 @@ const SecondTrial_final: React.FC = () => {
           <h2 className="text-xl md:text-2xl font-bold text-main mb-4 md:mb-6">2차 재판 투표 결과</h2>
 
           <div className="mt-6 md:mt-[43px] flex justify-center w-full px-2">
-            <div className="relative w-full max-w-[995px] h-[36px] md:h-[44px] bg-[rgba(235,146,146,0.46)] rounded-[20px] md:rounded-[30px] overflow-hidden flex items-center justify-between px-[12px] md:px-[20px]">
-              {/* A측 비율 바 */}
+            <div className="relative w-full max-w-[995px] h-[36px] md:h-[44px] bg-white rounded-[30px] overflow-hidden flex items-center justify-between px-[12px] md:px-[20px]">
+              {/* 진 쪽 전체 바 */}
               <div
-                className="absolute left-0 top-0 h-full bg-[#809AD2] rounded-[20px] md:rounded-[30px] transition-all duration-500"
-                style={{ width: `${ratioA}%` }}
-              >
-                {/* A가 승리했을 때 입체감 효과 */}
-                {aWins && (
-                  <div 
-                    className="absolute top-0 left-0 h-[40%] w-full rounded-t-[20px] md:rounded-t-[30px] bg-gradient-to-b from-white/30 to-transparent"
-                  />
+                className={clsx(
+                  "absolute left-0 top-0 h-full",
+                  ratioA > ratioB ? "bg-main-red" : "bg-main-medium",
+                  "rounded-[30px]"
                 )}
-              </div>
-              
-              {/* B측 비율 바 (우측에서 시작) */}
-              <div
-                className="absolute right-0 top-0 h-full bg-[rgba(235,146,146,0.8)] rounded-[20px] md:rounded-[30px] transition-all duration-500"
-                style={{ width: `${ratioB}%` }}
-              >
-                {/* B가 승리했을 때 입체감 효과 */}
-                {!aWins && (
-                  <div 
-                    className="absolute top-0 left-0 h-[40%] w-full rounded-t-[20px] md:rounded-t-[30px] bg-gradient-to-b from-white/30 to-transparent"
-                  />
-                )}
-              </div>
-              
-              {/* 비율 텍스트 */}
+                style={{ width: "100%", zIndex: 1 }}
+              />
+              {/* 이긴 쪽 덮는 바 (A가 이기면 왼쪽에서, B가 이기면 오른쪽에서) */}
+              {ratioA > ratioB ? (
+                <div
+                  className="absolute left-0 top-0 h-full bg-main-medium rounded-[30px]"
+                  style={{ width: `${ratioA}%`, zIndex: 2 }}
+                />
+              ) : (
+                <div
+                  className="absolute right-0 top-0 h-full bg-main-red rounded-[30px]"
+                  style={{ width: `${ratioB}%`, zIndex: 2 }}
+                />
+              )}
+              {/* 텍스트 */}
               <div className="relative z-10 flex w-full justify-between items-center px-[8px] md:px-[20px]">
-                <p className={clsx(
-                  "text-xs md:text-[16px] font-bold leading-[150%]",
-                  aWins ? "text-white drop-shadow-md" : "text-white"
-                )}>
+                <p className="text-xs md:text-[16px] font-bold leading-[150%] text-white drop-shadow-md">
                   A입장 {ratioA}%
                 </p>
-                <p className={clsx(
-                  "text-xs md:text-[16px] font-bold leading-[150%]",
-                  !aWins ? "text-white drop-shadow-md" : "text-white"
-                )}>
+                <p className="text-xs md:text-[16px] font-bold leading-[150%] text-white drop-shadow-md">
                   B입장 {ratioB}%
                 </p>
               </div>
