@@ -215,27 +215,28 @@ const ArgumentCard: React.FC<ArgumentCardProps> = ({
 
   return (
     <>
-      <div className="bg-white p-6 rounded-lg">
+      <div className="bg-white p-4 sm:p-6 rounded-lg">
         {/* 헤더 */}
-        <div className="flex items-start justify-between">
-          <div className="flex items-center gap-4">
-            <RankBadge 
-              rank={authorRank} 
+        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-0">
+          <div className="flex items-center gap-2 sm:gap-4">
+            <RankBadge
+              rank={authorRank}
               nickname={authorNickname}
               size="md"
             />
-            <span className={`inline-block px-3 py-1 rounded-xl text-sm font-semibold ${sideColorClass} ${sideBgClass}`}>
+            <span className={`inline-block shrink-0 px-2 sm:px-3 py-1 rounded-xl text-xs sm:text-sm font-semibold ${sideColorClass} ${sideBgClass}`}>
               {side} 의견
             </span>
           </div>
-          
-          <div className="flex items-center gap-2">
+
+          <div className="flex items-center gap-2 sm:gap-2">
             <button
               onClick={() => handleReport(defenseId, "DEFENSE", content)}
               className="flex items-center gap-1 text-xs px-2 py-1 text-red-500 hover:text-red-700"
             >
               <Siren className="w-4 h-4" />
-              <span>신고하기</span>
+              <span className="hidden sm:inline">신고하기</span>
+              <span className="sm:hidden">신고</span>
             </button>
             <button
               onClick={handleToggleDefenseLike}
@@ -244,7 +245,7 @@ const ArgumentCard: React.FC<ArgumentCardProps> = ({
                 toggleDefenseLikeMutation.isPending ||
                 isMyDefense
               }
-              className="flex items-center gap-2 text-main disabled:opacity-50"
+              className="flex items-center gap-1 sm:gap-2 text-main disabled:opacity-50"
               aria-label="반론 좋아요"
               title={
                 !isAuthenticated
@@ -255,10 +256,10 @@ const ArgumentCard: React.FC<ArgumentCardProps> = ({
               }
             >
               <ThumbUpIcon className={likedDefense ? "opacity-60" : ""} />
-              <span className="text-md">
+              <span className="text-sm sm:text-md">
                 {!isAuthenticated
-                  ? "로그인 후 이용 가능합니다"
-                  : `${defenseLikes}명이 이 의견에 찬성합니다`}
+                  ? "로그인 필요"
+                  : <><span className="hidden sm:inline">{`${defenseLikes}명이 이 의견에 찬성합니다`}</span><span className="sm:hidden">{defenseLikes}</span></>}
               </span>
             </button>
           </div>
@@ -266,7 +267,7 @@ const ArgumentCard: React.FC<ArgumentCardProps> = ({
 
         {/* 본문 */}
         {side && <div className="mt-3"/>}
-        <p className="mt-2 leading-7 text-main">{content}</p>
+        <p className="mt-2 leading-6 sm:leading-7 text-sm sm:text-base text-main">{content}</p>
 
         {/* 토글/의견달기 */}
         <div className="mt-4 flex flex-col gap-3">

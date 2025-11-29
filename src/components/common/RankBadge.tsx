@@ -46,7 +46,7 @@ const RankBadge: React.FC<RankBadgeProps> = ({
   const styles = sizeStyles[size];
 
   return (
-    <div className={`inline-flex items-center gap-2 ${className}`}>
+    <div className={`flex items-center gap-2 min-w-0 ${className}`}>
       {/* 명패 (칭호만) */}
       <div className={`relative inline-flex items-center ${styles.container}`}>
         <img 
@@ -62,7 +62,7 @@ const RankBadge: React.FC<RankBadgeProps> = ({
       </div>
       
       {/* 닉네임 (명패 밖) */}
-      <span className={`font-semibold text-main ${styles.nicknameText}`}>
+      <span className={`font-semibold text-main truncate ${styles.nicknameText}`}>
         {nickname}
       </span>
     </div>

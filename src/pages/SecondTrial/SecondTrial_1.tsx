@@ -132,16 +132,18 @@ const SecondTrial_1 = () => {
             <div className="max-w-6xl mx-auto px-4 md:px-6 lg:px-4">
                 
                 {/* 1. 헤더 및 타이머 */}
-                <div className="flex items-center gap-2 pb-4 mb-4 md:mb-6">
-                  <h1 className="text-2xl md:text-3xl font-bold text-main">2차 재판</h1>
-                  <Button
-                    variant="primary"
-                    size="sm"
-                    className="h-[32px] px-3 rounded-[8px] text-xs font-semibold"
-                    onClick={() => navigate(`/first-trial/${caseId}?step=judge`)}
-                  >
-                    1차 판결문 보기
-                  </Button>
+                <div className="flex flex-col md:flex-row items-center gap-2 pb-4 mb-4 md:mb-6">
+                  <div className='flex items-center gap-2'>
+                    <h1 className="text-3xl font-bold text-main">2차 재판</h1>
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      className="h-[32px] px-3 rounded-[8px] text-xs font-semibold"
+                      onClick={() => navigate(`/first-trial/${caseId}?step=judge`)}
+                    >
+                      1차 판결문 보기
+                    </Button>
+                  </div>
                   <span className="ml-auto bg-main-bright px-3 py-2 md:p-4 rounded-lg text-sm md:text-md font-medium text-main whitespace-nowrap">
                     {deadlineDate
                       ? `마감: ${formatDateTime(deadlineDate)}`
